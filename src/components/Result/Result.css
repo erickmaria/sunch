@@ -1,0 +1,9 @@
+.result {
+    padding: 0;
+    font-size: large;
+    background-color: #000000;
+    /* blur */
+    color: white;
+    text-align: left;
+    overflow-y: hidden;
+}
