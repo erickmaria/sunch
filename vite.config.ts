@@ -11,7 +11,6 @@ export default defineConfig({
         'electron/main.ts',
         'electron/preload.ts'
       ]
-
     }),
   ],
 })

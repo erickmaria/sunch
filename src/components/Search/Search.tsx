@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import Result from '../Result/Result';
 import GetAnswer from '../services/GptService';
 import Loading from '../Loading/Loading';
+import { Settings, Search as SearthIcon } from 'lucide-react';
 
 export default function Search() {
 
@@ -20,12 +21,11 @@ export default function Search() {
   function keyDownHandler(key: string){
     if (key == "Enter"){
       
-      // if (input.startsWith("/gpt")){
+      if (input.startsWith("/gpt")){
 
         setLoading(true)
 
-        // GetAnswer(input.substring(4).trim())
-        GetAnswer(input)
+        GetAnswer(input.substring(4).trim())
           .then((response) => { 
             
             let data = String(response.data.choices[0].text).split('\n').filter((str) => str !== '')
@@ -37,27 +37,29 @@ export default function Search() {
 
         setInput('')
 
-      // }
+      }
 
-      // setValue(input)
-      // setInput('')
+      setValues([input])
+      setInput('')
 
     }
   }
 
   return (
     <>
-      <div>
+      <div className='flex'>
+      <SearthIcon size={40} className='stroke-orange-500 pt-1 absolute' />
         <input
-          className='search'
+          className='search outline-none bg-slate-950 box-border pl-10 placeholder:pl-1'
           autoFocus
           type='text'
           name='search'
-          placeholder='search...'
+          placeholder='Search...'
           value={input} 
           onChange={e => setInput(e.target.value)} 
           onKeyDown={e => keyDownHandler(e.key)}
           />
+        <Settings size={40} className='stroke-orange-500 pt-2'/>
       </div>
       { loading ? <Loading/>  : <Result contents={values} />}
     </>
