@@ -10,6 +10,7 @@ export default function Search() {
   const [input, setInput] = useState('');
   const [values, setValues] = useState(Array<string>);
   const [loading, setLoading] = useState(false)
+  const [edit, setEdit] = useState(false)
 
 
   useEffect(() => {
@@ -45,6 +46,14 @@ export default function Search() {
     }
   }
 
+  function editToggle(): void {
+    if(edit){
+      setEdit(false)
+    }else{
+      setEdit(true)
+    }
+  }
+
   return (
     <>
       <div className='flex'>
@@ -59,9 +68,13 @@ export default function Search() {
           onChange={e => setInput(e.target.value)} 
           onKeyDown={e => keyDownHandler(e.key)}
           />
-        <Settings size={40} className='stroke-orange-500 pt-2'/>
+        <Settings className='stroke-orange-500 pt-2'
+          size={40}
+          onClick={editToggle}
+        />
       </div>
       { loading ? <Loading/>  : <Result contents={values} />}
+      { edit  && <p>s</p> }
     </>
   )
 }
