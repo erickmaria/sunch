@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react'
 import Result from '../Result/Result';
 import GetAnswer from '../services/GptService';
 import Loading from '../Loading/Loading';
-import { Settings, Search as SearthIcon } from 'lucide-react';
+import { Settings as SettingsIcon, Search as SearthIcon } from 'lucide-react';
+import Settings from '../Settings/Settings';
 
 export default function Search() {
 
@@ -68,13 +69,13 @@ export default function Search() {
           onChange={e => setInput(e.target.value)} 
           onKeyDown={e => keyDownHandler(e.key)}
           />
-        <Settings className='stroke-orange-500 pt-2'
+        <SettingsIcon className='stroke-orange-500 pt-2'
           size={40}
           onClick={editToggle}
         />
       </div>
       { loading ? <Loading/>  : <Result contents={values} />}
-      { edit  && <p>s</p> }
+      { edit  && <Settings /> }
     </>
   )
 }
