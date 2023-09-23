@@ -1,7 +1,6 @@
 import './Search.css'
 import { useEffect, useState } from 'react'
 import Result from '../Result/Result';
-import GetAnswer from '../../services/CrowlerService';
 import Loading from '../Loading/Loading';
 import { Settings as SettingsIcon, Search as SearthIcon } from 'lucide-react';
 import Settings from '../Settings/Settings';
@@ -57,8 +56,6 @@ export default function Search() {
         setInput('')
 
       }
-
-      GetAnswer().then().catch()
 
       setValues([input])
       setInput('')
