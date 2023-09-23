@@ -1,7 +1,7 @@
 import './Search.css'
 import { useEffect, useState } from 'react'
 import Result from '../Result/Result';
-import GetAnswer from '../services/GptService';
+import GetAnswer from '../../services/CrowlerService';
 import Loading from '../Loading/Loading';
 import { Settings as SettingsIcon, Search as SearthIcon } from 'lucide-react';
 import Settings from '../Settings/Settings';
@@ -20,26 +20,45 @@ export default function Search() {
     }
   }, [loading])
 
+  function findstartswith(commands: Array<string>, input: string) : boolean {
+    for (var i = 0; i < commands.length; i++) {
+        if (input.startsWith(commands[i])) {
+          return true
+        }
+    }
+
+    return false
+}
+
   function keyDownHandler(key: string){
     if (key == "Enter"){
       
-      if (input.startsWith("/gpt")){
+      const slashCommands: Array<string> = ["/gpt", "/hf"]
+
+      if (findstartswith(slashCommands, input)){
 
         setLoading(true)
 
-        GetAnswer(input.substring(4).trim())
-          .then((response) => { 
+        // GetAnswer(input.substring(4).trim())
+        //   .then((response) => { 
             
-            let data = String(response.data.choices[0].text).split('\n').filter((str) => str !== '')
+        //     console.log(response)
 
-            setLoading(false) 
-            setValues(data)
-          })
-          .catch((err) => { setValues(err.response.data.error.message) })
+        //     let data = String(response.data.choices[0].text).split('\n').filter((str) => str !== '')
+
+        //     setLoading(false) 
+        //     setValues(["data"])
+        //   })
+        //   .catch((err) => { 
+        //     setValues(err.response.data.error.message)
+        //     // console.log(err)
+        //   })
 
         setInput('')
 
       }
+
+      GetAnswer().then().catch()
 
       setValues([input])
       setInput('')
@@ -69,13 +88,15 @@ export default function Search() {
           onChange={e => setInput(e.target.value)} 
           onKeyDown={e => keyDownHandler(e.key)}
           />
-        <SettingsIcon className='stroke-orange-500 pt-2'
-          size={40}
-          onClick={editToggle}
-        />
+          <SettingsIcon className='stroke-orange-500 pt-2'
+            size={40}
+            onClick={editToggle}
+          />
       </div>
-      { loading ? <Loading/>  : <Result contents={values} />}
-      { edit  && <Settings /> }
+      <div>
+        { edit  && <Settings /> }
+        { loading ? <Loading/>  : <Result contents={values} />}
+      </div>
     </>
   )
 }

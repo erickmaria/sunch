@@ -2,7 +2,7 @@ import './Settings.css'
 
 export default function Settings() {
   return (
-    <div className='settings bg-slate-950 m-auto w-32' >
+    <div className='settings relative bg-slate-950 h-auto w-32 mt-1 m-auto' >
       <p>Add Item</p>
       <p>Add Item</p>
       <p>Add Item</p>

@@ -21,11 +21,11 @@ let createWindow = () => {
     win.loadFile('dist/index.html');
   }
 
-  // win.webContents.openDevTools()
+  win.webContents.openDevTools()
 
-  ipcMain.on('resize', (e: any, screen: any) => {
-    win.setSize(600, Number(screen.h?.toString().replace('px',''))+15)
-  })
+  // ipcMain.on('resize', (e: any, screen: any) => {
+  //   win.setSize(600, Number(screen.h?.toString().replace('px',''))+15)
+  // })
 
   win.on("ready-to-show", () => win.show())
 };
@@ -45,7 +45,3 @@ app.on('activate', () => {
     createWindow();
   }
 });
-
-// ipcMain.on('resize', (e: any, screen: any) => {
-//   window.resizeTo(screen.w, screen.h)
-// })
