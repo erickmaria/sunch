@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES6",                          
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "outDir": "dist-scraper",
+    "esModuleInterop":true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictPropertyInitialization": false,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["scraper/**/*"],
+}

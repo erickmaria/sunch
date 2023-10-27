@@ -1,0 +1,17 @@
+
+POST http://localhost:3080/api/login HTTP/1.1
+content-type: application/json
+
+{
+    "email": "your_email",
+    "password": "your_pass"
+}
+
+###
+
+GET http://localhost:3080/api/prompt HTTP/1.1
+content-type: application/json
+
+{
+    "message": "hello"
+}
