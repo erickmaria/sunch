@@ -1,10 +1,12 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path'
 
-let createWindow = () => {
+const winWidth = 900
+
+const createWindow = () => {
 
   const win = new BrowserWindow({
-    width: 600,
+    width: winWidth,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
@@ -21,11 +23,11 @@ let createWindow = () => {
     win.loadFile('dist/index.html');
   }
 
-  win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 
-  // ipcMain.on('resize', (e: any, screen: any) => {
-  //   win.setSize(600, Number(screen.h?.toString().replace('px',''))+15)
-  // })
+  ipcMain.on('resize', (e: any, screen: any) => {
+    win.setSize(winWidth, Number(screen.h?.toString().replace('px',''))+10)
+  })
 
   win.on("ready-to-show", () => win.show())
 };

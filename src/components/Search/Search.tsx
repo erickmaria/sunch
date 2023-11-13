@@ -14,59 +14,71 @@ export default function Search() {
 
 
   useEffect(() => {
-    if (loading){
+    if (loading) {
       setValues([])
     }
   }, [loading])
 
-  function findstartswith(commands: Array<string>, input: string) : boolean {
-    for (var i = 0; i < commands.length; i++) {
-        if (input.startsWith(commands[i])) {
-          return true
-        }
+  function findstartswith(commands: Array<string>, input: string): boolean {
+    for (let i = 0; i < commands.length; i++) {
+      if (input.startsWith(commands[i])) {
+        return true
+      }
     }
 
     return false
-}
+  }
 
-  function keyDownHandler(key: string){
-    if (key == "Enter"){
-      
+  async function keyDownHandler(key: string) {
+
+    if (key == "Enter") {
+
       const slashCommands: Array<string> = ["/gpt", "/hf"]
 
-      if (findstartswith(slashCommands, input)){
+      if (findstartswith(slashCommands, input)) {
 
         setLoading(true)
 
-        // GetAnswer(input.substring(4).trim())
-        //   .then((response) => { 
-            
-        //     console.log(response)
+        await fetch("http://localhost:3080/api/prompt", {
+          method: "POST",
+          headers: {
+            Accept: 'application.json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: input.substring(4).trim(),
+          })
+        })
+        .then( async(response) => {
 
-        //     let data = String(response.data.choices[0].text).split('\n').filter((str) => str !== '')
+          const data = await response.text();
 
-        //     setLoading(false) 
-        //     setValues(["data"])
-        //   })
-        //   .catch((err) => { 
-        //     setValues(err.response.data.error.message)
-        //     // console.log(err)
-        //   })
+          console.log(data)
+
+          setLoading(false) 
+          setValues([data])
+
+        })
+        .catch((err) => { 
+          console.log(err)
+          setLoading(false)
+          setValues([err.toString()])
+        })
 
         setInput('')
 
       }
 
-      setValues([input])
-      setInput('')
+      // setValues([input])
+      // setInput('')
 
     }
   }
 
   function editToggle(): void {
-    if(edit){
+    if (edit) {
       setEdit(false)
-    }else{
+    } else {
       setEdit(true)
     }
   }
@@ -74,25 +86,25 @@ export default function Search() {
   return (
     <>
       <div className='flex'>
-      <SearthIcon size={40} className='stroke-orange-500 pt-1 absolute' />
+        <SearthIcon size={40} className='stroke-orange-500 pt-1 absolute' />
         <input
           className='search outline-none bg-slate-950 box-border pl-10 placeholder:pl-1'
           autoFocus
           type='text'
           name='search'
           placeholder='Search...'
-          value={input} 
-          onChange={e => setInput(e.target.value)} 
+          value={input}
+          onChange={e => setInput(e.target.value)}
           onKeyDown={e => keyDownHandler(e.key)}
-          />
-          <SettingsIcon className='stroke-orange-500 pt-2'
-            size={40}
-            onClick={editToggle}
-          />
+        />
+        <SettingsIcon className='stroke-orange-500 pt-2'
+          size={40}
+          onClick={editToggle}
+        />
       </div>
       <div>
-        { edit  && <Settings /> }
-        { loading ? <Loading/>  : <Result contents={values} />}
+        {edit && <Settings />}
+        {loading ? <Loading /> : <Result contents={values} />}
       </div>
     </>
   )

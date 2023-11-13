@@ -9,7 +9,7 @@ content-type: application/json
 
 ###
 
-GET http://localhost:3080/api/prompt HTTP/1.1
+POST http://localhost:3080/api/prompt HTTP/1.1
 content-type: application/json
 
 {
