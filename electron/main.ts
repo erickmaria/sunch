@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path'
 
-const winWidth = 900
+const winWidth = 1000
 
 const createWindow = () => {
 
@@ -23,14 +23,17 @@ const createWindow = () => {
     win.loadFile('dist/index.html');
   }
 
+  win.setPosition(100,100)
+
   // win.webContents.openDevTools()
 
   ipcMain.on('resize', (e: any, screen: any) => {
-    win.setSize(winWidth, Number(screen.h?.toString().replace('px',''))+10)
+    win.setSize(winWidth, Number(screen.h?.toString().replace('px',''))+0)
   })
 
   win.on("ready-to-show", () => win.show())
 };
+
 
 app.whenReady().then(() => {
   createWindow();
