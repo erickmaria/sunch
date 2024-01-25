@@ -88,7 +88,7 @@ export default function Search() {
       <div className='flex flex-row'>
         <SearthIcon size={35} className='stroke-back-500 pt-1 absolute' />
         <input
-          className='search outline-none box-border pl-10 placeholder:pl-1'
+          className='search w-full h-9 outline-none rounded-lg pl-10 placeholder:pl-1'
           autoFocus
           type='text'
           name='search'
@@ -97,7 +97,7 @@ export default function Search() {
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => keyDownHandler(e.key)}
         />
-        <SettingsIcon className='stroke-back-500 pt-1 absolute right-0.5'
+        <SettingsIcon className='stroke-back-500 pt-1 absolute right-0'
           size={35}
           onClick={editToggle}
         />
