@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom/client'
 import './index.css';
 import App from './App.tsx'
 
-let root = document.getElementById("root")!
-let rootProps = window.getComputedStyle(root, null)
+const root = document.getElementById("root")!
+const rootProps = window.getComputedStyle(root, null)
 
-let resizeObserver = new ResizeObserver(() => {
+const resizeObserver = new ResizeObserver(() => {
   window.electron.resize({
     w: rootProps.getPropertyValue("width"),
     h: rootProps.getPropertyValue("height"),

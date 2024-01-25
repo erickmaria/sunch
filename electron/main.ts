@@ -1,21 +1,18 @@
 import { app, BrowserWindow, ipcMain, screen } from 'electron';
-import path from 'path'
+import { join } from 'path'
 
 const winWidth = 1000
 
 const createWindow = () => {
 
-  const primaryDisplay = screen.getPrimaryDisplay()
-  const { width } = primaryDisplay.workAreaSize
+  // const primaryDisplay = screen.getPrimaryDisplay()
+  // const { width } = primaryDisplay.workAreaSize
 
   const win = new BrowserWindow({
     width: winWidth,
-    x: width+(winWidth/5),
     y: 150,
-    minimizable: false,
-    maximizable: false,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: join(__dirname, 'preload.js'),
       nodeIntegration: true,
       experimentalFeatures: true,
     },
@@ -27,16 +24,16 @@ const createWindow = () => {
 
   if (process.env.VITE_DEV_SERVER_URL) {
     win.loadURL(process.env.VITE_DEV_SERVER_URL)
+    win.webContents.openDevTools()
   } else {
-    win.loadFile(path.join(app.getAppPath(), 'dist/index.html'));
-  }
+    
+    win.loadFile('dist/index.html')
 
-  ipcMain.on('resize', (e: Electron.IpcMainEvent, screen: {w: string, h: string }) => {
-    win.setResizable(true)
-    win.setPosition(width+(winWidth/5), 150)
-    win.setSize(winWidth, Number(screen.h.toString().replace('px','')))
-    win.setResizable(false)
-  })
+    ipcMain.on('resize', (e: Electron.IpcMainEvent, screen: {w: string, h: string }) => {
+      win.setSize(winWidth, Number(screen.h.toString().replace('px','')))
+    })
+
+  }
 
   win.on("ready-to-show", () => win.show())
 };

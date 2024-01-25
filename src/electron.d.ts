@@ -1,9 +1,9 @@
 import {} from '';
 
 declare global {
-    interface Window {
-      electron: {
-        resize(screen: any);
-      };
-    }
+  interface Window {
+    electron: {
+      resize(screen:  {w: string, h: string });
+    };
   }
+}

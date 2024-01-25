@@ -4,6 +4,7 @@ import electron from 'vite-plugin-electron'
 
 
 export default defineConfig({
+  base: './',
   plugins: [
     react(),
     electron({
