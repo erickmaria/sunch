@@ -28,8 +28,7 @@
     "productName": "sunch",
     "files": [
       "dist/**/*",
-      "dist-electron",
-      "node_modules/**/*"
+      "dist-electron"
     ],
     "directories": {
       "buildResources": "public"

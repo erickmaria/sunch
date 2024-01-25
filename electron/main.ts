@@ -19,7 +19,6 @@ const createWindow = () => {
     frame: false,
     transparent: true,
     show: false,
-    hasShadow: false,
   });
 
   if (process.env.VITE_DEV_SERVER_URL) {
