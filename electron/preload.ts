@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from "electron";
 
 contextBridge.exposeInMainWorld('electron', {
-    resize: (screen :any) => {
+    resize: (screen : {w: string, h: string }) => {
         return ipcRenderer.send('resize', screen)
     }
 })
