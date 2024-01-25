@@ -28,11 +28,11 @@ const createWindow = () => {
     
     win.loadFile('dist/index.html')
 
-    ipcMain.on('resize', (e: Electron.IpcMainEvent, screen: {w: string, h: string }) => {
-      win.setSize(winWidth, Number(screen.h.toString().replace('px','')))
-    })
-
   }
+
+  ipcMain.on('resize', (e: Electron.IpcMainEvent, screen: {w: string, h: string }) => {
+    win.setSize(winWidth, Number(screen.h.toString().replace('px','')))
+  })
 
   win.on("ready-to-show", () => win.show())
 };
