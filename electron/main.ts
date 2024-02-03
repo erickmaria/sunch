@@ -1,17 +1,33 @@
-
-
-
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, globalShortcut, Tray } from 'electron';
 import { createWindow } from './window';
 import { createTray } from './tray';
+import { ToggleWin } from './utils';
+
+let win: BrowserWindow;
+let tray: Tray;
 
 function App(){
-  const win = createWindow()
-  const tray = createTray(win)
-
+  win = createWindow()
+  tray = createTray(win)
 }
 
-app.whenReady().then(App);
+app.whenReady().then(() => {
+
+  const ret = globalShortcut.register('CommandOrControl+Alt+P', () => {
+    ToggleWin(win)
+  })
+
+  if (!ret) {
+    console.log('registration failed')
+  }
+
+  App()
+});
+
+app.on('will-quit', () => {
+  globalShortcut.unregister('CommandOrControl+Alt+P')
+  globalShortcut.unregisterAll()
+})
 
 app.disableHardwareAcceleration()
 
@@ -24,3 +40,5 @@ app.on('activate', () => {
     createWindow()
   }
 });
+
+app.setLoginItemSettings

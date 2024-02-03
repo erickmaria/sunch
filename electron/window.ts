@@ -30,18 +30,22 @@ export const createWindow = (): BrowserWindow => {
 
   }
 
-  ipcMain.on('resize', (e: Electron.IpcMainEvent, screen: {w: string, h: string }) => {
+  ipcMain.on('resize', (e: Electron.IpcMainEvent, screen: { w: string, h: string }) => {
 
-    let height = Number(screen.h.toString().replace('px',''))
+    let height = Number(screen.h.toString().replace('px', ''))
 
     if (height > maxHeight) {
-      height =  maxHeight
+      height = maxHeight
     }
 
     win.setSize(width, height)
   })
 
-  win.on("ready-to-show", () => win.show())
+  win.on("ready-to-show", () => {
+    if (process.env.VITE_DEV_SERVER_URL) {
+      win.show()
+    }
+  })
 
   return win
 };
