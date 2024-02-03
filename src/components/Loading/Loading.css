@@ -1,2 +1,7 @@
 .loading {
+    background-color: whitesmoke;
+    margin: auto;
+    border-radius: 10px;
+    width: 100%;
+    height: auto;
 }

@@ -1,16 +1,15 @@
 import { app, BrowserWindow, ipcMain, screen } from 'electron';
 import { join } from 'path'
 
-const winWidth = 1000
-
+const width = 1000
+const maxHeight = 1000
 const createWindow = () => {
 
-  // const primaryDisplay = screen.getPrimaryDisplay()
-  // const { width } = primaryDisplay.workAreaSize
-
   const win = new BrowserWindow({
-    width: winWidth,
-    y: 150,
+    width: width,
+    minWidth: width,
+    maxWidth: width,
+    y: 100,
     webPreferences: {
       preload: join(__dirname, 'preload.js'),
       nodeIntegration: true,
@@ -25,13 +24,20 @@ const createWindow = () => {
     win.loadURL(process.env.VITE_DEV_SERVER_URL)
     // win.webContents.openDevTools()
   } else {
-    
+
     win.loadFile('dist/index.html')
 
   }
 
   ipcMain.on('resize', (e: Electron.IpcMainEvent, screen: {w: string, h: string }) => {
-    win.setSize(winWidth, Number(screen.h.toString().replace('px','')))
+
+    let height = Number(screen.h.toString().replace('px',''))
+
+    if (height > maxHeight) {
+      height =  maxHeight
+    }
+
+    win.setSize(width, height)
   })
 
   win.on("ready-to-show", () => win.show())

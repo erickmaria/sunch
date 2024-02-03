@@ -18,3 +18,7 @@
   margin-top: 0px;
   background-color: #ffffff;
 }
+
+.settings > ul {
+  list-style-type: none;
+}

@@ -5,3 +5,8 @@ contextBridge.exposeInMainWorld('electron', {
         return ipcRenderer.send('resize', screen)
     }
 })
+
+contextBridge.exposeInMainWorld('env', {
+    SUNCH_GEMINI_API_KEY: process.env.SUNCH_GEMINI_API_KEY,
+    SUNCH_SCRAPGPT_API_KEY: process.env.SUNCH_SCRAPGPT_API_KEY,
+})

@@ -4,6 +4,7 @@ import Result from '../Result/Result';
 import Loading from '../Loading/Loading';
 import { Settings as SettingsIcon, Search as SearthIcon } from 'lucide-react';
 import Settings from '../Settings/Settings';
+import GeminiService from '../../services/GeminiService';
 
 export default function Search() {
 
@@ -12,6 +13,7 @@ export default function Search() {
   const [loading, setLoading] = useState(false)
   const [edit, setEdit] = useState(false)
 
+  const gmn = new GeminiService()
 
   useEffect(() => {
     if (loading) {
@@ -19,60 +21,40 @@ export default function Search() {
     }
   }, [loading])
 
-  function findstartswith(commands: Array<string>, input: string): boolean {
-    for (let i = 0; i < commands.length; i++) {
-      if (input.startsWith(commands[i])) {
-        return true
-      }
-    }
+  // function findstartswith(commands: Array<string>, input: string): boolean {
+  //   for (let i = 0; i < commands.length; i++) {
+  //     if (input.startsWith(commands[i])) {
+  //       return true
+  //     }
+  //   }
 
-    return false
-  }
+  //   return false
+  // }
 
   async function keyDownHandler(key: string) {
 
     if (key == "Enter") {
 
-      const slashCommands: Array<string> = ["/gpt", "/hf"]
-
-      if (findstartswith(slashCommands, input)) {
+      if (input.length == 0) {
+        return
+      }
 
         setLoading(true)
 
-        await fetch("http://localhost:3080/api/prompt", {
-          method: "POST",
-          headers: {
-            Accept: 'application.json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            message: input.substring(4).trim(),
-          })
-        })
-        .then( async(response) => {
-
-          const data = await response.text();
-
-          console.log(data)
-
+        await gmn.GetAnswer(input)
+        .then((response) => {
           setLoading(false) 
-          setValues([data])
+          setValues([response])
 
-        })
-        .catch((err) => { 
-          console.log(err)
-          setLoading(false)
-          setValues([err.toString()])
+        }).catch((err) => { 
+            setLoading(false)
+            setValues([err.toString()])
         })
 
-        setInput('')
-
-      }
-
-      // setValues([input])
-      // setInput('')
+      setInput('')
 
     }
+  
   }
 
   function editToggle(): void {
@@ -86,18 +68,18 @@ export default function Search() {
   return (
     <>
       <div className='flex flex-row'>
-        <SearthIcon size={35} className='stroke-back-500 pt-1 absolute' />
+        <SearthIcon size={35} className='stroke-gray-500 pt-1 absolute' />
         <input
           className='search w-full h-9 outline-none rounded-lg pl-10 placeholder:pl-1'
           autoFocus
           type='text'
           name='search'
-          placeholder='Search...'
+          placeholder='Search'
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => keyDownHandler(e.key)}
         />
-        <SettingsIcon className='stroke-back-500 pt-1 absolute right-0'
+        <SettingsIcon className='stroke-gray-500 pt-1 absolute right-0'
           size={35}
           onClick={editToggle}
         />

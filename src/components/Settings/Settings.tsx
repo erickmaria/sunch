@@ -6,7 +6,11 @@ export default function Settings() {
     <div 
       className='settings bg-slate-50 h-auto w-32 mt-2 rounded-sm relative'
      >
-      <p>Add Item</p>
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
     </div>
     </>
   )
