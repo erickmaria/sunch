@@ -1,7 +1,11 @@
 .loading {
-    background-color: whitesmoke;
-    margin: auto;
+    background-color: #17191A;
+    color: #BDBDBD;
+    padding: 10px;
+    margin: 1px auto;
     border-radius: 10px;
     width: 100%;
     height: auto;
+    text-align: start;
+    font-size: 0.875em;
 }

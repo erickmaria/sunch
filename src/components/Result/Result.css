@@ -1,5 +1,6 @@
 .result {
-    background-color: whitesmoke;
+    background-color: #17191A;
+    color: #BDBDBD;
     padding: 10px;
     margin: 1px auto;
     border-radius: 10px;
@@ -8,6 +9,7 @@
     max-height: 800px;
     text-align: start;
     overflow-y: scroll;
+    font-size: 0.875em;
 }
 
 .result::-webkit-scrollbar{

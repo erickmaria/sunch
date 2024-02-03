@@ -2,9 +2,10 @@ import './Search.css'
 import { useEffect, useState } from 'react'
 import Result from '../Result/Result';
 import Loading from '../Loading/Loading';
-import { Settings as SettingsIcon, Search as SearthIcon } from 'lucide-react';
 import Settings from '../Settings/Settings';
 import GeminiService from '../../services/GeminiService';
+import SearchIcon from '../Search.Icon/Search.Icon';
+import { SettingsIcon } from 'lucide-react';
 
 export default function Search() {
 
@@ -39,7 +40,7 @@ export default function Search() {
         return
       }
 
-        setLoading(true)
+      setLoading(true)
 
         await gmn.GetAnswer(input)
         .then((response) => {
@@ -54,7 +55,7 @@ export default function Search() {
       setInput('')
 
     }
-  
+
   }
 
   function editToggle(): void {
@@ -68,7 +69,7 @@ export default function Search() {
   return (
     <>
       <div className='flex flex-row'>
-        <SearthIcon size={35} className='stroke-gray-500 pt-1 absolute' />
+        <SearchIcon width={24} height={24} className={'absolute left-1 pt-1.5'} />
         <input
           className='search w-full h-9 outline-none rounded-lg pl-10 placeholder:pl-1'
           autoFocus
@@ -80,7 +81,7 @@ export default function Search() {
           onKeyDown={e => keyDownHandler(e.key)}
         />
         <SettingsIcon className='stroke-gray-500 pt-1 absolute right-0'
-          size={35}
+          size={32}
           onClick={editToggle}
         />
       </div>
