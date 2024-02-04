@@ -18,6 +18,12 @@ app.whenReady().then(() => {
     ToggleWin(win)
   })
 
+    
+  if (process.platform === 'win32')
+  {
+    app.setAppUserModelId(app.name);
+  }
+
   App()
 }).then(RunningNotification);
 

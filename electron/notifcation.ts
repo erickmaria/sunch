@@ -1,5 +1,11 @@
 import { Notification } from 'electron'
+import { IconTray } from './utils'
 
 export function RunningNotification () {
-    new Notification({ title: 'Sunch', body: 'Running on System Tray' }).show()
+    new Notification({ 
+        icon: IconTray,
+        // title: 'Sunch', 
+        body: 'Running on System Tray',
+        silent: true,
+    }).show()
 }

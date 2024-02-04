@@ -1,6 +1,7 @@
 import { Tray, Menu, BrowserWindow, app, nativeImage } from "electron";
 import { IconTray, ToggleWin } from "./utils";
 
+
 export const createTray = (win: BrowserWindow): Tray => {
 
     const tray = new Tray(IconTray)
