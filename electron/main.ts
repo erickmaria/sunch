@@ -2,6 +2,7 @@ import { app, BrowserWindow, globalShortcut, Tray } from 'electron';
 import { createWindow } from './window';
 import { createTray } from './tray';
 import { ToggleWin } from './utils';
+import { RunningNotification } from './notifcation';
 
 let win: BrowserWindow;
 let tray: Tray;
@@ -17,12 +18,8 @@ app.whenReady().then(() => {
     ToggleWin(win)
   })
 
-  if (!ret) {
-    console.log('registration failed')
-  }
-
   App()
-});
+}).then(RunningNotification);
 
 app.on('will-quit', () => {
   globalShortcut.unregister('CommandOrControl+Alt+P')
@@ -40,5 +37,3 @@ app.on('activate', () => {
     createWindow()
   }
 });
-
-app.setLoginItemSettings
