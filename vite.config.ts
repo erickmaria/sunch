@@ -6,7 +6,7 @@ export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), 'SUNCH_');
   return {
       define: {
-          'process.env': env
+        'process.env': env
       },
       base: './',
       envPrefix: 'SUNCH_',
@@ -21,17 +21,3 @@ export default defineConfig(({ command, mode }) => {
       ],
       };
 });
-
-// export default defineConfig({
-//   base: './',
-//   envPrefix: 'SUNCH_',
-//   plugins: [
-//     react(),
-//     electron({
-//       entry: [
-//         'electron/main.ts',
-//         'electron/preload.ts'
-//       ]
-//     }),
-//   ],
-// })
