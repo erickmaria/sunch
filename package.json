@@ -16,23 +16,12 @@
     "scraper-dev": "tsc --build tsconfig.scraper.json && node dist-scraper/index.js",
     "dev": "vite && tsc ",
     "build": "tsc && vite build",
-    "build:win": "NODE_ENV=local npm run build && electron-builder --win portable",
-    "build:mac": "npm run build && electron-builder --mac",
-    "build:linux": "npm run build && electron-builder --linux",
+    "build:win": "NODE_ENV=local npm run build && electron-builder --win --config",
+    "build:mac": "npm run build && electron-builder --mac --config",
+    "build:linux": "npm run build && electron-builder --linux --config",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "start": "electron ."
-  },
-  "build": {
-    "appId": "com.emrds.sunch",
-    "productName": "sunch",
-    "files": [
-      "dist/**/*",
-      "dist-electron"
-    ],
-    "directories": {
-      "buildResources": "public"
-    }
   },
   "dependencies": {
     "@google/generative-ai": "^0.2.0",

@@ -1,0 +1,42 @@
+
+appId: com.emrds.sunch
+productName: sunch
+directories:
+  buildResources: public
+  output: release/${version}
+
+asarUnpack:
+  - resources/**
+
+files:
+  - dist/**/*
+  - dist-electron
+
+mac:
+  icon: public/icon.png
+  artifactName: "${productName}_installer_${version}.${ext}"
+  target:
+    - dmg
+win:
+  icon: public/icon.png
+  target:
+  - target: nsis
+    arch:
+    - x64
+  artifactName: "${productName}_installer_${version}.${ext}"
+
+linux:
+  icon: public/icon.png
+  target:
+    - deb
+    - rpm
+    - snap
+    - AppImag
+  category: Development
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: true
+  createDesktopShortcut: false

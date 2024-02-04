@@ -14,6 +14,7 @@ dist-scraper
 dist-electron
 dist-ssr
 user_data/
+release
 *.local
 
 # Editor directories and files
