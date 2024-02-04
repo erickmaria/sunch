@@ -1,8 +1,8 @@
 import { app, BrowserWindow, globalShortcut, Tray } from 'electron';
 import { createWindow } from './window';
 import { createTray } from './tray';
-import { ToggleWin } from './utils';
-import { RunningNotification } from './notifcation';
+import { runningNotification } from './notifcation';
+import { ToggleWin } from './utils/wintoggle';
 
 let win: BrowserWindow;
 let tray: Tray;
@@ -25,7 +25,8 @@ app.whenReady().then(() => {
   }
 
   App()
-}).then(RunningNotification);
+})
+.then(runningNotification);
 
 app.on('will-quit', () => {
   globalShortcut.unregister('CommandOrControl+Alt+P')

@@ -1,5 +1,6 @@
-import { BrowserWindow, app, ipcMain } from "electron";
+import { BrowserWindow, ipcMain } from "electron";
 import { join } from 'path';
+import { searchReadyNotification } from "./notifcation";
 
 const width = 1000
 const maxHeight = 1000
@@ -41,11 +42,24 @@ export const createWindow = (): BrowserWindow => {
     win.setSize(width, height)
   })
 
+  ipcMain.on('searchReady', (e: Electron.IpcMainEvent, search: { ready: boolean}) => {
+    if (!win.isFocused() || !win.isVisible()) {
+      searchReadyNotification(win)
+    }
+  })
+
   win.on("ready-to-show", () => {
     if (process.env.VITE_DEV_SERVER_URL) {
       win.show()
     }
   })
+
+  // win.on('close', (event) => {
+  //   event.preventDefault()
+  //   win.hide()
+
+  //   // stillRunningNotification()
+  // })
 
   return win
 };

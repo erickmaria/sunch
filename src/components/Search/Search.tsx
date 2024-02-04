@@ -47,6 +47,10 @@ export default function Search() {
           setLoading(false) 
           setValues([response])
 
+          window.electron.searchReady({
+            ready: true
+          })
+
         }).catch((err) => { 
             setLoading(false)
             setValues([err.toString()])

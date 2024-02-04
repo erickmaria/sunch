@@ -1,10 +1,10 @@
-import { Tray, Menu, BrowserWindow, app, nativeImage } from "electron";
-import { IconTray, ToggleWin } from "./utils";
-
+import { Tray, Menu, BrowserWindow, app } from "electron";
+import { IconColofulData } from "./utils/dataurl";
+import { ToggleWin } from "./utils/wintoggle";
 
 export const createTray = (win: BrowserWindow): Tray => {
 
-    const tray = new Tray(IconTray)
+    const tray = new Tray(IconColofulData)
 
     const contextMenu = Menu.buildFromTemplate([
         { 
