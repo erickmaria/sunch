@@ -17,10 +17,6 @@ export default function Search() {
 
   const gmn = new GeminiService()
 
-  // useEffect(() => {
-  //   resizeTextarea();
-  // }, [input]);
-
   const resizeTextarea = () => {
     if (textareaRef.current) {
       const textarea = textareaRef.current;
@@ -92,20 +88,8 @@ export default function Search() {
 
   return (
     <>
-      <div className='flex flex-row'>
-        <SearchIcon width={24} height={24} className={'absolute left-1 pt-1.5'} />
-        {/* <input
-          className='search w-full h-9 outline-none rounded-lg pl-10 placeholder:pl-1'
-          autoFocus
-          type='text'
-          name='search'
-          id='search'
-          placeholder='Search'
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => keyDownHandler(e)}
-        /> */}
-
+      <div className='flex flex-row'> 
+        <SearchIcon width={24} height={24} className={'search-icon absolute left-1 pt-1.5'} />
         <textarea
           className='search w-full h-9 outline-none rounded-lg pl-10 pr-10 pt-1 placeholder:pl-1'
           ref={textareaRef}
@@ -117,10 +101,9 @@ export default function Search() {
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => keyDownHandler(e)}
-        >
-        </textarea>
+        ></textarea>
 
-        <SettingsIcon className='stroke-gray-500 pt-1 absolute right-0'
+        <SettingsIcon className='search-settings stroke-gray-500 pt-1 absolute right-0'
           size={32}
           onClick={editToggle}
         />
