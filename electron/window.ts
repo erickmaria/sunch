@@ -1,6 +1,6 @@
 import { BrowserWindow, ipcMain } from "electron";
 import { join } from 'path';
-import { searchReadyNotification } from "./notifcation";
+import { searchReadyNotification } from './notifications/notifcation';
 
 const width = 1000
 const maxHeight = 1000

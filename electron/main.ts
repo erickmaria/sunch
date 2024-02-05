@@ -1,7 +1,7 @@
 import { app, BrowserWindow, globalShortcut, Tray } from 'electron';
 import { createWindow } from './window';
 import { createTray } from './tray';
-import { runningNotification } from './notifcation';
+import { runningNotification } from './notifications/notifcation';
 import { ToggleWin } from './utils/wintoggle';
 
 let win: BrowserWindow;

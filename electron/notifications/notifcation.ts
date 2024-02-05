@@ -1,5 +1,5 @@
 import { BrowserWindow, Notification } from 'electron'
-import { IconColofulData } from './utils/dataurl'
+import { IconColofulData } from '../utils/dataurl'
 
 export function runningNotification () {
     new Notification({ 
