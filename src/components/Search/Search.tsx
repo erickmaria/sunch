@@ -1,5 +1,5 @@
 import './Search.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Result from '../Result/Result';
 import Loading from '../Loading/Loading';
 import Settings from '../Settings/Settings';
@@ -10,17 +10,33 @@ import { SettingsIcon } from 'lucide-react';
 export default function Search() {
 
   const [input, setInput] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [values, setValues] = useState(Array<string>);
   const [loading, setLoading] = useState(false)
   const [edit, setEdit] = useState(false)
 
   const gmn = new GeminiService()
 
+  // useEffect(() => {
+  //   resizeTextarea();
+  // }, [input]);
+
+  const resizeTextarea = () => {
+    if (textareaRef.current) {
+      const textarea = textareaRef.current;
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  };
+
   useEffect(() => {
+
+    resizeTextarea();
+
     if (loading) {
       setValues([])
     }
-  }, [loading])
+  }, [loading, input])
 
   // function findstartswith(commands: Array<string>, input: string): boolean {
   //   for (let i = 0; i < commands.length; i++) {
@@ -32,28 +48,32 @@ export default function Search() {
   //   return false
   // }
 
-  async function keyDownHandler(key: string) {
+  async function keyDownHandler(e: React.KeyboardEvent<HTMLTextAreaElement>) {
 
-    if (key == "Enter") {
+    if (e.key == "Enter" && e.shiftKey) {
+      return
+    }
+
+    if (e.key == "Enter") {
+      e.preventDefault()
 
       if (input.length == 0) {
         return
       }
 
       setLoading(true)
-
-        await gmn.GetAnswer(input)
+      await gmn.GetAnswer(input)
         .then((response) => {
-          setLoading(false) 
+          setLoading(false)
           setValues([response])
 
           window.electron.searchReady({
             ready: true
           })
 
-        }).catch((err) => { 
-            setLoading(false)
-            setValues([err.toString()])
+        }).catch((err) => {
+          setLoading(false)
+          setValues([err.toString()])
         })
 
       setInput('')
@@ -74,16 +94,32 @@ export default function Search() {
     <>
       <div className='flex flex-row'>
         <SearchIcon width={24} height={24} className={'absolute left-1 pt-1.5'} />
-        <input
+        {/* <input
           className='search w-full h-9 outline-none rounded-lg pl-10 placeholder:pl-1'
           autoFocus
           type='text'
           name='search'
+          id='search'
           placeholder='Search'
           value={input}
           onChange={e => setInput(e.target.value)}
-          onKeyDown={e => keyDownHandler(e.key)}
-        />
+          onKeyDown={e => keyDownHandler(e)}
+        /> */}
+
+        <textarea
+          className='search w-full h-9 outline-none rounded-lg pl-10 pr-10 pt-1 placeholder:pl-1'
+          ref={textareaRef}
+          autoFocus
+          name='search'
+          id='search'
+          rows={1}
+          placeholder='Search'
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => keyDownHandler(e)}
+        >
+        </textarea>
+
         <SettingsIcon className='stroke-gray-500 pt-1 absolute right-0'
           size={32}
           onClick={editToggle}

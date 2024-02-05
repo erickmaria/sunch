@@ -24,7 +24,7 @@ export const createWindow = (): BrowserWindow => {
 
   if (process.env.VITE_DEV_SERVER_URL) {
     win.loadURL(process.env.VITE_DEV_SERVER_URL)
-    win.webContents.openDevTools({mode: 'detach'})
+    // win.webContents.openDevTools({mode: 'detach'})
   } else {
 
     win.loadFile('dist/index.html')
@@ -57,7 +57,7 @@ export const createWindow = (): BrowserWindow => {
   // win.on('close', (event) => {
   //   event.preventDefault()
   //   win.hide()
-
+  
   //   // stillRunningNotification()
   // })
 
