@@ -20,7 +20,7 @@ export const createTray = (win: BrowserWindow): Tray => {
     tray.setContextMenu(contextMenu)
 
     tray.on('click', () => {
-        ToggleWin(win)
+        ToggleWin(win, true)
     })
 
     // function show() {
