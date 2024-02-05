@@ -9,7 +9,7 @@ export default defineConfig(({ command, mode }) => {
         'process.env': env
       },
       base: './',
-      envPrefix: 'SUNCH_',
+      envPrefix: ['VITE_','SUNCH_'],
       plugins: [
         react(),
         electron({
