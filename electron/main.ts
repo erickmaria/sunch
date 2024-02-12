@@ -26,7 +26,7 @@ app.whenReady().then(() => {
 
   App()
 })
-.then(runningNotification);
+.then(() => runningNotification(win));
 
 app.on('will-quit', () => {
   globalShortcut.unregister('CommandOrControl+Alt+P')

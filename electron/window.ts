@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain } from "electron";
+import { BrowserWindow, ipcMain, screen } from "electron";
 import { join } from 'path';
 import { searchReadyNotification } from './notifications/notifcation';
 
@@ -53,6 +53,14 @@ export const createWindow = (): BrowserWindow => {
       win.show()
     }
   })
+
+  // win.on('will-move', (event, rect) = > {
+  //   const {width, height} = screen.getPrimaryDisplay().workAreaSize
+
+  //   rect.height + rect.y > height && event?.preventDefault()
+  //   rect.width + rect.x > width && event?.preventDefault()
+
+  // })
 
   // win.on('close', (event) => {
   //   event.preventDefault()

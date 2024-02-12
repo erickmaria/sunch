@@ -9,13 +9,20 @@ import { SettingsIcon } from 'lucide-react';
 
 export default function Search() {
 
-  const [input, setInput] = useState('');
+  type SearchHistory = {
+    search: string,
+    result: string
+  }
+
+  const gmn = new GeminiService()
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [interator, setInterator] = useState(Number);
+  const [histories, setHistories] = useState(Array<SearchHistory>);
+  const [input, setInput] = useState('');
   const [values, setValues] = useState(Array<string>);
   const [loading, setLoading] = useState(false)
   const [edit, setEdit] = useState(false)
-
-  const gmn = new GeminiService()
 
   const resizeTextarea = () => {
     if (textareaRef.current) {
@@ -40,7 +47,6 @@ export default function Search() {
   //       return true
   //     }
   //   }
-
   //   return false
   // }
 
@@ -50,7 +56,33 @@ export default function Search() {
       return
     }
 
+    if (e.key == 'ArrowUp' && e.ctrlKey && e.altKey) {
+
+      if (interator <= histories.length) {
+        if (interator < histories.length-1){
+          setInterator(interator + 1)
+        }
+        setInput(histories[interator].search)
+        setValues([histories[interator].result])
+
+      }
+    }
+
+    if (e.key == 'ArrowDown' && e.ctrlKey && e.altKey) {
+      if (interator >= 0) {
+
+        if (interator != 0){
+          setInterator(interator - 1)
+        }
+        setInput(histories[interator].search)
+        setValues([histories[interator].result])
+      }
+    }
+
     if (e.key == "Enter") {
+
+      let witherror = false
+
       e.preventDefault()
 
       if (input.length == 0) {
@@ -60,19 +92,29 @@ export default function Search() {
       setLoading(true)
       await gmn.GetAnswer(input)
         .then((response) => {
+
+          setHistories([{
+            search: input,
+            result: response
+          }, ...histories])
+
           setLoading(false)
           setValues([response])
+
 
           window.electron.searchReady({
             ready: true
           })
 
+          console.log(histories)
+
         }).catch((err) => {
+          witherror = true
           setLoading(false)
           setValues([err.toString()])
         })
 
-      setInput('')
+      !witherror ? setInput('') : null
 
     }
 
@@ -88,7 +130,7 @@ export default function Search() {
 
   return (
     <>
-      <div className='flex flex-row'> 
+      <div className='flex flex-row'>
         <SearchIcon width={24} height={24} className={'search-icon absolute left-1 pt-1.5'} />
         <textarea
           className='search w-full h-9 outline-none rounded-lg pl-10 pr-10 pt-1 placeholder:pl-1'
