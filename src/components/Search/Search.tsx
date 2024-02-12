@@ -106,8 +106,6 @@ export default function Search() {
             ready: true
           })
 
-          console.log(histories)
-
         }).catch((err) => {
           witherror = true
           setLoading(false)
