@@ -1,24 +1,20 @@
-import { app, BrowserWindow, globalShortcut, Tray } from 'electron';
-import { createWindow } from './window';
-import { createTray } from './tray';
+import { app, BrowserWindow, globalShortcut } from 'electron';
 import { runningNotification } from './notifications/notifcation';
 import { ToggleWin } from './utils/wintoggle';
-
-let win: BrowserWindow;
-let tray: Tray;
+import { Windown } from './models/window';
+import { Tray } from './models/tray';
 
 function App(){
-  win = createWindow()
-  tray = createTray(win)
+  Windown.getInstance()
+  Tray.getInstance()
 }
 
 app.whenReady().then(() => {
 
-  const ret = globalShortcut.register('CommandOrControl+Alt+P', () => {
-    ToggleWin(win)
+  globalShortcut.register('CommandOrControl+Alt+P', () => {
+    ToggleWin()
   })
 
-    
   if (process.platform === 'win32')
   {
     app.setAppUserModelId(app.name);
@@ -26,7 +22,7 @@ app.whenReady().then(() => {
 
   App()
 })
-.then(() => runningNotification(win));
+.then(() => runningNotification());
 
 app.on('will-quit', () => {
   globalShortcut.unregister('CommandOrControl+Alt+P')
@@ -36,11 +32,11 @@ app.on('will-quit', () => {
 app.disableHardwareAcceleration()
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit()
+  // if (process.platform !== 'darwin') app.quit()
 });
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow()
+    Windown.getInstance()
   }
 });
