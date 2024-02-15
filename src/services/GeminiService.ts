@@ -31,8 +31,15 @@ export default class GeminiService implements Service {
     }
 
     async GetAnswer(prompt: string): Promise<string> {
-        const result = await this.model.generateContent(prompt);
+
+        const [tokens, result] = await Promise.all([
+            await this.model.countTokens(prompt),
+            await this.model.generateContent(prompt)
+        ])
+
+        console.log(tokens)
+
         const response = await result.response;
-        return response.text();
+        return tokens.totalTokens, response.text();
     }
 }
