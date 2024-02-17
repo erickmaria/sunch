@@ -12,8 +12,8 @@ export default function Result({ contents }: ResultProps) {
       <>
         <div className='result' >
           <pre>
-            {contents.map((content) => (
-              <MarkdownHighlighter markdown={content} />
+            {contents.map((content, index) => (
+              <MarkdownHighlighter key={index} markdown={content} />
             ))}
           </pre>
         </div>
