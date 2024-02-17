@@ -1,15 +1,15 @@
 import { Windown } from "../models/window";
 
-export function ToggleWin(clickOnTray?: boolean) {
+export function ToggleWin(clickOnTray?: boolean): void {
 
     const win = Windown.getInstance().bw
 
     if (!win.isFocused() && !clickOnTray) {
-        return win.show()
+        win.show()
     }else if(win.isVisible()){
-        return win.hide()
+        win.hide()
     } else {
-        return win.show()
+        win.show()
     }
 
 

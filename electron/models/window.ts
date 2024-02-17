@@ -1,5 +1,5 @@
 import { BrowserWindow, ipcMain } from "electron";
-import { searchReadyNotification } from "../notifications/notifcation";
+import { searchReadyNotification, stillRunningNotification } from "../notifications/notifcation";
 import { join } from 'path';
 
 export class Windown {
@@ -76,6 +76,7 @@ export class Windown {
     })
 
     win.on('close', () => {
+      stillRunningNotification()
       Windown.instance = null
     })
 
