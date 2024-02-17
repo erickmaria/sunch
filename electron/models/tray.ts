@@ -1,14 +1,10 @@
 import { Menu, Tray as TrayElectron, app } from "electron";
-
 import { ToggleWin } from "../utils/wintoggle";
 import { IconColofulData } from "../utils/dataurl";
 
 export class Tray {
 
   private static instance: Tray | null = null;
-
-  private width = 1000
-  private maxHeight = 1000
   public tw: TrayElectron
 
   private constructor() {

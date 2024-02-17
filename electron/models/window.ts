@@ -1,7 +1,6 @@
 import { BrowserWindow, ipcMain } from "electron";
 import { searchReadyNotification } from "../notifications/notifcation";
 import { join } from 'path';
-import { Wind } from "lucide-react";
 
 export class Windown {
 
@@ -61,7 +60,7 @@ export class Windown {
       
     })
 
-    ipcMain.on('searchReady', (e: Electron.IpcMainEvent, search: { ready: boolean }) => {
+    ipcMain.on('searchReady', () => {
 
       const win = Windown.getInstance().bw
 
@@ -76,7 +75,7 @@ export class Windown {
       }
     })
 
-    win.on('close', (event) => {
+    win.on('close', () => {
       Windown.instance = null
     })
 

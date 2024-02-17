@@ -7,9 +7,10 @@ export function ToggleWin(clickOnTray?: boolean) {
     if (!win.isFocused() && !clickOnTray) {
         return win.show()
     }else if(win.isVisible()){
-        return  win.hide()
+        return win.hide()
     } else {
         return win.show()
     }
+
 
 }
