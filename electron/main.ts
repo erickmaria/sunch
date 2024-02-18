@@ -20,6 +20,11 @@ app.whenReady().then(() => {
     app.setAppUserModelId(app.name);
   }
 
+  app.setLoginItemSettings({
+    openAtLogin: true,
+    path: app.getPath('exe')
+  })
+
   App()
 })
 .then(() => runningNotification());
