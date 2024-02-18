@@ -21,7 +21,6 @@ export default function Search() {
   const [histories, setHistories] = useState(Array<SearchHistory>);
   const [input, setInput] = useState('');
   const [values, setValues] = useState(Array<string>);
-
   const [loading, setLoading] = useState(false)
   const [settings, setSettings] = useState(false)
 
