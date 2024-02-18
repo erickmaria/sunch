@@ -12,12 +12,15 @@ export function runningNotification () {
 }
 
 export function stillRunningNotification () {
-    new Notification({ 
-        icon: IconColofulData,
-        title: 'Sunch is still running',
-        body: 'running on System Tray',
-        silent: true,
-    }).on('click', () => ToggleWin()).show()
+    // adding delay to not show notification when the app is closing
+    setTimeout(()=>{
+        new Notification({ 
+            icon: IconColofulData,
+            title: 'Sunch is still running',
+            body: 'running on System Tray',
+            silent: true,
+        }).on('click', () => ToggleWin()).show()
+    }, 100)
 }
 
 export function searchReadyNotification () {
