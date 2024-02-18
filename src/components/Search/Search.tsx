@@ -21,9 +21,11 @@ export default function Search() {
   const [histories, setHistories] = useState(Array<SearchHistory>);
   const [input, setInput] = useState('');
   const [values, setValues] = useState(Array<string>);
+
   const [loading, setLoading] = useState(false)
   const [settings, setSettings] = useState(false)
 
+  
   const resizeTextarea = () => {
     if (textareaRef.current) {
       const textarea = textareaRef.current;
@@ -145,6 +147,7 @@ export default function Search() {
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => keyDownHandler(e)}
         ></textarea>
+        {/* <span className='absolute pt-1.5 right-10 text-sm opacity-50 select-none'>0/400</span> */}
         <SettingsIcon 
           className='search-settings stroke-gray-500 pt-1 absolute right-0.5'
           size={30}

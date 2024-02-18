@@ -1,8 +1,8 @@
-import { Windown } from "../models/window";
+import { Window } from "../models/window";
 
 export function ToggleWin(clickOnTray?: boolean): void {
 
-    const win = Windown.getInstance().bw
+    const win = Window.getInstance().bw
 
     if (!win.isFocused() && !clickOnTray) {
         win.show()

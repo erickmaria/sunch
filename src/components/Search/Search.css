@@ -4,6 +4,7 @@
     overflow-y: hidden;
     min-height: 35px;
 }
+
 .search-icon {
     -webkit-user-select: none;
     -webkit-app-region: drag;

@@ -2,9 +2,9 @@ import { BrowserWindow, ipcMain } from "electron";
 import { searchReadyNotification, stillRunningNotification } from "../notifications/notifcation";
 import { join } from 'path';
 
-export class Windown {
+export class Window {
 
-  private static instance: Windown | null = null;
+  private static instance: Window | null = null;
 
   private width = 1000
   private maxHeight = 1000
@@ -14,12 +14,12 @@ export class Windown {
     this.bw = this.create()
   }
 
-  public static getInstance(): Windown {
+  public static getInstance(): Window {
 
-    if (!Windown.instance) {
-      Windown.instance = new Windown();
+    if (!Window.instance) {
+      Window.instance = new Window();
     }
-    return Windown.instance;
+    return Window.instance;
   }
 
 
@@ -56,13 +56,13 @@ export class Windown {
         height = this.maxHeight
       }
 
-      Windown.getInstance().bw.setSize(this.width, height)
+      Window.getInstance().bw.setSize(this.width, height)
       
     })
 
     ipcMain.on('searchReady', () => {
 
-      const win = Windown.getInstance().bw
+      const win = Window.getInstance().bw
 
       if (!win.isFocused() || !win.isVisible()) {
         searchReadyNotification()
@@ -77,7 +77,7 @@ export class Windown {
 
     win.on('close', () => {
       stillRunningNotification()
-      Windown.instance = null
+      Window.instance = null
     })
 
     return win

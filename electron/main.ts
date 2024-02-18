@@ -1,11 +1,11 @@
 import { app, BrowserWindow, globalShortcut } from 'electron';
 import { runningNotification } from './notifications/notifcation';
 import { ToggleWin } from './utils/wintoggle';
-import { Windown } from './models/window';
+import { Window } from './models/window';
 import { Tray } from './models/tray';
 
 function App(){
-  Windown.getInstance()
+  Window.getInstance()
   Tray.getInstance()
 }
 
@@ -37,6 +37,6 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    Windown.getInstance()
+    Window.getInstance()
   }
 });
