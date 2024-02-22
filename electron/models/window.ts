@@ -6,7 +6,7 @@ export class Window {
 
   private static instance: Window | null = null;
 
-  private width = 1000
+  private width = 900
   private maxHeight = 1000
   public bw: BrowserWindow
 
@@ -41,11 +41,9 @@ export class Window {
 
     if (process.env.VITE_DEV_SERVER_URL) {
       win.loadURL(process.env.VITE_DEV_SERVER_URL)
-      // win.webContents.openDevTools({mode: 'detach'})
+      if (process.env.SUNCH_DEVTOOLS_ENABLED) win.webContents.openDevTools({mode: 'detach'})
     } else {
-
       win.loadFile('dist/index.html')
-
     }
 
     ipcMain.on('resize', (e: Electron.IpcMainEvent, screen: { w: string, h: string }) => {
@@ -55,6 +53,7 @@ export class Window {
       if (height > this.maxHeight) {
         height = this.maxHeight
       }
+
 
       Window.getInstance().bw.setSize(this.width, height)
       

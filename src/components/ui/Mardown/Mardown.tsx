@@ -1,7 +1,6 @@
 import Markdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { xonokai  } from 'react-syntax-highlighter/dist/esm/styles/prism'
-
+import { oneDark as stylePrism } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 interface MarkProps {
     markdown: string
@@ -20,9 +19,10 @@ export default function MarkdownHighlighter({ markdown }: MarkProps) {
                     return match ? (
                         <SyntaxHighlighter
                             PreTag="pre"
+                            wrapLongLines={true}
                             children={String(children).replace(/\n$/, '')}
                             language={match[1]}
-                            style={xonokai}
+                            style={stylePrism}
                         />
                     ) : (
                         <code {...rest} className={className}>

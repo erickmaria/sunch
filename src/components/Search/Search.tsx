@@ -2,10 +2,12 @@ import './Search.css'
 import { useEffect, useRef, useState } from 'react'
 import Result from '../Result/Result';
 import Loading from '../Loading/Loading';
-import Settings from '../Settings/Settings';
 import GeminiService from '../../services/GeminiService';
 import sunchIcon from '../../assets/icon.svg'
-import { SettingsIcon } from 'lucide-react';
+import { Microphone } from '../Microphone/Microphone';
+import { MoreVertical } from 'lucide-react';
+import Settings from '../Settings/Settings';
+
 
 export default function Search() {
 
@@ -21,10 +23,9 @@ export default function Search() {
   const [histories, setHistories] = useState(Array<SearchHistory>);
   const [input, setInput] = useState('');
   const [values, setValues] = useState(Array<string>);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [settings, setSettings] = useState(false)
 
-  
   const resizeTextarea = () => {
     if (textareaRef.current) {
       const textarea = textareaRef.current;
@@ -35,11 +36,12 @@ export default function Search() {
 
   useEffect(() => {
 
-    resizeTextarea();
+    resizeTextarea()
 
     if (loading) {
       setValues([])
     }
+
   }, [loading, input])
 
   // function findstartswith(commands: Array<string>, input: string): boolean {
@@ -68,7 +70,6 @@ export default function Search() {
 
       }
     }
-
     if (e.key == 'ArrowDown' && e.ctrlKey && e.altKey) {
       if (interator >= 0) {
 
@@ -120,6 +121,7 @@ export default function Search() {
   }
 
   function settingsToggle(): void {
+
     if (settings) {
       setSettings(false)
     } else {
@@ -130,12 +132,12 @@ export default function Search() {
   return (
     <>
       <div className='flex flex-row'>
-        <img 
-          className='search-icon absolute left-0.5 pt-1' 
-          style={{ width: 28, height: 28 }} src={sunchIcon} alt="sunch icon" 
+        <img
+          className='search-icon absolute left-0.5 pt-2'
+          style={{ width: 26, height: 26 }} src={sunchIcon} alt="sunch icon"
         />
         <textarea
-          className='search w-full h-9 outline-none rounded-lg pl-10 pr-10 pt-1 placeholder:opacity-50'
+          className='search w-full h-9 outline-none rounded-2xl pl-9 pr-12 pt-1 placeholder:opacity-50'
           ref={textareaRef}
           autoFocus
           name='search'
@@ -146,15 +148,18 @@ export default function Search() {
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => keyDownHandler(e)}
         ></textarea>
-        {/* <span className='absolute pt-1.5 right-10 text-sm opacity-50 select-none'>0/400</span> */}
-        <SettingsIcon 
-          className='search-settings stroke-gray-500 pt-1 absolute right-0.5'
-          size={30}
+        <Microphone
+          lang='pt-BR'
+          onErrorMessage={setValues} 
+          onTranscriptData={setInput}
+        />
+        <MoreVertical 
+          className='pt-1.5 absolute right-1 cursor-pointer'
           onClick={settingsToggle}
         />
       </div>
       {settings && <Settings />}
-      {loading ? <Loading /> : <Result contents={values} />}
+      {loading ? <Loading /> : !settings && <Result contents={values} />}
     </>
   )
 }

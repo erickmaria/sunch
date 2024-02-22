@@ -26,7 +26,7 @@ export default class GeminiService implements Service {
             },
         ];
 
-        this.genAI = new GoogleGenerativeAI(window.env.SUNCH_GEMINI_API_KEY || "")
+        this.genAI = new GoogleGenerativeAI(window.env?.SUNCH_GEMINI_API_KEY || process.env.SUNCH_GEMINI_API_KEY || "")
         this.model = this.genAI.getGenerativeModel({ model: "gemini-pro", safetySettings });
     }
 

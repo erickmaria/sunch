@@ -1,0 +1,44 @@
+.mic {
+}
+
+.mic::before,
+.mic::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -40%);
+    border-radius: 100%;
+    z-index: 1;
+}
+
+.mic::before {
+    width: 25px;
+    height: 25px;
+    background-color: rgb(68 64 60);
+}
+
+.mic::after {
+    width: 25px;
+    height: 25px;
+    background-color: rgb(68 64 60);
+    animation: circle-size 0.3s linear infinite alternate;
+    
+}
+
+.mic-icon {
+    position: relative;
+    z-index: 2;
+}
+
+@keyframes circle-size {
+    from {
+        width: 25px;
+        height: 25px;
+    }
+
+    to {
+        width: 29px;
+        height: 29px;
+    }
+}
