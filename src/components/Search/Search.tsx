@@ -8,13 +8,12 @@ import { Microphone } from '../Microphone/Microphone';
 import { MoreVertical } from 'lucide-react';
 import Settings from '../Settings/Settings';
 
+export type SearchHistory = {
+  search: string,
+  result: string
+}
 
 export default function Search() {
-
-  type SearchHistory = {
-    search: string,
-    result: string
-  }
 
   const gmn = new GeminiService()
 
@@ -158,7 +157,11 @@ export default function Search() {
           onClick={settingsToggle}
         />
       </div>
-      {settings && <Settings />}
+      {settings && <Settings 
+        onCloseSetting={setSettings} 
+        onClearResult={setValues}
+        onClearHistory={[setHistories, setInput]}
+      />}
       {loading ? <Loading /> : !settings && <Result contents={values} />}
     </>
   )
