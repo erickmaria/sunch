@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction } from 'react'
 import './Settings.css'
-import { SearchHistory } from '../Search/Search'
 
 interface SettingsProps {
   onCloseSetting: Dispatch<SetStateAction<boolean>>
