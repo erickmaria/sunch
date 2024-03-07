@@ -11,9 +11,6 @@
   "main": "dist-electron/main.js",
   "homepage": "./",
   "scripts": {
-    "scraper-server": "node dist-scraper/app.js",
-    "scraper-build": "tsc --build tsconfig.scraper.json",
-    "scraper-dev": "tsc --build tsconfig.scraper.json && node dist-scraper/index.js",
     "dev": "vite && tsc ",
     "build": "tsc && vite build",
     "build:win": "NODE_ENV=local npm run build && electron-builder --win --config",

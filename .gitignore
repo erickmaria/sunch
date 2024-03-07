@@ -10,7 +10,6 @@ lerna-debug.log*
 .cache
 dist*
 node_modules
-dist-scraper
 dist-electron
 dist-ssr
 user_data/
