@@ -1,36 +1,30 @@
 .settings {
-    background-color: #17191A;
-    color: hsl(270, 1%, 62%);
-    left: 87.5%;
-    padding: 6px;
-    width: fit-content;
-  }
-  
-  .settings:after {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    top: -3%;
-    left: 85%;
-    /* margin-left: 30px; */
-    content: '';
-    transform: rotate(-45deg);
-    margin-top: 0px;
-    background-color: #17191A;
-  }
-  
-  .settings > ul {
-    list-style-type: none;
-    text-align: start;
-  }
+  background-color: #17191A;
+  color: hsl(270, 1%, 62%);
+  left: 83.2%;
+  padding: 6px;
+  margin: 2px;
+  width: fit-content;
 
-  .settings > ul > li {
-    list-style-type: none;
-    padding-bottom: 6px;
-    cursor: pointer;
-    user-select: none;   
-  }
-/* 
-  .settings > ul > li:not(:last-child){
-    border-bottom: 1px solid rgb(79, 79, 79);
-  } */
+  border: 1px solid rgb(49, 49, 49);
+  box-sizing: border-box;
+}
+
+.settings>ul {
+  list-style-type: none;
+  text-align: start;
+}
+
+.settings>ul>li {
+  display: flex;
+  gap: 8px;
+  list-style-type: none;
+  padding: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.settings>ul>li:hover {
+  background-color: #292a2a;
+  border-radius: 8px;
+}

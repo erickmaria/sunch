@@ -1,10 +1,43 @@
 .loading {
     background-color: #17191A;
-    padding: 10px;
+    padding: 6px;
     margin: 1px auto;
     border-radius: 10px;
     width: 100%;
     height: auto;
     text-align: start;
     font-size: 0.875em;
+
+    border: 1px solid rgb(49, 49, 49);
+    box-sizing: border-box;
+}
+
+.loading span {
+    animation-name: blink;
+    animation-duration: 1.4s;
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+
+   
+}
+
+.loading span:nth-child(2) {
+    animation-delay: .2s;
+}
+
+.loading span:nth-child(3) {
+    animation-delay: .4s;
+}
+
+@keyframes blink {
+
+    0% {
+      opacity: .2;
+    }
+    20% {
+      opacity: 1;
+    }
+    100% {
+      opacity: .2;
+    }
 }

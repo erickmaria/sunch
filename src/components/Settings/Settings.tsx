@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from 'react'
 import './Settings.css'
+import { Trash, Trash2 } from 'lucide-react'
 
 interface SettingsProps {
   onCloseSetting: Dispatch<SetStateAction<boolean>>
@@ -24,10 +25,16 @@ export default function Settings({onCloseSetting, onClearResult, onClearHistory}
 
   return (
     <>
-    <div className='settings bg-slate-50 h-auto mt-2 rounded-lg relative font-medium'>
+    <div className='settings bg-slate-50 rounded-lg relative font-medium'>
       <ul>
-        <li onClick={() => clearResult()}>clean result</li>
-        <li onClick={() => clearHistory()}>clean history</li>
+        <li onClick={() => clearResult()}>
+          <Trash size={18} className='mt-1'/>
+          <span>clean result</span>
+        </li>
+        <li onClick={() => clearHistory()}>
+          <Trash2 size={18} className='mt-1' />
+          <span>clean history </span>
+        </li>
       </ul>
     </div>
     </>

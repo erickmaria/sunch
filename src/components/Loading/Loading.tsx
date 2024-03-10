@@ -2,8 +2,8 @@ import './Loading.css'
 
 export default function Loading() {
   return (
-    <div className='loading rounded-lg'  >
-      <p>Loading...</p>
+    <div  className="loading">
+      <p> Loading<span>.</span><span>.</span><span>.</span></p>
     </div>
   )
 }

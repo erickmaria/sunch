@@ -39,10 +39,12 @@ export class Window {
       show: false,
     });
 
+    // win.setBackgroundMaterial("acrylic")
+
     if (process.env.VITE_DEV_SERVER_URL) {
       win.loadURL(process.env.VITE_DEV_SERVER_URL)
       // if (process.env.SUNCH_DEVTOOLS_ENABLED) 
-      win.webContents.openDevTools({mode: 'detach'})
+      // win.webContents.openDevTools({mode: 'detach'})
     } else {
       win.loadFile('dist/index.html')
     }
@@ -54,7 +56,6 @@ export class Window {
       if (height > this.maxHeight) {
         height = this.maxHeight
       }
-
 
       Window.getInstance().bw.setSize(this.width, height)
       
