@@ -29,7 +29,9 @@ export function Microphone({onErrorMessage, onTranscriptData, lang }: Microphone
 
     return (
         <>
-            <div onClick={toogleRecording} className='stroke-gray-500 pt-1.5 absolute right-7 cursor-pointer'>
+            <div onClick={toogleRecording} className='pt-1.5 absolute right-7 cursor-pointer' style={{
+            color: 'var(--foreground-color)'
+          }}>
                 {isListening ? (
                     <div className='mic'>
                         <Mic size={20} className='mic-icon' />

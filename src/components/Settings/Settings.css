@@ -1,6 +1,5 @@
 .settings {
-  background-color: #17191A;
-  color: hsl(270, 1%, 62%);
+  background-color: var(--background-color);
   left: 83.2%;
   padding: 6px;
   margin: 2px;
@@ -25,6 +24,6 @@
 }
 
 .settings>ul>li:hover {
-  background-color: #292a2a;
+  background-color: var(--background-secondary-color);
   border-radius: 8px;
 }

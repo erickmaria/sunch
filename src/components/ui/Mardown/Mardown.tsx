@@ -1,12 +1,15 @@
 import Markdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { oneDark as stylePrism } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 interface MarkProps {
     markdown: string
 }
 
 export default function MarkdownHighlighter({ markdown }: MarkProps) {
+
+    
+
     return (
         <Markdown
             children={markdown}
@@ -22,7 +25,7 @@ export default function MarkdownHighlighter({ markdown }: MarkProps) {
                             wrapLongLines={true}
                             children={String(children).replace(/\n$/, '')}
                             language={match[1]}
-                            style={stylePrism}
+                            style={oneDark}
                         />
                     ) : (
                         <code {...rest} className={className}>

@@ -1,5 +1,5 @@
 .result {
-    background-color: rgb(23 25 26 / 99%); /* #17191a */
+    background-color: var(--background-color);
     padding: 10px;
     margin: 1px auto;
     border-radius: 10px;

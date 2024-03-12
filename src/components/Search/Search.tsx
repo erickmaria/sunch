@@ -153,7 +153,7 @@ export default function Search() {
           onTranscriptData={setInput}
         />
         <MoreVertical 
-          className='pt-1.5 absolute right-1 cursor-pointer'
+          className='pt-1.5 absolute right-1 cursor-pointer' color='var(--foreground-color)'
           onClick={settingsToggle}
         />
       </div>

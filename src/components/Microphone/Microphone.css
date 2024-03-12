@@ -15,13 +15,14 @@
 .mic::before {
     width: 25px;
     height: 25px;
-    background-color: rgb(68 64 60);
+    background-color: var(--background-secondary-color);
+    
 }
 
 .mic::after {
     width: 25px;
     height: 25px;
-    background-color: rgb(68 64 60);
+    background-color: var(--background-secondary-color);
     animation: circle-size 0.3s linear infinite alternate;
     
 }
