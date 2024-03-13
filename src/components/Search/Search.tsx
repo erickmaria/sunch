@@ -130,19 +130,19 @@ export default function Search() {
 
   return (
     <>
-      <div className='flex flex-row'>
+      <div className='flex flex-row items-center'>
         <img
-          className='search-icon absolute left-0.5 pt-2'
-          style={{ width: 26, height: 26 }} src={sunchIcon} alt="sunch icon"
+          className='search-icon absolute left-2'
+          style={{ width: 18, height: 18 }} src={sunchIcon} alt="sunch icon"
         />
         <textarea
-          className='search w-full h-9 outline-none rounded-2xl pl-9 pr-12 pt-1 placeholder:opacity-50'
+          className='search flex-1 outline-none p-1 rounded-2xl pl-9 pr-14 placeholder:opacity-50'
           ref={textareaRef}
           autoFocus
           name='search'
           id='search'
           rows={1}
-          placeholder='Search'
+          placeholder='Ask your question'
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => keyDownHandler(e)}
@@ -152,8 +152,8 @@ export default function Search() {
           onErrorMessage={setValues} 
           onTranscriptData={setInput}
         />
-        <MoreVertical 
-          className='pt-1.5 absolute right-1 cursor-pointer' color='var(--foreground-color)'
+        <MoreVertical size={20}
+          className='absolute right-2 cursor-pointer' color='var(--foreground-color)'
           onClick={settingsToggle}
         />
       </div>
