@@ -15,15 +15,16 @@ app.whenReady().then(() => {
     ToggleWin()
   })
 
-  if (process.platform === 'win32')
-  {
+  if (process.platform === 'win32'){
     app.setAppUserModelId(app.name);
   }
 
-  app.setLoginItemSettings({
-    openAtLogin: true,
-    path: app.getPath('exe')
-  })
+  if (process.platform === "win32" || process.platform === "darwin") {
+    app.setLoginItemSettings({
+      openAtLogin: true,
+      path: app.getPath('exe')
+    })
+  }
 
   App()
 })
