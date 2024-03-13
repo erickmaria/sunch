@@ -1,6 +1,6 @@
 import { Notification } from 'electron'
 import { IconColofulData } from '../utils/dataurl'
-import { ToggleWin } from '../utils/wintoggle'
+import { toggleWindow } from '../utils/wintoggle'
 
 export function runningNotification () {
     new Notification({ 
@@ -8,7 +8,7 @@ export function runningNotification () {
         title: 'Sunch running on System Tray', 
         body: 'click to show',
         silent: true,
-    }).on('click', () => ToggleWin()).show()
+    }).on('click', () => toggleWindow()).show()
 }
 
 export function stillRunningNotification () {
@@ -19,7 +19,7 @@ export function stillRunningNotification () {
             title: 'Sunch is still running',
             body: 'running on System Tray',
             silent: true,
-        }).on('click', () => ToggleWin()).show()
+        }).on('click', () => toggleWindow()).show()
     }, 100)
 }
 
@@ -29,5 +29,5 @@ export function searchReadyNotification () {
         title: 'Sunch your search is ready',
         body: 'click to show',
         silent: true,
-    }).on('click', () => ToggleWin()).show()
+    }).on('click', () => toggleWindow()).show()
 }

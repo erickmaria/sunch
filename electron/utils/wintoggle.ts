@@ -1,16 +1,9 @@
 import { Window } from "../models/window";
 
-export function ToggleWin(clickOnTray?: boolean): void {
+export function toggleWindow(): void {
 
     const win = Window.getInstance().bw
 
-    if (!win.isFocused() && !clickOnTray) {
-        win.show()
-    }else if(win.isVisible()){
-        win.hide()
-    } else {
-        win.show()
-    }
-
+    !win.isFocused() ? win.show() : win.isVisible() ? win.hide() : win.show()
 
 }

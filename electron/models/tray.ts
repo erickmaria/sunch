@@ -1,5 +1,5 @@
 import { Menu, Tray as TrayElectron, app } from "electron";
-import { ToggleWin } from "../utils/wintoggle";
+import { toggleWindow } from "../utils/wintoggle";
 import { IconColofulData } from "../utils/dataurl";
 
 export class Tray {
@@ -38,7 +38,7 @@ export class Tray {
     tray.setContextMenu(contextMenu)
 
     tray.on('click', () => {
-        ToggleWin(true)
+      toggleWindow()
     })
 
     return tray

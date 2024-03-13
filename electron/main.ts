@@ -1,6 +1,6 @@
 import { app, BrowserWindow, globalShortcut } from 'electron';
 import { runningNotification } from './notifications/notifcation';
-import { ToggleWin } from './utils/wintoggle';
+import { toggleWindow } from './utils/wintoggle';
 import { Window } from './models/window';
 import { Tray } from './models/tray';
 
@@ -12,7 +12,7 @@ function App(){
 app.whenReady().then(() => {
 
   globalShortcut.register('CommandOrControl+Alt+P', () => {
-    ToggleWin()
+    toggleWindow()
   })
 
   if (process.platform === 'win32'){
