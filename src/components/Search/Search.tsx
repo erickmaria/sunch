@@ -91,17 +91,15 @@ export default function Search() {
       }
 
       setLoading(true)
+
       await gmn.GetAnswer(input)
         .then((response) => {
-
           setHistories([{
             search: input,
             result: response
           }, ...histories])
 
-          setLoading(false)
           setValues([response])
-
 
           window.electron.searchReady({
             ready: true
@@ -109,8 +107,9 @@ export default function Search() {
 
         }).catch((err) => {
           witherror = true
-          setLoading(false)
           setValues([err.toString()])
+        }).finally(() => {
+          setLoading(false)
         })
 
       !witherror ? setInput('') : null
