@@ -92,7 +92,7 @@ export default function Search() {
 
       setLoading(true)
 
-      await gmn.GetAnswer(input)
+      await gmn.execute(input)
         .then((response) => {
           setHistories([{
             search: input,

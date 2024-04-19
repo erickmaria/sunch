@@ -1,3 +1,3 @@
 interface Service {
-    GetAnswer(prompt: string): Promise<string>;
+    execute(prompt: string): Promise<string>;
 }

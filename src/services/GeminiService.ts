@@ -27,10 +27,13 @@ export default class GeminiService implements Service {
         ];
 
         this.genAI = new GoogleGenerativeAI(window.env?.SUNCH_GEMINI_API_KEY || process.env.SUNCH_GEMINI_API_KEY || "")
+
         this.model = this.genAI.getGenerativeModel({ model: "gemini-pro", safetySettings });
     }
 
-    async GetAnswer(prompt: string): Promise<string> {
+    async execute(prompt: string): Promise<string> {
+
+        console.log(window.env?.SUNCH_GEMINI_API_KEY, process.env.SUNCH_GEMINI_API_KEY)
 
         const [tokens, result] = await Promise.all([
             await this.model.countTokens(prompt),
