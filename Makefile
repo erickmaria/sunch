@@ -24,4 +24,4 @@ build-mac:
 
 .PHONY: clean
 clean:
-	rm -rf releases/
+	rm -rf release/
