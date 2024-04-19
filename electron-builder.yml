@@ -23,7 +23,7 @@ win:
   - target: nsis
     arch:
     - x64
-  artifactName: "${productName}_installer_${version}.${ext}"
+  artifactName: "${productName}_installer_${version}_${arch}.${ext}"
 
 linux:
   icon: public/icon.png
@@ -31,8 +31,9 @@ linux:
     - deb
     - rpm
     - snap
-    - AppImag
+    - AppImage
   category: Development
+  artifactName: "${productName}_installer_${version}_${arch}.${ext}"
 
 nsis:
   oneClick: false
