@@ -1,4 +1,4 @@
-import { Menu, Tray as TrayElectron, app } from "electron";
+import { Menu, MenuItem, MenuItemConstructorOptions, Tray as TrayElectron, app } from "electron";
 import { toggleWindow } from "../utils/wintoggle";
 import { IconColofulData } from "../utils/dataurl";
 
@@ -24,15 +24,27 @@ export class Tray {
     
     const tray = new TrayElectron(IconColofulData)
 
-    const contextMenu = Menu.buildFromTemplate([
-        { 
-            label: 'quit',
-            role: 'quit',
-            click: function(){
-                app.quit()
-            },
+    let template: Array<(MenuItemConstructorOptions) | (MenuItem)> = [
+      {
+        label: 'Sunch',
+        click: function(){
+          toggleWindow()
         },
-    ])
+      },
+      { 
+        label: 'quit',
+        role: 'quit',
+        click: function(){
+          app.quit()
+        },
+    }]
+
+    if (process.platform !== "linux"){
+      // remove label 'Sunch' on non-linux platform
+      template.shift()
+    }
+
+    const contextMenu = Menu.buildFromTemplate(template)
     
     tray.setToolTip('Sunch')
     tray.setContextMenu(contextMenu)
