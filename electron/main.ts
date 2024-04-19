@@ -35,7 +35,7 @@ app.on('will-quit', () => {
   globalShortcut.unregisterAll()
 })
 
-// app.disableHardwareAcceleration()
+app.disableHardwareAcceleration()
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
