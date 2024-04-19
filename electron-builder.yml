@@ -28,10 +28,10 @@ win:
 linux:
   icon: public/icon.png
   target:
-    - deb
-    - rpm
     - snap
-    - AppImage
+    # - deb
+    # - rpm
+    # - AppImage
   category: Development
   artifactName: "${productName}_installer_${version}_${arch}.${ext}"
 
