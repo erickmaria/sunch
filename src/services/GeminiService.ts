@@ -34,8 +34,6 @@ export default class GeminiService implements Service {
 
     async execute(prompt: string): Promise<string> {
 
-        console.log(window.env?.SUNCH_GEMINI_API_KEY, process.env.SUNCH_GEMINI_API_KEY) 
-
         const result = await this.model.generateContent(prompt)
         const response = result.response;
 
