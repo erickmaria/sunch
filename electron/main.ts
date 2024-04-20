@@ -3,6 +3,9 @@ import { runningNotification } from './notifications/notifcation';
 import { toggleWindow } from './utils/wintoggle';
 import { Window } from './models/window';
 import { Tray } from './models/tray';
+import { config } from 'dotenv'
+
+config()
 
 function App(){
   Window.getInstance()

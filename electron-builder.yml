@@ -29,11 +29,12 @@ linux:
   icon: public/icon.png
   target:
     - snap
-    # - deb
-    # - rpm
-    # - AppImage
   category: Development
   artifactName: "${productName}_installer_${version}_${arch}.${ext}"
+
+snap:
+  grade: devel
+  autoStart: true
 
 nsis:
   oneClick: false
