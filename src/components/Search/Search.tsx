@@ -2,28 +2,19 @@ import './Search.css'
 import { useEffect, useRef, useState } from 'react'
 import Result from '../Result/Result';
 import Loading from '../Loading/Loading';
-import GeminiService from '../../services/GeminiService';
 import sunchIcon from '../../assets/icon.svg'
 import { Microphone } from '../Microphone/Microphone';
 import { MoreVertical } from 'lucide-react';
 import Settings from '../Settings/Settings';
-
-export type SearchHistory = {
-  search: string,
-  result: string
-}
+import { useGetAnswer } from '../../hooks/useGetAnswer';
 
 export default function Search() {
 
-  const gmn = new GeminiService()
-
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [interator, setInterator] = useState(Number);
-  const [histories, setHistories] = useState(Array<SearchHistory>);
   const [input, setInput] = useState('');
   const [values, setValues] = useState(Array<string>);
-  const [loading, setLoading] = useState(false);
   const [settings, setSettings] = useState(false)
+  const {awaiting, makeQuestion } = useGetAnswer({})
 
   const resizeTextarea = () => {
     if (textareaRef.current) {
@@ -37,11 +28,7 @@ export default function Search() {
 
     resizeTextarea()
 
-    if (loading) {
-      setValues([])
-    }
-
-  }, [loading, input])
+  }, [input])
 
   // function findstartswith(commands: Array<string>, input: string): boolean {
   //   for (let i = 0; i < commands.length; i++) {
@@ -54,77 +41,29 @@ export default function Search() {
 
   async function keyDownHandler(e: React.KeyboardEvent<HTMLTextAreaElement>) {
 
-    if (e.key == "Enter" && e.shiftKey) {
-      return
-    }
-
-    if (e.key == 'ArrowUp' && e.ctrlKey && e.altKey) {
-
-      if (interator <= histories.length) {
-        if (interator < histories.length - 1) {
-          setInterator(interator + 1)
-        }
-        setInput(histories[interator].search)
-        setValues([histories[interator].result])
-
-      }
-    }
-    if (e.key == 'ArrowDown' && e.ctrlKey && e.altKey) {
-      if (interator >= 0) {
-
-        if (interator != 0) {
-          setInterator(interator - 1)
-        }
-        setInput(histories[interator].search)
-        setValues([histories[interator].result])
-      }
-    }
-
     if (e.key == "Enter") {
-
-      let witherror = false
-
       e.preventDefault()
-
+      
       if (input.length == 0) {
         return
       }
 
-      setLoading(true)
+      try{
+        const result = await makeQuestion(input);
+        setValues([result!])
+        setInput('')
+      }catch(err){
+        if(err instanceof Error){
+          setValues([err.message])
+        }
+      }
 
-      await gmn.execute(input)
-        .then((response) => {
-          setHistories([{
-            search: input,
-            result: response
-          }, ...histories])
 
-          setValues([response])
-
-          window.electron.searchReady({
-            ready: true
-          })
-
-        }).catch((err) => {
-          witherror = true
-          setValues([err.toString()])
-        }).finally(() => {
-          setLoading(false)
-        })
-
-      !witherror ? setInput('') : null
-
+      window.electron.searchReady({
+        ready: true
+      })
     }
 
-  }
-
-  function settingsToggle(): void {
-
-    if (settings) {
-      setSettings(false)
-    } else {
-      setSettings(true)
-    }
   }
 
   return (
@@ -153,15 +92,15 @@ export default function Search() {
         />
         <MoreVertical size={20}
           className='absolute right-2 cursor-pointer' color='var(--foreground-color)'
-          onClick={settingsToggle}
+          onClick={() =>(settings ? setSettings(false) : setSettings(true))}
         />
       </div>
       {settings && <Settings 
         onCloseSetting={setSettings} 
         onClearResult={setValues}
-        onClearHistory={[setHistories, setInput]}
+        // onClearHistory={[setHistories, setInput]}
       />}
-      {loading ? <Loading /> : !settings && <Result contents={values} />}
+      {awaiting ? !settings &&  <Loading /> : !settings && <Result contents={values} />}
     </>
   )
 }

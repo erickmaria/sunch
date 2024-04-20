@@ -1,4 +1,5 @@
 import { GenerativeModel, GoogleGenerativeAI, HarmBlockThreshold, HarmCategory } from "@google/generative-ai"
+import { Service } from "./service";
 
 export default class GeminiService implements Service {
 
@@ -33,16 +34,11 @@ export default class GeminiService implements Service {
 
     async execute(prompt: string): Promise<string> {
 
-        console.log(window.env?.SUNCH_GEMINI_API_KEY, process.env.SUNCH_GEMINI_API_KEY)
+        console.log(window.env?.SUNCH_GEMINI_API_KEY, process.env.SUNCH_GEMINI_API_KEY) 
 
-        const [tokens, result] = await Promise.all([
-            await this.model.countTokens(prompt),
-            await this.model.generateContent(prompt)
-        ])
+        const result = await this.model.generateContent(prompt)
+        const response = result.response;
 
-        console.log(tokens)
-
-        const response = await result.response;
-        return tokens.totalTokens, response.text();
+        return response.text();
     }
 }
