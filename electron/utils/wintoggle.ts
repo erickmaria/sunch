@@ -1,4 +1,4 @@
-import { Window } from "../models/window";
+import { Window } from "../ui/window";
 
 export function toggleWindow(): void {
 
