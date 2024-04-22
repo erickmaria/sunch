@@ -69,4 +69,4 @@ Contributions are welcome! To learn more about how to contribute to the project,
 
 ## License
 
-This project is licensed under the [License Name]. See the LICENSE.md file for more details.
+This project is licensed under the Apache License, Version 2.0 (the "License"); See the [LICENSE](LICENSE) file for more details.
