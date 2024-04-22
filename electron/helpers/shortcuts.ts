@@ -1,6 +1,45 @@
 import { globalShortcut } from "electron"
-import { toggleWindow } from "./wintoggle"
+import { toggleWindow } from "../utils/wintoggle"
 import net from 'net'
+import { exec } from 'child_process'
+import { config } from "dotenv"
+
+config()
+
+const PORT: number = <number>(process.env.SUNCH_EXTERNAL_SERVICE_PORT as unknown) || 7581;
+const PATH: string = <string>(process.env.SUNCH_SHORTCUT_SCRIPTS as string) || '.';
+
+/**
+* run script to define the keyboard shortcuts
+*
+* @platform linux
+*/
+const scriptShortcuts = (() => {
+
+    const execScript = (file: string) => {
+        exec(`bash ${PATH}/${file} ${PORT}`, (error, stdout, stderr) => {
+            if (error) {
+              console.error(`[ERROR][LINUX] shortcuts script: ${error.message}`);
+              return;
+            }
+            if (stderr) {
+              console.error(`[ERROR][LINUX] shortcuts script: ${stderr}`);
+              return;
+            }
+            console.log(`[INFO][LINUX] shortcuts scripts: ${stdout}`);
+          });
+    }
+
+    return {
+        register: () => {
+            execScript('custom-keybindings-add.sh')
+        },
+
+        unregister: () => {
+            execScript('custom-keybindings-remove.sh')
+        }
+    }
+})();
 
 /**
 * provides API to interact with global shortcut functionality
@@ -11,8 +50,6 @@ const ShortcutsServer = (() => {
 
     return {
         start: () => {
-
-            const PORT: number = <number>(process.env.SUNCH_EXTERNAL_SERVICE_PORT as unknown) || 7581;
 
             const server = net.createServer(socket => {
                 socket.on('data', data => {
@@ -61,7 +98,7 @@ const ShortcurtsServerSupport = (() => {
 
 const Shortcuts = (() => {
 
-    const exec = () => {
+    const _register = () => {
         
         const ret = globalShortcut.register('CommandOrControl+Alt+P', () => {
             toggleWindow()
@@ -78,11 +115,13 @@ const Shortcuts = (() => {
             let nosSetShotcutGlobal = false
             if (process.platform === 'linux') {
                 nosSetShotcutGlobal = ShortcurtsServerSupport.activateServerWhenNecessary()
+                scriptShortcuts.register()
             }
-            if (!nosSetShotcutGlobal) exec()
+            if (!nosSetShotcutGlobal) _register()
         },
         unregister: () => {
             globalShortcut.unregisterAll()
+            scriptShortcuts.unregister()
         }
     }
 })();

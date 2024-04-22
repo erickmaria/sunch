@@ -1,5 +1,5 @@
 import { Notification } from 'electron'
-import { IconColofulData } from '../utils/icondata'
+import { IconColofulData } from '../helpers/icondata'
 import { toggleWindow } from '../utils/wintoggle'
 
 export function runningNotification () {

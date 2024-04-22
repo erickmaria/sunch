@@ -1,6 +1,6 @@
 import { Menu, MenuItem, MenuItemConstructorOptions, Tray as TrayElectron, app } from "electron";
 import { toggleWindow } from "../utils/wintoggle";
-import { IconColofulData } from "../utils/icondata";
+import { IconColofulData } from "../helpers/icondata";
 
 export class Tray {
 

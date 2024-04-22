@@ -2,10 +2,7 @@ import { app, BrowserWindow } from 'electron';
 import { runningNotification } from './notifications/notifcation';
 import { Window } from './ui/window';
 import { Tray } from './ui/tray';
-import { config } from 'dotenv'
-import { Shortcuts } from './utils/shortcuts';
-
-config()
+import { Shortcuts } from './helpers/shortcuts';
 
 const App = () => {
   Window.getInstance()

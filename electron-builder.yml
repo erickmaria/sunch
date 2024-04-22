@@ -1,6 +1,8 @@
 
 appId: com.emrds.sunch
+
 productName: sunch
+
 directories:
   buildResources: public
   output: release/${version}
@@ -16,19 +18,21 @@ mac:
   icon: public/icon.png
   artifactName: "${productName}_installer_${version}.${ext}"
   target:
-    - dmg
+    - target: dmg
+      arch: x64
 win:
   icon: public/icon.png
   target:
-  - target: nsis
-    arch:
-    - x64
+    - target: nsis
+      arch:
+      - x64
   artifactName: "${productName}_installer_${version}_${arch}.${ext}"
 
 linux:
-  icon: public/icon.png
+  icon: public/
   target:
-    - snap
+    # - target: snap
+    - target: deb
   category: Development
   artifactName: "${productName}_installer_${version}_${arch}.${ext}"
 
