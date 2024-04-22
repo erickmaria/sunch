@@ -17,6 +17,7 @@
     "build:win": "NODE_ENV=local npm run clean && npm run build && electron-builder --win --config",
     "build:mac": "npm run clean && npm run build && electron-builder --mac --config",
     "build:linux": "npm run clean && npm run build && electron-builder --linux --config",
+    "ts-coverage": "type-coverage --detail",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "start": "electron ."
@@ -30,7 +31,8 @@
     "react-icons": "^5.0.1",
     "react-markdown": "^9.0.1",
     "react-syntax-highlighter": "^15.5.0",
-    "remark-gfm": "^4.0.0"
+    "remark-gfm": "^4.0.0",
+    "type-coverage": "^2.28.1"
   },
   "devDependencies": {
     "@rollup/plugin-replace": "^5.0.2",
