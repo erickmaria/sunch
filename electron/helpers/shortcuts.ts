@@ -3,11 +3,14 @@ import { toggleWindow } from "../utils/wintoggle"
 import net from 'net'
 import { exec } from 'child_process'
 import { config } from "dotenv"
+import os from 'os' ;
 
 config()
 
+const homeDir = os.homedir();
+
 const PORT: number = <number>(process.env.SUNCH_EXTERNAL_SERVICE_PORT as unknown) || 7581;
-const PATH: string = <string>(process.env.SUNCH_SHORTCUT_SCRIPTS as string) || '.';
+const PATH: string = <string>(process.env.SUNCH_SHORTCUT_SCRIPTS as string) || homeDir+'/.sunch/scripts';
 
 /**
 * run script to define the keyboard shortcuts
