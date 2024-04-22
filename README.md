@@ -44,7 +44,7 @@ The table below lists the supported platforms:
 
 > NOTE: the **Linux** build needs a post-installation script for the application to have access to all its functionalities
 > ```bash
->curl -fsSL https://raw.githubusercontent.com/erickmaria/sunch/main/scripts/electron/postinstall.sh | bash
+> curl -fsSL https://raw.githubusercontent.com/erickmaria/sunch/main/scripts/postinstall.sh | bash
 >```
 
 ## How to Use
