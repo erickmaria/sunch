@@ -28,7 +28,8 @@ To interact with LLMS, Sunch will use the APIs available for use. For this you n
 | Gemini        | suppored     | SUNCH_GEMINI_API_KEY
 | GPT           | come soom    | SUNCH_GPT_API_KEY
 
-> Note: the variable in **Linux** needs to be in **/etc/environment** to work
+> [!CAUTION]
+> the variable in **Linux** needs to be in **/etc/environment** to work
 
 After creating the variables, **restart the system**
 
@@ -42,7 +43,8 @@ The table below lists the supported platforms:
 | macOS         | [Download](#) | not tested
 | Linux(.deb)   | [Download](#) | unstable
 
-> NOTE: the **Linux** build needs a post-installation script for the application to have access to all its functionalities
+> [!IMPORTANT] 
+> the **Linux** build needs a post-installation script for the application to have access to all its functionalities
 > ```bash
 > curl -fsSL https://raw.githubusercontent.com/erickmaria/sunch/main/scripts/postinstall.sh | bash
 >```
