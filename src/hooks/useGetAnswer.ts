@@ -2,10 +2,10 @@ import { useMemo, useState } from "react";
 import GeminiService from "../services/GeminiService";
 
 interface OptionGetAnswer {
-    chatMode?: string
+    chatMode?: boolean
 }
 
-export function useGetAnswer({ chatMode }: OptionGetAnswer) {
+export function useGetAnswer({ }: OptionGetAnswer) {
 
     const [awaiting, setAwaiting] = useState(false);
 

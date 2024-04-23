@@ -14,7 +14,7 @@ export default function Search() {
   const [input, setInput] = useState('');
   const [values, setValues] = useState(Array<string>);
   const [settings, setSettings] = useState(false)
-  const {awaiting, makeQuestion } = useGetAnswer({})
+  const {awaiting, makeQuestion } = useGetAnswer({ })
 
   const resizeTextarea = () => {
     if (textareaRef.current) {
