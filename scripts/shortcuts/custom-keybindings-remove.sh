@@ -4,13 +4,9 @@
 
 # Delete the keyboard shortcut and the command to execute
 
-source ./scripts/electron/shortcuts/common/validate.sh $1
+source ./scripts/shortcuts/common/validate.sh $1
 
-source ./scripts/electron/shortcuts/common/vars.sh $1 "keyboard shortcuts removed!"
- 
-# name="Sunch Window Toogle"
-# command_id=$(echo "${name// /}" | tr '[:upper:]' '[:lower:]')
-# finishMesage='keyboard shortcuts removed!'
+source ./scripts/shortcuts/common/vars.sh $1 "keyboard shortcuts removed!"
 
 # Function to remove shortcut for GNOME
 remove_gnome_shortcut() {

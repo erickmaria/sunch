@@ -7,12 +7,10 @@ directories:
   buildResources: public
   output: release/${version}
 
-asarUnpack:
-  - resources/**
-
 files:
-  - dist/**/*
-  - dist-electron
+  - "!**/node_modules/**"
+  - dist/**
+  - dist-electron/**
 
 mac:
   icon: public/icon.png
@@ -30,15 +28,17 @@ win:
 
 linux:
   icon: public/
+  executableArgs:
+    - "--no-sandbox"
   target:
-    # - target: snap
     - target: deb
-  category: Development
+  category: Ultils
   artifactName: "${productName}_installer_${version}_${arch}.${ext}"
 
-snap:
-  grade: devel
-  autoStart: true
+extraFiles:
+  - from: scripts/
+    to: scripts/
+    filter: '**/*.sh'
 
 nsis:
   oneClick: false

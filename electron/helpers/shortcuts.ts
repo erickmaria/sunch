@@ -1,16 +1,15 @@
-import { globalShortcut } from "electron"
+import { app, globalShortcut } from "electron"
 import { toggleWindow } from "../utils/wintoggle"
 import net from 'net'
 import { exec } from 'child_process'
+import { join } from 'path';
 import { config } from "dotenv"
-import os from 'os' ;
 
 config()
 
-const homeDir = os.homedir();
-
-const PORT: number = <number>(process.env.SUNCH_EXTERNAL_SERVICE_PORT as unknown) || 7581;
-const PATH: string = <string>(process.env.SUNCH_SHORTCUT_SCRIPTS as string) || homeDir+'/.sunch/scripts';
+const PORT: number = <number>(process.env.SUNCH_SHORTCUT_SERVER_PORT as unknown) || 7581;
+const appPath = app.getAppPath().includes('asar') ? join(app.getAppPath(), '../..') : app.getAppPath() // or process.resourcesPath
+const PATH: string = join(appPath, 'scripts/shortcuts')
 
 /**
 * run script to define the keyboard shortcuts
@@ -20,7 +19,7 @@ const PATH: string = <string>(process.env.SUNCH_SHORTCUT_SCRIPTS as string) || h
 const scriptShortcuts = (() => {
 
     const execScript = (file: string) => {
-        exec(`bash ${PATH}/${file} ${PORT}`, (error, stdout, stderr) => {
+        exec(`bash ${join(PATH, file)} ${PORT} ${appPath} `, (error, stdout, stderr) => {
             if (error) {
               console.error(`[ERROR][LINUX] shortcuts script: ${error.message}`);
               return;

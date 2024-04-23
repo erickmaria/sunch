@@ -4,16 +4,9 @@
 
 # Define the keyboard shortcut and the command to execute
 
-source ./scripts/electron/shortcuts/common/validate.sh $1
+source $2/scripts/shortcuts/common/validate.sh $1
 
-source ./scripts/electron/shortcuts/common/vars.sh $1 "keyboard shortcuts added!"
-
-# port="$1"
-# shortcut="<Primary><Alt>p"  # Shortcut example: Ctrl+Alt+P
-# command="curl localhost:$port"
-# name="Sunch Window Toogle"
-# command_id=$(echo "${name// /}" | tr '[:upper:]' '[:lower:]')
-# finishMesage='keyboard shortcuts added!'
+source $2/scripts/shortcuts/common/vars.sh $1 "keyboard shortcuts added!"
 
 # Function to add shortcut for GNOME
 add_gnome_shortcut() {
