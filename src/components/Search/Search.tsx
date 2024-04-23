@@ -50,8 +50,10 @@ export default function Search() {
 
       try{
         const result = await makeQuestion(input);
-        setValues([result!])
-        setInput('')
+        if (result !== undefined){
+          setValues([result])
+          setInput('')
+        }
       }catch(err){
         if(err instanceof Error){
           setValues([err.message])

@@ -5,7 +5,7 @@ interface OptionGetAnswer {
     chatMode?: string
 }
 
-export function useGetAnswer({ }: OptionGetAnswer) {
+export function useGetAnswer({ chatMode }: OptionGetAnswer) {
 
     const [awaiting, setAwaiting] = useState(false);
 
