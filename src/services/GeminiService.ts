@@ -5,8 +5,11 @@ export default class GeminiService implements Service {
 
     private genAI: GoogleGenerativeAI
     private model: GenerativeModel
+    chatMode: boolean;
 
-    constructor() {
+    constructor(chatMode?: boolean) {
+
+        this.chatMode = <boolean>chatMode
 
         const safetySettings = [
             {

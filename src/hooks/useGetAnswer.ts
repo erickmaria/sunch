@@ -5,13 +5,13 @@ interface OptionGetAnswer {
     chatMode?: boolean
 }
 
-export function useGetAnswer({ }: OptionGetAnswer) {
+export function useGetAnswer({ chatMode }: OptionGetAnswer) {
 
     const [awaiting, setAwaiting] = useState(false);
 
     const service = useMemo(() => {
         
-        const service = new (GeminiService)
+        const service = new (GeminiService)(chatMode)
 
         return service
     }, [])
