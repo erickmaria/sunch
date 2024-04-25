@@ -66,6 +66,11 @@ jobs:
       with:
         name: build-artifacts
         path: ./release
+      
+    - name: List Files
+      run: |
+        ls
+        ls ./release
 
     - name: Create Release
       id: create_release
@@ -86,5 +91,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./release
-        asset_name: sunch_installer_0.0.0_x64.exe
+        asset_name: '*.exe'
         asset_content_type: application/vnd.github+json
