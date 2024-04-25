@@ -89,6 +89,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./release/**/
+        asset_path: ./release/0.0.0/
         asset_name: sunch_installer_0.0.0_x64.exe
         asset_content_type: application/vnd.github+json
