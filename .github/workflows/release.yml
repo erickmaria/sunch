@@ -5,10 +5,6 @@ on:
     workflows: 'Build and Lint'
     types:
       - completed
-  pull_request: 
-  push:
-    tags: 
-      'v*'
 
 jobs:
   build:
