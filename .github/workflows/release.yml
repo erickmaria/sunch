@@ -1,19 +1,17 @@
 name: Release
 
 on:
-  push:
-    branches: 
-      - main
-  pull_request:
   workflow_run:
     workflows: 'Build and Lint'
     types:
       - completed
+  push:
+    branches: 
+      - main
+  pull_request:
 
 jobs:
   build:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}  
-
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
