@@ -69,8 +69,7 @@ jobs:
       
     - name: List Files
       run: |
-        ls
-        ls ./release
+        ls ./release/0.0.0/
 
     - name: Create Release
       id: create_release
@@ -90,6 +89,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./release
-        asset_name: '*.exe'
+        asset_path: ./release/**/
+        asset_name: sunch_installer_0.0.0_x64.exe
         asset_content_type: application/vnd.github+json
