@@ -1,0 +1,74 @@
+name: Build and Release
+
+on:
+  pull_request: 
+  push:
+    tags: 
+      'v*'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20.x'
+
+    - name: Install dependencies
+      run: |
+        apt-get install --no-install-recommends -y libopenjp2-tools
+        npm install
+
+    - name: Build Linux
+      run: npm run build:linux
+
+    - name: Archive artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-artifacts
+        path: ./dist
+        
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: build-artifacts
+        path: ./dist
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ github.run_number }}
+        release_name: Release ${{ github.run_number }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/*
+        asset_name: app-${{ github.run_number }}.zip
+        asset_content_type: application/zip

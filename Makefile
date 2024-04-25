@@ -7,20 +7,25 @@ define _build
 		-v "$(CURRENT_DIR)"/.cache/electron:/root/.cache/electron \
 		-v "$(CURRENT_DIR)"/.cache/electron-builder:/root/.cache/electron-builder \
 		electronuserland/builder:wine \
-		/bin/bash -c "npm run build:$(1)"	
+		/bin/bash -c "npm run build:$(1)"
 endef
 
-.PHONY: build-linux
-build-linux:
+.PHONY: electron-builder/linux
+electron-builder/linux:
 	$(call _build,linux)
 
-.PHONY: build-win
-build-win:
+.PHONY: electron-builder/windows
+electron-builder/windows:
 	$(call _build,win)
 
-.PHONY: build-mac
-build-mac:
+.PHONY: electron-builder/macos
+electron-builder/macos:
 	$(call _build,mac)
+
+
+.PHONY: electron-builder/all
+electron-builder/all:
+	$(call _build,all)
 
 .PHONY: clean
 clean:
