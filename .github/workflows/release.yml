@@ -75,8 +75,8 @@ jobs:
       with:
         tag_name: v${{ github.run_number }}
         release_name: Release ${{ github.run_number }}
-        draft: true
-        prerelease: true
+        draft: false
+        prerelease: false
 
     - name: Upload Release Asset
       id: upload-release-asset
@@ -85,6 +85,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./release
-        asset_name: app-${{ github.run_number }}.zip
-        asset_content_type: application/zip
+        asset_path: ./release/**/*.deb
+        asset_name: sunch-${{ github.run_number }}.deb
+        asset_content_type: application/vnd.github+json
