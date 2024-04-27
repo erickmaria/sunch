@@ -64,10 +64,6 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        config: [amd64.deb, x64.exe, x64.dmg]
 
     steps:
     - name: Checkout repository
