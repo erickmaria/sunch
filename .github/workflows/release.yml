@@ -32,10 +32,9 @@ jobs:
       run:
         npm install
 
-    - name: Set package version output
-      id: set_vars
-      run: |
-        echo "NPM_PACKAGE_VERSION=$(npm pkg get version | tr -d \")" >> $GITHUB_OUTPUT
+    - name: Get project version (using package.json)
+      id: get_project_version
+      run: echo "PROJECT_VERSION=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
 
     - if: matrix.os == 'ubuntu-latest'
       name: Build ${{ matrix.os }}
