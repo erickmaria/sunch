@@ -79,27 +79,32 @@ jobs:
         name: build-artifacts
         path: ./release
       
-    - name: List Files
-      run:
-        ls ./release
-
+    # - if: startsWith(github.ref, 'refs/tags/')
     - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
       with:
-        tag_name: v${{ github.run_number }}
-        release_name: Release ${{ github.run_number }}
-        draft: false
-        prerelease: false
+        files: |
+          ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_amd64.deb
+          ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_x64.exe
+          ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_x64.dmg
+          
+    # - name: Create Release
+    #   id: create_release
+    #   uses: actions/create-release@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     tag_name: v${{ github.run_number }}
+    #     release_name: Release ${{ github.run_number }}
+    #     draft: false
+    #     prerelease: false
 
-    - name: Upload Release Asset ${{ matrix.config }}
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_${{ matrix.config }}
-        asset_name: ${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_${{ matrix.config }}
-        asset_content_type: application/vnd.github+json
+    # - name: Upload Release Asset ${{ matrix.config }}
+    #   uses: actions/upload-release-asset@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+    #     asset_path: ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_${{ matrix.config }}
+    #     asset_name: ${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_${{ matrix.config }}
+    #     asset_content_type: application/vnd.github+json
