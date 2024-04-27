@@ -81,28 +81,11 @@ jobs:
         draft: false
         prerelease: false
       
-    - name: Generate Changelog
-      run: |
-        content=""
-        first=0
-        while IFS= read -r line; do
-          if [[ "$line" == "## v"* ]]; then
-              ((first++))
-          fi
-          if [[ $first > 1 ]]; then
-              break
-          fi
-          content+="$line\n"
-        done < CHANGELOG.md
-        
-        echo -e "$content" > ${{ github.workspace }}-CHANGELOG.txt
-
     - name: Upload Release Asset 
       uses: softprops/action-gh-release@v2
       with:
         tag_name: v${{ needs.build.outputs.project_version }}
         fail_on_unmatched_files: false
-        body_path: ${{ github.workspace }}-CHANGELOG.txt
         files: |
           ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_amd64.deb
           ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_x64.exe
