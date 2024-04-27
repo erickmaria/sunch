@@ -74,16 +74,17 @@ jobs:
       id: create_release
       uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: v${{ github.run_number }}
+        release_name: Release ${{ github.run_number }}
         draft: false
         prerelease: false
-
-    - name: Create Release
+      
+    - name: Upload Release Asset 
       uses: softprops/action-gh-release@v2
       with:
+        tag_name: v${{ github.run_number }}
         files: ${{ needs.build.outputs.project_version }}-pr${{ github.event.pull_request.number }}"
           ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_amd64.deb
           ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_x64.exe
