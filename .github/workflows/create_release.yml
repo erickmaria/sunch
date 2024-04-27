@@ -71,7 +71,7 @@ jobs:
         path: ./release
 
     - name: List Files
-      run: let ./release
+      run: ls ./release
 
     - name: Create Release
       id: create_release
@@ -85,7 +85,7 @@ jobs:
         prerelease: false
       
     - name: List Files
-      run: let ./release
+      run: ls ./release
       
     - name: Upload Release Asset 
       uses: softprops/action-gh-release@v2
