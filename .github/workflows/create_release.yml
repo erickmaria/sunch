@@ -1,13 +1,13 @@
-name: Create Release
+name: Create Tag and Release
 
 on:
   pull_request:
-    # types:
-    #   - closed
+    types:
+      - closed
 
 jobs:
   build:
-    # if: startsWith(github.event.pull_request.title, 'Release:')
+    if: startsWith(github.event.pull_request.title, 'Release:')
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -56,7 +56,7 @@ jobs:
           ./release/${{ steps.get_project_version.outputs.project_version }}/*.deb
         
   release:
-    # if: startsWith(github.event.pull_request.title, 'Release:')
+    if: startsWith(github.event.pull_request.title, 'Release:')
     needs: build
     runs-on: ubuntu-latest
 
@@ -76,15 +76,15 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v${{ github.run_number }}
-        release_name: Release ${{ github.run_number }}
+        tag_name: v${{ needs.build.outputs.project_version }}
+        release_name: Release v${{ needs.build.outputs.project_version }}
         draft: false
         prerelease: false
       
     - name: Upload Release Asset 
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v${{ github.run_number }}
+        tag_name: v${{ needs.build.outputs.project_version }}
         fail_on_unmatched_files: false
         files: |
           ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_amd64.deb
