@@ -64,6 +64,10 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        config: [amd64.deb, x64.exe, x64.dmg]
 
     steps:
     - name: Checkout repository
@@ -90,13 +94,12 @@ jobs:
         draft: false
         prerelease: false
 
-    - name: Upload Release Asset
-      id: upload-release-asset
+    - name: Upload Release Asset ${{ matrix.config }}
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./release/${{ needs.build.outputs.project_version }}/${{ github.event.repository.name }}_installer_${{ needs.build.outputs.project_version }}_x64.exe
-        asset_name: ${{ github.event.repository.name }}_installer_${{ needs.build.outputs.project_version }}_x64.exe
+        asset_path: ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_${{ matrix.config }}
+        asset_name: ${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_${{ matrix.config }}
         asset_content_type: application/vnd.github+json
