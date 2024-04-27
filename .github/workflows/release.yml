@@ -75,6 +75,8 @@ jobs:
       
     - name: List Files
       run: |
+        ls
+        ls ./release
         ls ./release/${{ needs.build.outputs.project_version }}/
 
     - name: Create Release
