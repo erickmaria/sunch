@@ -34,15 +34,11 @@ jobs:
       run:
         npm install
 
-    - if: matrix.os == 'windows-latest'
-      name: Get project version (using package.json)
+    - name: Get project version (using package.json)
       id: get_project_version
-      run: echo "project_version=$(node -p "require('./package.json').version")" >> "$Env:GITHUB_OUTPUT"
-
-    - if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
-      name: Get project version (using package.json)
-      id: get_project_version
-      run: echo "project_version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+      run: |
+        echo "project_version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+        echo "project_version=$(node -p "require('./package.json').version")" >> $ENV:GITHUB_OUTPUT
 
     - if: matrix.os == 'ubuntu-latest'
       name: Build ${{ matrix.os }}
