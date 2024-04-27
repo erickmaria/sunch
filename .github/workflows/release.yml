@@ -34,7 +34,13 @@ jobs:
       run:
         npm install
 
-    - name: Get project version (using package.json)
+    - if: matrix.os == 'windows-latest'
+      name: Get project version (using package.json)
+      id: get_project_version
+      run: echo "project_version=$(node -p "require('./package.json').version")" >> "$Env:GITHUB_OUTPUT"
+
+    - if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
+      name: Get project version (using package.json)
       id: get_project_version
       run: echo "project_version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
 
@@ -74,10 +80,8 @@ jobs:
         path: ./release
       
     - name: List Files
-      run: |
-        ls
+      run:
         ls ./release
-        ls ./release/${{ needs.build.outputs.project_version }}/
 
     - name: Create Release
       id: create_release
