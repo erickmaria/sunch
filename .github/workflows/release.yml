@@ -32,6 +32,11 @@ jobs:
       run:
         npm install
 
+    - name: Set package version output
+      id: set_vars
+      run: |
+        echo "NPM_PACKAGE_VERSION=$(npm pkg get version | tr -d \")" >> $GITHUB_OUTPUT
+
     - if: matrix.os == 'ubuntu-latest'
       name: Build ${{ matrix.os }}
       run: npm run build:linux
@@ -49,9 +54,9 @@ jobs:
       with:
         name: build-artifacts
         path: |
-          ./release/**/*.exe
-          ./release/**/*.dmg
-          ./release/**/*.deb
+          ./release/${{ steps.set_vars.outputs.NPM_PACKAGE_VERSION }}/*.exe
+          ./release/${{ steps.set_vars.outputs.NPM_PACKAGE_VERSION }}/*.dmg
+          ./release/${{ steps.set_vars.outputs.NPM_PACKAGE_VERSION }}/*.deb
         
   release:
     needs: build
@@ -69,7 +74,7 @@ jobs:
       
     - name: List Files
       run: |
-        ls ./release/0.0.0/
+        ls ./release/${{ steps.set_vars.outputs.NPM_PACKAGE_VERSION }}/
 
     - name: Create Release
       id: create_release
@@ -89,6 +94,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./release/0.0.0/sunch_installer_0.0.0_x64.exe
-        asset_name: sunch_installer_0.0.0_x64.exe
+        asset_path: ./release/${{ steps.set_vars.outputs.NPM_PACKAGE_VERSION }}/sunch_installer_${{ steps.set_vars.outputs.NPM_PACKAGE_VERSION }}_x64.exe
+        asset_name: sunch_installer_${{ steps.set_vars.outputs.NPM_PACKAGE_VERSION }}_x64.exe
         asset_content_type: application/vnd.github+json
