@@ -1,12 +1,10 @@
-name: CI
+name: Build and Lint
 
 on:
   push:
-    branches: [ main ]
-    tags:
-      '*'
+    branches: 
+      - main
   pull_request:
-    branches: [ main ]
 
 jobs:
   lint:
@@ -39,8 +37,6 @@ jobs:
     - name: Run Build
       run: npm run build
 
-    
-  
   coverage:
     name: Coverage
     runs-on: ubuntu-latest
