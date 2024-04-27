@@ -6,7 +6,7 @@
     "email": "erickmaria08@gmail.com"
   },
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "commonjs",
   "main": "dist-electron/main.js",
   "homepage": "./",
