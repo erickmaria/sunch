@@ -13,12 +13,14 @@ on:
 jobs:
   build:
     # if: ${{ github.event.workflow_run.conclusion == 'success' }}  
-
+    
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     runs-on: ${{ matrix.os }}
+    outputs:
+      project_version: ${{ steps.get_project_version.outputs.project_version }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -34,7 +36,7 @@ jobs:
 
     - name: Get project version (using package.json)
       id: get_project_version
-      run: echo "PROJECT_VERSION=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+      run: echo "project_version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
 
     - if: matrix.os == 'ubuntu-latest'
       name: Build ${{ matrix.os }}
@@ -53,9 +55,9 @@ jobs:
       with:
         name: build-artifacts
         path: |
-          ./release/${{ steps.set_vars.outputs.NPM_PACKAGE_VERSION }}/*.exe
-          ./release/${{ steps.set_vars.outputs.NPM_PACKAGE_VERSION }}/*.dmg
-          ./release/${{ steps.set_vars.outputs.NPM_PACKAGE_VERSION }}/*.deb
+          ./release/${{ steps.get_project_version.outputs.project_version }}/*.exe
+          ./release/${{ steps.get_project_version.outputs.project_version }}/*.dmg
+          ./release/${{ steps.get_project_version.outputs.project_version }}/*.deb
         
   release:
     needs: build
@@ -73,7 +75,7 @@ jobs:
       
     - name: List Files
       run: |
-        ls ./release/${{ steps.set_vars.outputs.NPM_PACKAGE_VERSION }}/
+        ls ./release/${{ needs.build.outputs.project_version }}/
 
     - name: Create Release
       id: create_release
@@ -93,6 +95,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./release/${{ steps.set_vars.outputs.NPM_PACKAGE_VERSION }}/sunch_installer_${{ steps.set_vars.outputs.NPM_PACKAGE_VERSION }}_x64.exe
-        asset_name: sunch_installer_${{ steps.set_vars.outputs.NPM_PACKAGE_VERSION }}_x64.exe
+        asset_path: ./release/${{ needs.build.outputs.project_version }}/${{ github.event.repository.name }}_installer_${{ needs.build.outputs.project_version }}_x64.exe
+        asset_name: ${{ github.event.repository.name }}_installer_${{ needs.build.outputs.project_version }}_x64.exe
         asset_content_type: application/vnd.github+json
