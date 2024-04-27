@@ -7,15 +7,6 @@ on:
   pull_request:
 
 jobs:
-  changelog:
-    runs-on: ubuntu-latest
-    name: Changelog Validate
-    steps:
-      - uses: actions/checkout@v4
-      - uses: zattoo/changelog@v1
-        with:
-          token: ${{ github.token }}
-          sources: './'
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -28,7 +19,6 @@ jobs:
     - name: Run Lint
       run: npm run lint
 
-  
   build:
     name: Build
     runs-on: ubuntu-latest
