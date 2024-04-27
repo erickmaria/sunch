@@ -69,7 +69,7 @@ jobs:
       with:
         name: build-artifacts
         path: ./release
-
+      
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -81,17 +81,12 @@ jobs:
         draft: false
         prerelease: false
       
-    - name: Move Release Files
-      run: |
-        mv ./release/* .
-        ls .
-      
     - name: Upload Release Asset 
       uses: softprops/action-gh-release@v2
       with:
         tag_name: v${{ github.run_number }}
         fail_on_unmatched_files: false
-        files:
-          ${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_amd64.deb
-          ${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_x64.exe
-          ${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_x64.dmg
+        files: |
+          ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_amd64.deb
+          ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_x64.exe
+          ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_x64.dmg
