@@ -69,7 +69,12 @@ jobs:
       with:
         name: build-artifacts
         path: ./release
-      
+    
+    - name: Generate Release Note
+      run: |
+        line_numbers=$(grep -n -m2 '^## v' CHANGELOG.md | cut -d: -f1 | paste -sd ',')
+        sed -n "${line_numbers}p" CHANGELOG.md | head -n -1 > release_note.md
+  
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
