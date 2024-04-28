@@ -1,5 +1,5 @@
 import { app, BrowserWindow } from 'electron';
-import { runningNotification } from './notifications/notifcation';
+import { runningNotification, stillRunningNotification } from './notifications/notifcation';
 import { Window } from './ui/window';
 import { Tray } from './ui/tray';
 import { Shortcuts } from './helpers/shortcuts';
@@ -8,7 +8,12 @@ const data = { lock: 'app.lock' }
 const gotTheLock = app.requestSingleInstanceLock(data)
 
 if (!gotTheLock) {
-  app.quit()
+  
+  stillRunningNotification()
+  setTimeout(()=>{
+    app.quit()
+  }, 100)
+  
 } else {
 
   const App = () => {
