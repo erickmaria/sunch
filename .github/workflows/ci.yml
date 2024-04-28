@@ -19,7 +19,13 @@ jobs:
       - name: Check for Changelog Changes
         id: changelog
         run: |
-          git diff --name-only origin/${{ github.base_ref }} -- CHANGELOG.md
+          if git diff --name-only origin/${{ github.base_ref }} -- CHANGELOG.md; then
+            echo "Changelog has been updated."
+            exit 0
+          else
+            echo "Changelog needs to be updated."
+            exit 1
+          fi
   lint:
     name: Lint
     runs-on: ubuntu-latest
