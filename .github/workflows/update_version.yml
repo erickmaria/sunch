@@ -31,6 +31,7 @@ jobs:
         id: update_changelog
         run: |
           sed -i 's/Unreleased/${{ steps.update_version.outputs.version }}/g' CHANGELOG.md
+          sed -i '1s/$/\n\n## Unreleased/' CHANGELOG.md 
       - name: Create pull request
         id: create_pr
         uses: peter-evans/create-pull-request@v6

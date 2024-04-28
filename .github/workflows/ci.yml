@@ -12,15 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Add Unreleased section (if missing)
-        id: check-unreleased
-        run: |
-          if  grep -q "^## Unreleased" CHANGELOG.md; then
-            sed -i '1i\## Unreleased\n' CHANGELOG.md
-            git config --local user.email "github-actions[bot]@users.noreply.github.com"
-            git config --local user.name "GitHub Actions"
-            git commit -m "chore: added Unreleased section to CHANGELOG.md"
-          fi
       - name: Check for Changelog Changes
         id: changelog
         run: |
