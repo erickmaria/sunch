@@ -15,7 +15,7 @@ jobs:
       - name: Check for Changelog Changes
         id: changelog
         run: |
-          if git diff --name-only HEAD^ | grep -q '^CHANGELOG.md$'; then
+          if [[ git diff --name-only HEAD^ | grep -q '^CHANGELOG.md$' ]]; then
             echo "Changelog has been updated."
             exit 0
           else
