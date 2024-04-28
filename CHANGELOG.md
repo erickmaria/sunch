@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## vv1.0.1 - 2024-04-28
+
 ### Added
 
 - [#3](https://github.com/erickmaria/sunch/pull/3): Improment changelog and release node
