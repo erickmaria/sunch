@@ -12,6 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
+      - name: Fetch Remote Branches
+        run: git fetch origin
+      
       - name: Check for Changelog Changes
         id: changelog
         run: |
