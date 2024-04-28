@@ -15,8 +15,7 @@ jobs:
       - name: Check for Changelog Changes
         id: changelog
         run: |
-          git diff --name-only HEAD^
-
+          git diff --name-only ${{ github.base_ref }}...HEAD
   lint:
     name: Lint
     runs-on: ubuntu-latest
