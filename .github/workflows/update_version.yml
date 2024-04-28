@@ -21,16 +21,22 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '20.x'
+
       - name: Install dependencies
         run: npm install
+
       - name: Update the version
         id: update_version
         run: |
           echo "version=$(npm version ${{ github.event.inputs.version }} --no-git-tag-version)" >> $GITHUB_OUTPUT
+
       - name: Update Changelog
         id: update_changelog
         run: |
-          sed -i 's/Unreleased/${{ steps.update_version.outputs.version }}/g' CHANGELOG.md
+          current_date=$(date +'%Y-%m-%d') 
+          sed -i "s/Unreleased/v${{ steps.update_version.outputs.version }} - ${current_date}/g" CHANGELOG.md
+          sed -i '1s/$/\n\n## Unreleased/' CHANGELOG.md 
+
       - name: Create pull request
         id: create_pr
         uses: peter-evans/create-pull-request@v6
