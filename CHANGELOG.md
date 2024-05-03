@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## v1.1.0 - 2024-05-03
+
+### Added
+
+- [#6](https://github.com/erickmaria/sunch/pull/6): Lock the application to run on a single instance
+
 ## v1.0.1 - 2024-04-28
 
 ### Added
