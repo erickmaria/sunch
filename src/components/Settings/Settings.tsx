@@ -4,22 +4,23 @@ import { Computer, Moon, Sun } from 'lucide-react'
 import { useThemeContext } from '../../contexts/ThemeProvider'
 
 interface SettingsProps {
-  onCloseSetting: Dispatch<SetStateAction<boolean>>
-  onClearResult: Dispatch<SetStateAction<string[]>>
-  // onClearHistory: Array<Dispatch<SetStateAction<any>>>
+  onCloseSetting?: Dispatch<SetStateAction<boolean>>
+  onClearResult?: Dispatch<SetStateAction<string[]>>
+  onClearHistory?: Array<Dispatch<SetStateAction<any>>>
 }
 
-export default function Settings({ onCloseSetting, onClearResult }: SettingsProps) {
+// eslint-disable-next-line no-empty-pattern
+export default function Settings({  }: SettingsProps) {
 
   const { changeThemeTo } = useThemeContext();
 
-  function clearHistory() {
-    onCloseSetting(false)
-    // onClearHistory.map(element =>{
-    //   element('')
-    // })
-    onClearResult([])
-  }
+  // function clearHistory() {
+  //   onCloseSetting(false)
+  //   // onClearHistory.map(element =>{
+  //   //   element('')
+  //   // })
+  //   onClearResult([])
+  // }
   
   return (
     <>
