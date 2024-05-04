@@ -5,6 +5,10 @@ declare global {
     electron: {
       resize(screen: {w: string, h: string });
       searchReady(search: { ready: boolean});
+      store: {
+        get: (key: string) => any;
+        set: (key: string, val: unknown) => void;
+      };
     };
     env: {
       readonly SUNCH_GEMINI_API_KEY : string;

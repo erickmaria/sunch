@@ -1,39 +1,57 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { useUserSettings } from "../../hooks/useUserSettings";
 
 type Themes = 'light' | 'dark' | 'auto' 
 
 type ThemeContextValue = {
     theme: Themes | string;
     changeThemeTo: (theme: Themes) => void;
+    getCurrentTheme: () => string
 }
 
 interface ThemeProviderProps {
     children: React.ReactNode;
 }
 
-const ThemeContext = createContext<ThemeContextValue>({ theme: ''} as ThemeContextValue);
+const ThemeContext = createContext<ThemeContextValue>({ theme: window.electron.store.get('theme')} as ThemeContextValue);
 
 const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
-    const getCurrentTheme = (): Themes =>  window.matchMedia("(prefers-color-scheme: dark)").matches == true ? 'dark' : 'light'
+    const getDefaultTheme = (): Themes =>  window.matchMedia("(prefers-color-scheme: dark)").matches == true ? 'dark' : 'light'
 
-    const [theme, setTheme] = useState<Themes>('dark');
+    const { getConfigValue, setConfigValue } = useUserSettings()
+    
+    const [theme, setTheme] = useState<Themes>('auto');
+
     useEffect(() => {
-        setTheme(getCurrentTheme());
+
+        if(getConfigValue('theme') == "auto"){
+            setConfigValue('theme', 'auto')
+            setTheme(getDefaultTheme())
+            return
+        }
+
+        setTheme(getConfigValue('theme'));
     }, []);
 
     const changeThemeTo = (theme: Themes) => {
 
         if (theme == 'auto'){
-            setTheme(getCurrentTheme());
+            setConfigValue('theme', 'auto')
+            setTheme(getDefaultTheme());
             return
         }
 
         setTheme(theme);
+        setConfigValue('theme', theme)
+    };
+
+    const getCurrentTheme = (): string => {
+        return getConfigValue('theme') as string
     };
 
     return (
-        <ThemeContext.Provider value={{ theme, changeThemeTo,  }}>
+        <ThemeContext.Provider value={{ theme, changeThemeTo, getCurrentTheme }}>
             {children}
         </ThemeContext.Provider>
     );
