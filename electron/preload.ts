@@ -12,4 +12,5 @@ contextBridge.exposeInMainWorld('electron', {
 contextBridge.exposeInMainWorld('env', {
     SUNCH_GEMINI_API_KEY: process.env.SUNCH_GEMINI_API_KEY,
     SUNCH_GPT_API_KEY: process.env.SUNCH_GPT_API_KEY,
+    SUNCH_THEME_DEFAULT:  process.env.SUNCH_THEME_DEFAULT
 })

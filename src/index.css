@@ -6,12 +6,12 @@
       
 }
 
-:root{
+/* :root{
     --background-color: #BDBDBD;
     --foreground-color: #17191A;
     --background-secondary-color: #adadad;
     --primary-text-color: #131314;
-}
+} */
 
 [data-theme="dark"] {
     --background-color: #17191A;
@@ -19,6 +19,14 @@
     --background-secondary-color: #292a2a;
     --primary-text-color: #BDBDBD;
 }
+
+[data-theme="light"] {
+    --background-color: #BDBDBD;
+    --foreground-color: #17191A;
+    --background-secondary-color: #adadad;
+    --primary-text-color: #131314;
+}
+
 
 @tailwind base;
 @tailwind components;
