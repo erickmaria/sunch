@@ -26,7 +26,7 @@ export function Settings() {
         <>
             <SettingsContent.Root>
                 <SettingsContent.Options>
-                    <SettingsContent.Tittle name='Tittle' />
+                    <SettingsContent.Tittle name='Themes' />
                     <SettingsContent.Action>
                             <div className="setting-options-switch-field setting-options-switch-size">
 
