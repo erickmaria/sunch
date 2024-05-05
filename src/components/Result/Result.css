@@ -1,25 +1,37 @@
 .result {
-    background-color: var(--background-color);
-    padding: 10px;
+    /* background-color: var(--background-color); */
+    padding: 1px;
     margin: 1px auto;
-    border-radius: 10px;
+    border-radius: 8px;
     width: 100%;
-    height: auto;
     max-height: 800px;
     text-align: start;
     overflow-y: scroll;
     font-size: 0.875em;
-
     border: 1px solid rgb(49, 49, 49);
     box-sizing: border-box;
 }
 
-.result::-webkit-scrollbar{
+.result::-webkit-scrollbar {
     display: none;
 }
 
-.result pre {
-    white-space: pre-wrap; 
+.result-panel>pre {
+    /* white-space: pre-wrap; */
     word-break: break-word;
     line-height: normal;
- }
+}
+
+.result-panel {
+    background-color: var(--background-color);
+    overflow: auto;
+    height: 100%;
+    border-radius: 8px;
+    padding: 4px;
+    margin: 1px;
+    overflow-x: scroll;
+}
+
+.result-panel-single {
+    background-color: var(--background-secondary-color);
+}

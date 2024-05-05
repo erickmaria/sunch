@@ -5,7 +5,7 @@ import Loading from '../Loading/Loading';
 import sunchIcon from '../../assets/icon.svg'
 import { Microphone } from '../Microphone/Microphone';
 import { MoreVertical } from 'lucide-react';
-import Settings from '../Settings/Settings';
+import { Settings } from '../Settings/index';
 import { useGetAnswer } from '../../hooks/useGetAnswer';
 
 export default function Search() {
@@ -14,7 +14,7 @@ export default function Search() {
   const [input, setInput] = useState('');
   const [values, setValues] = useState(Array<string>);
   const [settings, setSettings] = useState(false)
-  const {awaiting, makeQuestion } = useGetAnswer({ genAI: 'GPT' })
+  const {awaiting, makeQuestion } = useGetAnswer({})
 
   const resizeTextarea = () => {
     if (textareaRef.current) {
@@ -50,8 +50,9 @@ export default function Search() {
 
       try{
         const result = await makeQuestion(input);
+
         if (result !== undefined){
-          setValues([result])
+          setValues(result)
           setInput('')
         }
       }catch(err){
@@ -97,11 +98,7 @@ export default function Search() {
           onClick={() =>(settings ? setSettings(false) : setSettings(true))}
         />
       </div>
-      {settings && <Settings 
-        onCloseSetting={setSettings} 
-        onClearResult={setValues}
-        // onClearHistory={[setHistories, setInput]}
-      />}
+      {settings && <Settings /> }
       {awaiting ? !settings &&  <Loading /> : !settings && <Result contents={values} />}
     </>
   )
