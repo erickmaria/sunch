@@ -5,6 +5,10 @@ export const userSettingsShema = {
 		type: JSONSchemaType.String,
 		default: 'auto'
 	},
+	generativeAi: {
+		type: JSONSchemaType.String,
+		default: 'gemini'
+	},
 	geminiApiKey: {
 		type: JSONSchemaType.String,
 		default: ''

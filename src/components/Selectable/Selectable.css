@@ -1,0 +1,8 @@
+.selectable {
+  width: 100%;
+}
+.selectable:hover {
+  background-color: var(--background-secondary-color);
+  border-radius: '8px';
+  cursor: pointer;
+}
