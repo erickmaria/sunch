@@ -78,14 +78,14 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-
-    - name: Install dependencies
-      run:
-        version=$(npm pkg get version | xargs)"
-        pr=pr-{{ github.event.pull_request.number  }}
-        npm version $version-$pr
-        npm version
-        # npm install
+    steps:
+      - name: Install dependencies
+        run:
+          version=$(npm pkg get version | xargs)"
+          pr=pr-{{ github.event.pull_request.number  }}
+          npm version $version-$pr
+          npm version
+          # npm install
 
     # - if: matrix.os == 'ubuntu-latest'
     #   name: Build Test Release ${{ matrix.os }}
@@ -99,7 +99,7 @@ jobs:
     #   name: Build Test Release ${{ matrix.os }}
     #   run: npm run build:macos
 
-    # steps:
+   
     #   - name:  Generate Test Release artifacts
     #     uses: actions/upload-artifact@v2
     #     with:
