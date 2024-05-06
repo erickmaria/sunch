@@ -45,6 +45,12 @@ if (!gotTheLock) {
       store.set(key, val);
     });
 
+    ipcMain.on('electron-store-open-editor', async() => {
+      store.openInEditor()
+    });
+    
+  })
+  .then(() => {
     if (process.platform === 'win32'){
       app.setAppUserModelId(app.name);
     }
@@ -55,7 +61,6 @@ if (!gotTheLock) {
         path: app.getPath('exe')
       })
     }
-
   })
   .then(() => App())
   .then(() => runningNotification())

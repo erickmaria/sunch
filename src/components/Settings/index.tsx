@@ -74,7 +74,7 @@ export function Settings() {
                 </SettingsContent.Options>
                 <Separator />
                 <SettingsContent.Options>
-                    <Selectable>Advanced Settings</Selectable>
+                    <Selectable onClick={() => {window.electron.store.openInEditor()}}>Advanced Settings</Selectable>
                 </SettingsContent.Options>
             </SettingsContent.Root>
         </>

@@ -8,6 +8,7 @@ declare global {
       store: {
         get: (key: string) => any;
         set: (key: string, val: unknown) => void;
+        openInEditor: () => void;
       };
     };
     env: {

@@ -13,6 +13,9 @@ contextBridge.exposeInMainWorld('electron', {
         },
         set(property: string, val: unknown) {
           ipcRenderer.send('electron-store-set', property, val);
+        },
+        openInEditor() {
+            return ipcRenderer.send('electron-store-open-editor');
         }
     }
 })
