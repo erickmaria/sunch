@@ -70,21 +70,19 @@ jobs:
   
   test-release:
     if: github.event_name == 'pull_request'
-    needs:
-      - lint
-      - build
-      - coverage
-
+    name: Test Release
+    # needs:
+    #   - lint
+    #   - build
+    #   - coverage
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-    
     runs-on: ubuntu-latest
-
     steps:
       - name: Install dependencies
         run:
-          version=$(npm pkg get version | xargs)"
+          version=$(npm pkg get version | xargs)
           pr=pr-{{ github.event.pull_request.number  }}
           npm version $version-$pr
           npm version
