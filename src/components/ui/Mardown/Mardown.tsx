@@ -7,9 +7,7 @@ interface MarkProps {
 }
 
 export default function MarkdownHighlighter({ markdown }: MarkProps) {
-
     
-
     return (
         <Markdown
             children={markdown}

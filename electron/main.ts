@@ -1,8 +1,9 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import { runningNotification, stillRunningNotification } from './notifications/notifcation';
 import { Window } from './ui/window';
 import { Tray } from './ui/tray';
 import { Shortcuts } from './helpers/shortcuts';
+import { store } from './store/config';
 
 const data = { lock: 'app.lock' }
 const gotTheLock = app.requestSingleInstanceLock(data)
@@ -33,10 +34,23 @@ if (!gotTheLock) {
     }
   });
 
-
   app.whenReady()
   .then(() => {
 
+    ipcMain.on('electron-store-get', async(e: Electron.IpcMainEvent , val: string) => {
+      e.returnValue = store.get(val);
+    });
+
+    ipcMain.on('electron-store-set', async(e: Electron.IpcMainEvent, key: string, val: unknown) => {
+      store.set(key, val);
+    });
+
+    ipcMain.on('electron-store-open-editor', async() => {
+      store.openInEditor()
+    });
+    
+  })
+  .then(() => {
     if (process.platform === 'win32'){
       app.setAppUserModelId(app.name);
     }
@@ -47,7 +61,6 @@ if (!gotTheLock) {
         path: app.getPath('exe')
       })
     }
-
   })
   .then(() => App())
   .then(() => runningNotification())
