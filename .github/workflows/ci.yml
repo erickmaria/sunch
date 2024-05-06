@@ -88,9 +88,19 @@ jobs:
       - name: Install dependencies
         run:  npm install
 
-      - name: Create Test Version
+      - if: matrix.os == 'windows-latest'
+        name: Create Test Version ${{ matrix.os }}
         run: |
-          current_date=$(date +'%Y%m%d%s') 
+          $currentDate = Get-Date -Format "yyyyMMddfffffff"
+          $version = npm pkg get version | ForEach-Object { $_.Replace('"', '') }
+          $prNumber = ${{ github.event.pull_request.number  }}
+          $newVersion = "${version}-pr-${prNumber}-${currentDate}"
+          npm version $newVersion --no-git-tag-version
+
+      - if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
+        name: Create Test Version ${{ matrix.os }}
+        run: |
+          current_date=$(date +'%Y%m%d%s')
           version=$(npm pkg get version | xargs)
           newversion=${version}-pr-${{ github.event.pull_request.number  }}-${current_date}
           npm version ${newversion} --no-git-tag-version
