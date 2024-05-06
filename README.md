@@ -5,7 +5,7 @@
 <h3 align="center">Sunch</h3>
 
 <p align="center">
-    Providing answers to your questions using the most popular LLMS.
+    Providing answers to your questions using the most popular generative AI.
   <br>
   <a href="#how-to-use"><strong>Explore About Sunch »</strong></a>
   <br>
@@ -17,7 +17,7 @@
 
 ## Project Summary
 
-Sunch is an application that provides an answer to your question using the most popular LLMS such as GPT and Gemini
+Sunch is an application that provides an answer to your question using the most popular generative AI such as GPT and Gemini
 
 ## Setup
 
