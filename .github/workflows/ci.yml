@@ -71,10 +71,10 @@ jobs:
   test-release:
     if: github.event_name == 'pull_request'
     name: Test Release
-    # needs:
-    #   - lint
-    #   - build
-    #   - coverage
+    needs:
+      - lint
+      - build
+      - coverage
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -85,32 +85,32 @@ jobs:
         with:
           node-version: '20.x'
       - name: Install dependencies
+        run:  npm install
+      - name: Create Test Version
         run: |
           current_date=$(date +'%Y%m%d%s') 
           version=$(npm pkg get version | xargs)
-          echo "test prease version: ${version}-pr-${{ github.event.pull_request.number  }}-$current_date"
-          # npm version ${version}-pr-{{ github.event.pull_request.number  }}
-          # npm version
-          # npm install
+          newversion=${version}-pr-${{ github.event.pull_request.number  }}-${current_date}
+          npm version ${newversion} --no-git-tag-version
 
-    # - if: matrix.os == 'ubuntu-latest'
-    #   name: Build Test Release ${{ matrix.os }}
-    #   run: npm run build:linux
+      - if: matrix.os == 'ubuntu-latest'
+        name: Build Test Release ${{ matrix.os }}
+        run: npm run build:linux
 
-    # - if: matrix.os == 'windows-latest'
-    #   name: Build Test Release ${{ matrix.os }}
-    #   run: npm run build:windows
+      - if: matrix.os == 'windows-latest'
+        name: Build Test Release ${{ matrix.os }}
+        run: npm run build:windows
 
-    # - if: matrix.os == 'macos-latest'
-    #   name: Build Test Release ${{ matrix.os }}
-    #   run: npm run build:macos
+      - if: matrix.os == 'macos-latest'
+        name: Build Test Release ${{ matrix.os }}
+        run: npm run build:macos
 
-   
-    #   - name:  Generate Test Release artifacts
-    #     uses: actions/upload-artifact@v2
-    #     with:
-    #       name: release-artifacts
-    #       path: |
-    #         ./release/${{ steps.get_project_version.outputs.project_version }}/*.exe
-    #         ./release/${{ steps.get_project_version.outputs.project_version }}/*.dmg
-    #         ./release/${{ steps.get_project_version.outputs.project_version }}/*.deb
+    
+        - name:  Generate Test Release artifacts
+          uses: actions/upload-artifact@v2
+          with:
+            name: release-artifacts
+            path: |
+              ./release/${{ steps.get_project_version.outputs.project_version }}/*.exe
+              ./release/${{ steps.get_project_version.outputs.project_version }}/*.dmg
+              ./release/${{ steps.get_project_version.outputs.project_version }}/*.deb
