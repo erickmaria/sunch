@@ -16,7 +16,7 @@ electron-builder/linux:
 
 .PHONY: electron-builder/windows
 electron-builder/windows:
-	$(call _build,win)
+	$(call _build,windows)
 
 .PHONY: electron-builder/macos
 electron-builder/macos:
