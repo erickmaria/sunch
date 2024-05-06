@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v1.2.0 - 2024-05-06
+
 ### Added
 
 - [#8](https://github.com/erickmaria/sunch/pull/8): Support to GPT-3
