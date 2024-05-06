@@ -86,9 +86,9 @@ jobs:
           node-version: '20.x'
       - name: Install dependencies
         run: |
-          current_date=$(date +'%Y-%m-%d') 
+          current_date=$(date +'%Y%m%d%s') 
           version=$(npm pkg get version | xargs)
-          echo "test prease version: ${version}-pr-{{ github.event.pull_request.number  }}-$current_date"
+          echo "test prease version: ${version}-pr-${{ github.event.pull_request.number  }}-$current_date"
           # npm version ${version}-pr-{{ github.event.pull_request.number  }}
           # npm version
           # npm install
