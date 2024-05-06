@@ -81,27 +81,30 @@ jobs:
 
     - name: Install dependencies
       run:
-        npm version prerelease --no-git-tag-version
-        npm install
+        version=$(npm pkg get version | xargs)"
+        pr=pr-{{ github.event.pull_request.number  }}
+        npm version $version-$pr
+        npm version
+        # npm install
 
-    - if: matrix.os == 'ubuntu-latest'
-      name: Build Test Release ${{ matrix.os }}
-      run: npm run build:linux
+    # - if: matrix.os == 'ubuntu-latest'
+    #   name: Build Test Release ${{ matrix.os }}
+    #   run: npm run build:linux
 
-    - if: matrix.os == 'windows-latest'
-      name: Build Test Release ${{ matrix.os }}
-      run: npm run build:windows
+    # - if: matrix.os == 'windows-latest'
+    #   name: Build Test Release ${{ matrix.os }}
+    #   run: npm run build:windows
 
-    - if: matrix.os == 'macos-latest'
-      name: Build Test Release ${{ matrix.os }}
-      run: npm run build:macos
+    # - if: matrix.os == 'macos-latest'
+    #   name: Build Test Release ${{ matrix.os }}
+    #   run: npm run build:macos
 
-    steps:
-      - name:  Generate Test Release artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: release-artifacts
-          path: |
-            ./release/${{ steps.get_project_version.outputs.project_version }}/*.exe
-            ./release/${{ steps.get_project_version.outputs.project_version }}/*.dmg
-            ./release/${{ steps.get_project_version.outputs.project_version }}/*.deb
+    # steps:
+    #   - name:  Generate Test Release artifacts
+    #     uses: actions/upload-artifact@v2
+    #     with:
+    #       name: release-artifacts
+    #       path: |
+    #         ./release/${{ steps.get_project_version.outputs.project_version }}/*.exe
+    #         ./release/${{ steps.get_project_version.outputs.project_version }}/*.dmg
+    #         ./release/${{ steps.get_project_version.outputs.project_version }}/*.deb
