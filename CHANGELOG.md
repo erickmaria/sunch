@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Added
+
+- [#8](https://github.com/erickmaria/sunch/pull/8): Support to GPT-3
+- Add user settings with electron store
+- Improment settings options on UI
+- More minors patchs
+
+
 ## v1.1.0 - 2024-05-03
 
 ### Added
