@@ -26,9 +26,7 @@ export default class GPTService implements Service {
               { role: "user", content: prompt },
             ],
             model: "gpt-3.5-turbo",
-            response_format: { type: "json_object" },
           });
-          console.log(completion.choices[0].message.content);
 
         return completion.choices[0].message.content || ""
     }
