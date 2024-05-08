@@ -77,6 +77,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     outputs:
       project_version: ${{ steps.get_project_version.outputs.project_version }}
+      project_platform: ${{ steps.get_project_version.outputs.project_platform }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -108,6 +109,9 @@ jobs:
         run: |
           echo "project_version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
           echo "project_version=$(node -p "require('./package.json').version")" >> $ENV:GITHUB_OUTPUT
+          echo "project_platform=$(node -e "console.log(process.platform)" >> "$GITHUB_OUTPUT"
+          echo "project_platform=$(node -e "console.log(process.platform)" >> $ENV:GITHUB_OUTPUT
+
 
       - if: matrix.os == 'ubuntu-latest'
         name: Build Test Release ${{ matrix.os }}
@@ -124,8 +128,8 @@ jobs:
       - name:  Generate Test Release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: release-artifacts-sunch-${{ steps.get_project_version.outputs.project_version }}
-          retention-days: 5
+          name: release-artifacts-sunch-${{ steps.get_project_version.outputs.project_version }}-${{ steps.get_project_version.outputs.project_platform }}
+          retention-days: 1
           path: |
             ./release/${{ steps.get_project_version.outputs.project_version }}/*.exe
             ./release/${{ steps.get_project_version.outputs.project_version }}/*.dmg
