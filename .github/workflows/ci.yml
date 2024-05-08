@@ -124,7 +124,7 @@ jobs:
       - name:  Generate Test Release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: release-artifacts
+          name: release-artifacts-sunch-${{ steps.get_project_version.outputs.project_version }}
           retention-days: 5
           path: |
             ./release/${{ steps.get_project_version.outputs.project_version }}/*.exe
