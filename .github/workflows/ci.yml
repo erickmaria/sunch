@@ -143,7 +143,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: release-artifacts-sunch-${{ needs.test-release.project_version }}-*
+          pattern: release-artifacts-sunch-${{ needs.test-release.outputs.project_version }}-*
           merge-multiple: true
           path: ./release
       - name: Display structure of downloaded files
