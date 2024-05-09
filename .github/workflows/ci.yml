@@ -128,7 +128,7 @@ jobs:
       - name:  Generate Test Release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: release-artifacts-sunch-${{ steps.get_project_version.outputs.project_version }}-${{ steps.get_project_version.outputs.project_platform }}
+          name: release-artifacts-sunch-v${{ steps.get_project_version.outputs.project_version }}-${{ steps.get_project_version.outputs.project_platform }}
           retention-days: 1
           path: |
             ./release/${{ steps.get_project_version.outputs.project_version }}/*.exe
@@ -143,7 +143,8 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: release-artifacts-sunch-${{ needs.test-release.outputs.project_version }}-*
+          pattern: release-artifacts-sunch-v*
+
           merge-multiple: true
           path: ./release
       - name: Display structure of downloaded files
