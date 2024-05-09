@@ -33,6 +33,8 @@ jobs:
       run: |
         echo "project_version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
         echo "project_version=$(node -p "require('./package.json').version")" >> $ENV:GITHUB_OUTPUT
+        echo "project_platform=$(node -e 'console.log(process.platform)')" >> "$GITHUB_OUTPUT"
+        echo "project_platform=$(node -e 'console.log(process.platform)')" >> $ENV:GITHUB_OUTPUT
 
     - if: matrix.os == 'ubuntu-latest'
       name: Build ${{ matrix.os }}
@@ -49,7 +51,7 @@ jobs:
     - name: Archive artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: build-artifacts
+        name: release-artifacts-sunch-${{ steps.get_project_version.outputs.project_version }}-${{ steps.get_project_version.outputs.project_platform }}
         retention-days: 5
         path: |
           ./release/${{ steps.get_project_version.outputs.project_version }}/*.exe
