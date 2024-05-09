@@ -134,18 +134,3 @@ jobs:
             ./release/${{ steps.get_project_version.outputs.project_version }}/*.exe
             ./release/${{ steps.get_project_version.outputs.project_version }}/*.dmg
             ./release/${{ steps.get_project_version.outputs.project_version }}/*.deb
-
-  download-artifacts:
-    name: Download Artifacts
-    needs: test-release
-    runs-on: ubuntu-latest
-    steps:  
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          pattern: release-artifacts-sunch-v*
-
-          merge-multiple: true
-          path: ./release
-      - name: Display structure of downloaded files
-        run: ls -lah ./release

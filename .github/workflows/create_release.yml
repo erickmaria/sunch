@@ -15,6 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     outputs:
       project_version: ${{ steps.get_project_version.outputs.project_version }}
+      project_platform: ${{ steps.get_project_version.outputs.project_platform }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -70,7 +71,8 @@ jobs:
     - name: Download artifacts
       uses: actions/download-artifact@v4
       with:
-        name: build-artifacts
+        pattern: release-artifacts-sunch-v${{ needs.build.outputs.project_version }}
+        merge-multiple: true
         path: ./release
     
     - name: Generate Release Note
