@@ -4,6 +4,10 @@
 
 ## v1.2.1 - 2024-05-09
 
+### Fixed
+
+- [#10](https://github.com/erickmaria/sunch/pull/10): Workflow to create release 
+
 ## v1.2.0 - 2024-05-06
 
 ### Added
@@ -12,7 +16,6 @@
 - Add user settings with electron store
 - Improment settings options on UI
 - More minors patchs
-
 
 ## v1.1.0 - 2024-05-03
 
