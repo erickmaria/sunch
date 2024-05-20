@@ -7,6 +7,7 @@ import { Microphone } from '../Microphone/Microphone';
 import { MoreVertical } from 'lucide-react';
 import { Settings } from '../Settings/index';
 import { useGetAnswer } from '../../hooks/useGetAnswer';
+import { SlashCommands } from '../../slash_comands/slash';
 
 export default function Search() {
 
@@ -30,21 +31,16 @@ export default function Search() {
 
   }, [input])
 
-  // function findstartswith(commands: Array<string>, input: string): boolean {
-  //   for (let i = 0; i < commands.length; i++) {
-  //     if (input.startsWith(commands[i])) {
-  //       return true
-  //     }
-  //   }
-  //   return false
-  // }
-
   async function keyDownHandler(e: React.KeyboardEvent<HTMLTextAreaElement>) {
 
     if (e.key == "Enter") {
       e.preventDefault()
       
-      if (input.length == 0) {
+      if (input.length == 0) return
+
+      if (SlashCommands.validate('/clear', input)){
+        setValues([])
+        setInput('')
         return
       }
 
