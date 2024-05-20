@@ -24,7 +24,7 @@ export class Tray {
     
     const tray = new TrayElectron(IconColofulData)
 
-    let template: Array<(MenuItemConstructorOptions) | (MenuItem)> = [
+    const template: Array<(MenuItemConstructorOptions) | (MenuItem)> = [
       {
         label: 'Sunch',
         click: function(){
