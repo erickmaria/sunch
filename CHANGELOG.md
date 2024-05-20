@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Fixed
+
+- [#12](https://github.com/erickmaria/sunch/pull/12) App quitting when close window
+
 ## v1.2.1 - 2024-05-09
 
 ### Fixed
