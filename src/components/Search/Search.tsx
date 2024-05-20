@@ -33,6 +33,10 @@ export default function Search() {
 
   async function keyDownHandler(e: React.KeyboardEvent<HTMLTextAreaElement>) {
 
+    if (e.key == "Enter" && e.shiftKey) {
+      return
+    }
+
     if (e.key == "Enter") {
       e.preventDefault()
       
