@@ -80,6 +80,7 @@ export default function Search() {
           className='search flex-1 outline-none p-1 rounded-2xl pl-9 pr-14 placeholder:opacity-50'
           ref={textareaRef}
           autoFocus
+          onFocus={()=> setSettings(false)}
           name='search'
           id='search'
           rows={1}
