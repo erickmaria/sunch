@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+- [#13](https://github.com/erickmaria/sunch/pull/13) Add slash command `/clear`
+
 ### Fixed
 
 - [#12](https://github.com/erickmaria/sunch/pull/12) App quitting when close window
