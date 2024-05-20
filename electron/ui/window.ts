@@ -80,6 +80,10 @@ export class Window {
     win.on('close', () => {
       stillRunningNotification()
       Window.instance = null
+      setTimeout(()=>{
+        Window.instance = Window.getInstance()
+        Window.instance.bw.hide()
+      }, 100)
     })
 
     return win
