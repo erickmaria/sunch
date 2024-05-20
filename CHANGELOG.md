@@ -9,6 +9,7 @@
 ### Fixed
 
 - [#12](https://github.com/erickmaria/sunch/pull/12) App quitting when close window
+- [#14](https://github.com/erickmaria/sunch/pull/14) Now when click keybinds `Shift+Enter` textarea will resize
 
 ## v1.2.1 - 2024-05-09
 
