@@ -4,7 +4,6 @@ import { Window } from './ui/window';
 import { Tray } from './ui/tray';
 import { Shortcuts } from './helpers/shortcuts';
 import { store } from './store/config';
-import { PiReceiptBold } from 'react-icons/pi';
 
 const data = { lock: 'app.lock' }
 const gotTheLock = app.requestSingleInstanceLock(data)
