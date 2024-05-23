@@ -39,8 +39,6 @@ export class Window {
       show: false,
     });
 
-    // win.setBackgroundMaterial("acrylic")
-
     if (process.env.VITE_DEV_SERVER_URL) {
       win.loadURL(process.env.VITE_DEV_SERVER_URL)
       if (process.env.SUNCH_DEVTOOLS_ENABLED === 'true'){
