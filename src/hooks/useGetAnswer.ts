@@ -14,7 +14,7 @@ export function useGetAnswer({ chatMode }: OptionGetAnswer) {
 
     const { getConfigValue } = useUserSettings()
 
-    const genAI = (getConfigValue('generativeAi') as string).toLowerCase()
+    const genAI = (getConfigValue('models.current') as string).toLowerCase()
 
     const services = useMemo(() => {
 

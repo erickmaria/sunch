@@ -1,20 +1,51 @@
 import { JSONSchemaType } from 'json-schema-typed'
 
-export const userSettingsShema = {
-    theme: {
-		type: JSONSchemaType.String,
-		default: 'auto'
+export const userSettingsSchema = {
+	general: {
+		type: JSONSchemaType.Object,
+		properties: {
+			theme: { type: JSONSchemaType.String, },
+			language: { type: JSONSchemaType.String },
+			media: {
+				type: JSONSchemaType.Object,
+				default: {
+					microphone: '',
+					speaker: '',
+				}
+			},
+			notification: {
+				type: JSONSchemaType.Object,
+				default: {
+					enable: true,
+				}
+			}
+		},
+		default: {
+			theme: 'auto',
+			language: 'es-us'	
+		},
 	},
-	generativeAi: {
-		type: JSONSchemaType.String,
-		default: 'gemini'
-	},
-	geminiApiKey: {
-		type: JSONSchemaType.String,
-		default: ''
-	},
-    gptApiKey: {
-		type: JSONSchemaType.String,
-		default: ''
+	models: {
+		type: JSONSchemaType.Object,
+		properties: {
+			current: { type: JSONSchemaType.String},
+			gemini: {
+				type: JSONSchemaType.Object,
+				default: {
+					version: 'gemini-pro',
+					apikey: ''
+				}
+			},
+			gpt: {
+				type: JSONSchemaType.Object,
+				default: {
+					version: 'gpt-3.5-turbo',
+					apikey: ''
+				}
+			},
+		},
+		default: {
+			current: 'gemini',
+		}
 	}
 }
