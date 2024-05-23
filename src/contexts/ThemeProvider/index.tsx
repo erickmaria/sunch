@@ -13,7 +13,7 @@ interface ThemeProviderProps {
     children: React.ReactNode;
 }
 
-const ThemeContext = createContext<ThemeContextValue>({ theme: window.electron.store.get('theme')} as ThemeContextValue);
+const ThemeContext = createContext<ThemeContextValue>({ theme: window.electron.store.get('models')} as ThemeContextValue);
 
 const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
@@ -25,29 +25,29 @@ const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
     useEffect(() => {
 
-        if(getConfigValue('theme') == "auto"){
-            setConfigValue('theme', 'auto')
+        if(getConfigValue('general.theme') == "auto"){
+            setConfigValue('general.theme', 'auto')
             setTheme(getDefaultTheme())
             return
         }
 
-        setTheme(getConfigValue('theme'));
+        setTheme(getConfigValue('general.theme'));
     }, []);
 
     const changeThemeTo = (theme: Themes) => {
 
         if (theme == 'auto'){
-            setConfigValue('theme', 'auto')
+            setConfigValue('general.theme', 'auto')
             setTheme(getDefaultTheme());
             return
         }
 
         setTheme(theme);
-        setConfigValue('theme', theme)
+        setConfigValue('general.theme', theme)
     };
 
     const getCurrentTheme = (): string => {
-        return getConfigValue('theme') as string
+        return getConfigValue('general.theme') as string
     };
 
     return (

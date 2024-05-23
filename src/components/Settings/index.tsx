@@ -54,18 +54,18 @@ export function Settings() {
                     <SettingsContent.Action>
                         <div className="setting-options-switch-field setting-options-switch-size">
 
-                            <input type="radio" id="genai-switcher-radio-gemini" name="genai-switcher-radio-switch" value="gemini" defaultChecked={getConfigValue('generativeAi') === 'gemini'} />
-                            <label onClick={() => { setConfigValue('generativeAi', 'gemini') }} htmlFor="genai-switcher-radio-gemini" aria-label="Gemini Generative AI">
+                            <input type="radio" id="genai-switcher-radio-gemini" name="genai-switcher-radio-switch" value="gemini" defaultChecked={getConfigValue('models.current') === 'gemini'} />
+                            <label onClick={() => { setConfigValue('models.current', 'gemini') }} htmlFor="genai-switcher-radio-gemini" aria-label="Gemini Generative AI">
                                 Gemini
                             </label>
 
-                            <input type="radio" id="genai-switcher-radio-gpt" name="genai-switcher-radio-switch" value="gpt" defaultChecked={getConfigValue('generativeAi') === 'gpt'} />
-                            <label onClick={() => { setConfigValue('generativeAi', 'gpt') }} htmlFor="genai-switcher-radio-gpt" aria-label="GPT Generative AI">
+                            <input type="radio" id="genai-switcher-radio-gpt" name="genai-switcher-radio-switch" value="gpt" defaultChecked={getConfigValue('models.current') === 'gpt'} />
+                            <label onClick={() => { setConfigValue('models.current', 'gpt') }} htmlFor="genai-switcher-radio-gpt" aria-label="GPT Generative AI">
                                 GPT
                             </label>
 
-                            <input type="radio" id="genai-switcher-radio-both" name="genai-switcher-radio-switch" value="both" defaultChecked={getConfigValue('generativeAi') === 'both'} />
-                            <label onClick={() => { setConfigValue('generativeAi', 'both') }} htmlFor="genai-switcher-radio-both" aria-label="Both Generative AI">
+                            <input type="radio" id="genai-switcher-radio-both" name="genai-switcher-radio-switch" value="both" defaultChecked={getConfigValue('models.current') === 'both'} />
+                            <label onClick={() => { setConfigValue('models.current', 'both') }} htmlFor="genai-switcher-radio-both" aria-label="Both Generative AI">
                                 Both
                             </label>
 

@@ -30,9 +30,9 @@ export default class GeminiService implements Service {
             },
         ];
 
-        this.genAI = new GoogleGenerativeAI(window.env?.SUNCH_GEMINI_API_KEY || process.env.SUNCH_GEMINI_API_KEY || "")
+        this.genAI = new GoogleGenerativeAI( window.electron.store.get('models.gemini.apikey') ||  window.env?.SUNCH_GEMINI_API_KEY || process.env.SUNCH_GEMINI_API_KEY || "")
 
-        this.model = this.genAI.getGenerativeModel({ model: "gemini-pro", safetySettings });
+        this.model = this.genAI.getGenerativeModel({ model: window.electron.store.get('models.gemini.version'), safetySettings });
     }
 
     async execute(prompt: string): Promise<string> {

@@ -7,7 +7,10 @@ declare global {
       searchReady(search: { ready: boolean});
       store: {
         get: (key: string) => any;
+        // get: <K extends keyof Schema>(key: K) => Schema[Key];
         set: (key: string, val: unknown) => void;
+        // set: <K extends keyof Schema>(key: K, val: unknown) => void;
+
         openInEditor: () => void;
       };
     };
