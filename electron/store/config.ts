@@ -1,5 +1,5 @@
 import Store from 'electron-store';
-import { userSettingsSchema } from '../../config/schemas/userSettings'
+import { userSettingsSchema } from './schemas/userSettings'
 
 export const store = new Store({
     schema: userSettingsSchema,

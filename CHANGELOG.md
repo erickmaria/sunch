@@ -1,5 +1,9 @@
 # Changelog
 
+### Updated
+
+- chore: change windown electron to system
+
 ## Unreleased
 
 ### Added
