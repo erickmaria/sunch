@@ -3,6 +3,7 @@
 ### Updated
 
 - chore: change windown electron to system
+- chore: add word wrap on search result
 
 ## Unreleased
 
