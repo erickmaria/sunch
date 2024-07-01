@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from "electron";
 
-contextBridge.exposeInMainWorld('electron', {
+contextBridge.exposeInMainWorld('system', {
     resize: (screen : {w: string, h: string }) => {
         return ipcRenderer.send('resize', screen)
     },

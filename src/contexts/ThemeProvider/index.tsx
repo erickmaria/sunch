@@ -13,7 +13,7 @@ interface ThemeProviderProps {
     children: React.ReactNode;
 }
 
-const ThemeContext = createContext<ThemeContextValue>({ theme: window.electron.store.get('models')} as ThemeContextValue);
+const ThemeContext = createContext<ThemeContextValue>({ theme: window.system.store.get('models')} as ThemeContextValue);
 
 const ThemeProvider = ({ children }: ThemeProviderProps) => {
 

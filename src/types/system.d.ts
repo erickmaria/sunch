@@ -2,7 +2,7 @@ import {} from '';
 
 declare global {
   interface Window {
-    electron: {
+    system: {
       resize(screen: {w: string, h: string });
       searchReady(search: { ready: boolean});
       store: {

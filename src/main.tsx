@@ -9,7 +9,7 @@ if (root != null) {
   const rootProps = window.getComputedStyle(root, null)
 
   const resizeObserver = new ResizeObserver(() => {
-    window.electron.resize({
+    window.system.resize({
       w: rootProps.getPropertyValue("width"),
       h: rootProps.getPropertyValue("height"),
     })

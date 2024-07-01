@@ -10,7 +10,7 @@ export default class GPTService implements Service {
         this.chatMode = <boolean>chatMode
 
         this.genAI = new OpenAI({
-            apiKey:  window.electron.store.get('models.gpt.apikey') || window.env.SUNCH_GPT_API_KEY || process.env.SUNCH_GPT_API_KEY || "",
+            apiKey:  window.system.store.get('models.gpt.apikey') || window.env.SUNCH_GPT_API_KEY || process.env.SUNCH_GPT_API_KEY || "",
             dangerouslyAllowBrowser: true
         });
     }
@@ -25,7 +25,7 @@ export default class GPTService implements Service {
               },
               { role: "user", content: prompt },
             ],
-            model: window.electron.store.get('models.gpt.version'),
+            model: window.system.store.get('models.gpt.version'),
           });
 
         return completion.choices[0].message.content || ""

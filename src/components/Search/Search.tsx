@@ -62,7 +62,7 @@ export default function Search() {
       }
 
 
-      window.electron.searchReady({
+      window.system.searchReady({
         ready: true
       })
     }
