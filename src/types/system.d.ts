@@ -13,6 +13,7 @@ declare global {
 
         openInEditor: () => void;
       };
+      exit();
     };
     env: {
       readonly SUNCH_GEMINI_API_KEY : string;

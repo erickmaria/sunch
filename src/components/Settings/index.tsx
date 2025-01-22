@@ -1,4 +1,4 @@
-import { Computer, Moon, Sun } from 'lucide-react'
+import { Computer, Moon, Sun, LogOut } from 'lucide-react'
 import { useThemeContext } from '../../contexts/ThemeProvider'
 import { SettingsActions } from './SettingsActions'
 import { SettingsIcon } from './SettingsIcon'
@@ -75,6 +75,15 @@ export function Settings() {
                 <Separator />
                 <SettingsContent.Options>
                     <Selectable onClick={() => {window.system.store.openInEditor()}}>Advanced Settings</Selectable>
+                </SettingsContent.Options>
+                <Separator />
+                <SettingsContent.Options>
+                    <Selectable onClick={() => {window.system.exit()}}>
+                        <div className='flex flex-row justify-between items-center'>
+                            <p>Exit</p>  
+                            <LogOut size={18}/>
+                        </div>
+                    </Selectable>
                 </SettingsContent.Options>
             </SettingsContent.Root>
         </>

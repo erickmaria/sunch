@@ -17,6 +17,9 @@ contextBridge.exposeInMainWorld('system', {
         openInEditor() {
             return ipcRenderer.send('electron-store-open-editor');
         }
+    },
+    exit: () => {
+        return ipcRenderer.send("exit")
     }
 })
 

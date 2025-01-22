@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import { searchReadyNotification, stillRunningNotification } from "../notifications/notifcation";
 import { join } from 'path';
 
@@ -68,6 +68,11 @@ export class Window {
         searchReadyNotification()
       }
     })
+
+    ipcMain.on('exit', () => {
+      win.close()
+    })
+
 
     win.on("ready-to-show", () => {
       if (process.env.VITE_DEV_SERVER_URL) {
