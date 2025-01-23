@@ -14,6 +14,7 @@ declare global {
         openInEditor: () => void;
       };
       exit();
+      openWindow(windowName: string);
     };
     env: {
       readonly SUNCH_GEMINI_API_KEY : string;

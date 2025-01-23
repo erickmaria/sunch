@@ -16,11 +16,14 @@ contextBridge.exposeInMainWorld('system', {
         },
         openInEditor() {
             return ipcRenderer.send('electron-store-open-editor');
-        }
+        },
     },
     exit: () => {
         return ipcRenderer.send("exit")
-    }
+    },
+    openWindow(windowName: string) {
+        return ipcRenderer.send('open-window', windowName);
+    },
 })
 
 contextBridge.exposeInMainWorld('env', {

@@ -1,4 +1,4 @@
-import { Window } from "../ui/window";
+import { HomeWidown as Window } from "../ui/windows/home";
 
 export function toggleWindow(): void {
 

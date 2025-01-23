@@ -1,9 +1,10 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { runningNotification, stillRunningNotification } from './notifications/notifcation';
-import { Window } from './ui/window';
+import { HomeWidown } from './ui/windows/home';
 import { Tray } from './ui/tray';
 import { Shortcuts } from './helpers/shortcuts';
 import { store } from './store/config';
+import { SettingsWindow } from './ui/windows/settings';
 
 const data = { lock: 'app.lock' }
 const gotTheLock = app.requestSingleInstanceLock(data)
@@ -18,7 +19,7 @@ if (!gotTheLock) {
 } else {
 
   const App = () => {
-    Window.getInstance()
+    HomeWidown.getInstance()
     Tray.getInstance()
   }
 
@@ -30,7 +31,7 @@ if (!gotTheLock) {
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      Window.getInstance()
+      HomeWidown.getInstance()
     }
   });
 
@@ -47,6 +48,13 @@ if (!gotTheLock) {
 
     ipcMain.on('electron-store-open-editor', async() => {
       store.openInEditor()
+    });
+
+    ipcMain.on('open-window', async(e: Electron.IpcMainEvent, windowName: string) => {
+      switch (windowName){
+        case "settings":
+          SettingsWindow.getInstance()
+      }
     });
     
   })
