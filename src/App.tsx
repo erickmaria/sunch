@@ -16,8 +16,7 @@ export default function App() {
         <BrowserRouter>
           <Routes>
             <Route index path="/" element={<Home />} />
-            <Route path="/settings" element={<Settings />}>
-            </Route>
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </BrowserRouter>
       </div>

@@ -10,16 +10,17 @@ const data = { lock: 'app.lock' }
 const gotTheLock = app.requestSingleInstanceLock(data)
 
 if (!gotTheLock) {
-  
+
   stillRunningNotification()
-  setTimeout(()=>{
+  setTimeout(() => {
     app.quit()
   }, 100)
-  
+
 } else {
 
   const App = () => {
     HomeWidown.getInstance()
+    SettingsWindow.getInstance().bw.hide()
     Tray.getInstance()
   }
 
@@ -36,48 +37,41 @@ if (!gotTheLock) {
   });
 
   app.whenReady()
-  .then(() => {
+    .then(() => {
 
-    ipcMain.on('electron-store-get', async(e: Electron.IpcMainEvent , val: string) => {
-      e.returnValue = store.get(val);
-    });
+      ipcMain.on('electron-store-get', async (e: Electron.IpcMainEvent, val: string) => {
+        e.returnValue = store.get(val);
+      });
 
-    ipcMain.on('electron-store-set', async(e: Electron.IpcMainEvent, key: string, val: unknown) => {
-      store.set(key, val);
-    });
+      ipcMain.on('electron-store-set', async (e: Electron.IpcMainEvent, key: string, val: unknown) => {
+        store.set(key, val);
+      });
 
-    ipcMain.on('electron-store-open-editor', async() => {
-      store.openInEditor()
-    });
+      ipcMain.on('electron-store-open-editor', async () => {
+        store.openInEditor()
+      });
 
-    ipcMain.on('open-window', async(e: Electron.IpcMainEvent, windowName: string) => {
-      switch (windowName){
-        case "settings":
-          SettingsWindow.getInstance()
+    })
+    .then(() => {
+      if (process.platform === 'win32') {
+        app.setAppUserModelId(app.name);
       }
-    });
-    
-  })
-  .then(() => {
-    if (process.platform === 'win32'){
-      app.setAppUserModelId(app.name);
-    }
 
-    if (process.platform === "win32" || process.platform === "darwin") {
-      app.setLoginItemSettings({
-        openAtLogin: true,
-        path: app.getPath('exe')
-      })
-    }
-  })
-  .then(() => App())
-  .then(() => runningNotification())
-  .then(() => Shortcuts.register())
-  .then(() => console.log("[INFO][GENERAL] app running!"))
+      if (process.platform === "win32" || process.platform === "darwin") {
+        app.setLoginItemSettings({
+          openAtLogin: true,
+          path: app.getPath('exe')
+        })
+      }
+    })
+    .then(() => App())
+    .then(() => runningNotification())
+    .then(() => Shortcuts.register())
+    .then(() => console.log("[INFO][GENERAL] app running!"))
 
-  app.on('window-all-closed', (e: Event) => {
-    e.preventDefault()
-  })
+  // app.on('window-all-closed', (e: Event) => {
+  //   e.preventDefault()
+  // })
 
 }
 

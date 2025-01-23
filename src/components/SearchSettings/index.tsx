@@ -17,7 +17,11 @@ const SettingsContent = {
     Action: SettingsActions
 }
 
-export function SearchSettings() {
+interface SearchSettingsProps{
+    setSettings: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export function SearchSettings({setSettings}: SearchSettingsProps) {
 
     const { changeThemeTo, getCurrentTheme } = useThemeContext();
     const { getConfigValue, setConfigValue } = useUserSettings()
@@ -80,7 +84,10 @@ export function SearchSettings() {
                 </SettingsContent.Options>
                 <Separator />
                 <SettingsContent.Options>
-                    <Selectable onClick={() => { window.system.exit() }}>
+                    <Selectable onClick={() => { 
+                        setSettings(false)
+                        window.system.exit()
+                        }}>
                         <div className='flex flex-row justify-between items-center'>
                             <p>Exit</p>
                             <LogOut size={18} />

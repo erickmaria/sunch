@@ -42,8 +42,8 @@ class Window {
 
     if (process.env.VITE_DEV_SERVER_URL) {
       win.loadURL(process.env.VITE_DEV_SERVER_URL)
-      if (process.env.SUNCH_DEVTOOLS_ENABLED === 'true'){
-        win.webContents.openDevTools({mode: 'detach'})
+      if (process.env.SUNCH_DEVTOOLS_ENABLED === 'true') {
+        win.webContents.openDevTools({ mode: 'detach' })
       }
     } else {
       win.loadFile('dist/index.html')
@@ -58,7 +58,7 @@ class Window {
       }
 
       Window.getInstance().bw.setSize(this.width, height)
-      
+
     })
 
     ipcMain.on('searchReady', () => {
@@ -70,10 +70,19 @@ class Window {
       }
     })
 
+    ipcMain.on('open-window', async (e: Electron.IpcMainEvent, windowName: string) => {
+      switch (windowName) {
+        case "settings":
+          SettingsWindow.getInstance().bw.show()
+      }
+    });
+
+
     ipcMain.on('exit', () => {
-      win.close()
+      Window.instance = Window.getInstance()
+      Window.instance.bw.hide()
     })
-    
+
     win.on("ready-to-show", () => {
       if (process.env.VITE_DEV_SERVER_URL) {
         win.show()
@@ -83,7 +92,7 @@ class Window {
     win.on('close', () => {
       stillRunningNotification()
       Window.instance = null
-      setTimeout(()=>{
+      setTimeout(() => {
         Window.instance = Window.getInstance()
         Window.instance.bw.hide()
       }, 100)

@@ -99,7 +99,7 @@ export default function Search() {
           onClick={() =>(settings ? setSettings(false) : setSettings(true))}
         />
       </div>
-      {settings && <SearchSettings /> }
+      {settings && <SearchSettings setSettings={setSettings} /> }
       {awaiting ? !settings &&  <Loading /> : !settings && <Result contents={values} />}
     </>
   )

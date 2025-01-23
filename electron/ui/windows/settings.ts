@@ -28,7 +28,7 @@ class Window {
 
   private create(): BrowserWindow {
     const win = new BrowserWindow({
-      title: "settings", 
+      title: "settings",
       width: this.width,
       minWidth: this.width,
       maxWidth: this.width,
@@ -46,18 +46,13 @@ class Window {
     });
 
     if (process.env.VITE_DEV_SERVER_URL) {
-      win.loadURL(process.env.VITE_DEV_SERVER_URL+"settings")
-      if (process.env.SUNCH_DEVTOOLS_ENABLED === 'true'){
-        win.webContents.openDevTools({mode: 'detach'})
+      win.loadURL(process.env.VITE_DEV_SERVER_URL + "settings")
+      if (process.env.SUNCH_DEVTOOLS_ENABLED === 'true') {
+        win.webContents.openDevTools({ mode: 'detach' })
       }
     } else {
       win.loadFile('dist/index.html')
     }
-
-
-    ipcMain.on('exit', () => {
-      win.close()
-    })
 
 
     win.on("ready-to-show", () => {
@@ -66,9 +61,20 @@ class Window {
       }
     })
 
-    win.on('close', () => {
+    // win.on('close', (e: Electron.Event) => {
+    //   e.preventDefault()
+    //   Window.getInstance().bw.hide()
+    // })
+
+    win.on('close', (e: Electron.Event) => {
+      // e.preventDefault()
+
+      Window.instance = null
+      setTimeout(() => {
         Window.instance = Window.getInstance()
         Window.instance.bw.hide()
+
+      }, 100)
     })
 
     return win
