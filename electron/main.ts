@@ -39,17 +39,37 @@ if (!gotTheLock) {
   app.whenReady()
     .then(() => {
 
-      ipcMain.on('electron-store-get', async (e: Electron.IpcMainEvent, val: string) => {
-        e.returnValue = store.get(val);
+      ipcMain.on('electron-store-get', async (e: Electron.IpcMainEvent, value: string) => {
+        e.returnValue = store.get(value);
       });
 
-      ipcMain.on('electron-store-set', async (e: Electron.IpcMainEvent, key: string, val: unknown) => {
-        store.set(key, val);
+      ipcMain.on('electron-store-set', async (e: Electron.IpcMainEvent, key: string, value: unknown) => {
+        store.set(key, value);
       });
 
       ipcMain.on('electron-store-open-editor', async () => {
         store.openInEditor()
       });
+
+      ipcMain.on('open-window', async (e: Electron.IpcMainEvent, windowName: string) => {
+        switch (windowName) {
+          case "home":
+            HomeWidown.getInstance().bw.show()
+          case "settings":
+            SettingsWindow.getInstance().bw.show()
+        }
+      });
+  
+      ipcMain.on('close-window', async (e: Electron.IpcMainEvent, windowName: string) => {
+
+        switch (windowName) {
+          case "home":
+            HomeWidown.getInstance().bw.hide()
+          case "settings":
+            SettingsWindow.getInstance().bw.hide()
+        }
+      })
+  
 
     })
     .then(() => {

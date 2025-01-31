@@ -1,4 +1,5 @@
 import {} from '';
+import { V } from "node_modules/react-router/dist/development/route-data-Cw8htKcF.d.mts";
 
 declare global {
   interface Window {
@@ -8,13 +9,16 @@ declare global {
       store: {
         get: (key: string) => any;
         // get: <K extends keyof Schema>(key: K) => Schema[Key];
-        set: (key: string, val: unknown) => void;
-        // set: <K extends keyof Schema>(key: K, val: unknown) => void;
+        set: (key: string, value: unknown) => void;
+        // set: <K extends keyof Schema>(key: K, value: unknown) => void;
 
         openInEditor: () => void;
       };
-      exit();
+      // exit();
+      closeWindow(windowName: string);
       openWindow(windowName: string);
+      syncConfig: (callback: (data: { key: string, value: unknown}) => void) => void;
+      dispatchSyncConfig: (key: string, value: unknown) => void;
     };
     env: {
       readonly SUNCH_GEMINI_API_KEY : string;

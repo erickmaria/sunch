@@ -6,8 +6,8 @@ class Window {
 
   private static instance: Window | null = null;
 
-  private width = 900
-  private maxHeight = 1000
+  private width = 400
+  private maxHeight = 700
   public bw: BrowserWindow
 
   private constructor() {
@@ -42,11 +42,14 @@ class Window {
         nodeIntegration: true,
         experimentalFeatures: true,
       },
+      frame: false,
       show: false,
     });
 
     if (process.env.VITE_DEV_SERVER_URL) {
-      win.loadURL(process.env.VITE_DEV_SERVER_URL + "settings")
+      win.loadURL(process.env.VITE_DEV_SERVER_URL + "settings", {
+
+      })
       if (process.env.SUNCH_DEVTOOLS_ENABLED === 'true') {
         win.webContents.openDevTools({ mode: 'detach' })
       }
@@ -54,18 +57,14 @@ class Window {
       win.loadFile('dist/index.html')
     }
 
-
-    win.on("ready-to-show", () => {
-      if (process.env.VITE_DEV_SERVER_URL) {
-        win.show()
-      }
+    ipcMain.on('dispatch-sync-config', async (e: Electron.IpcMainEvent, key: string, value: unknown) => {
+      win.webContents.send('sync-config', {key, value} );
     })
 
-    // win.on('close', (e: Electron.Event) => {
-    //   e.preventDefault()
-    //   Window.getInstance().bw.hide()
-    // })
-
+    win.on("ready-to-show", () => {
+        win.show()
+    })
+    
     win.on('close', (e: Electron.Event) => {
       // e.preventDefault()
 

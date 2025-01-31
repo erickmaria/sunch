@@ -8,6 +8,7 @@ import { MoreVertical } from 'lucide-react';
 import { SearchSettings } from '../SearchSettings/index';
 import { useGetAnswer } from '../../hooks/useGetAnswer';
 import { SlashCommands } from '../../slash_comands/slash';
+import { useThemeContext } from '@/contexts/ThemeProvider';
 
 export default function Search() {
 
@@ -76,7 +77,7 @@ export default function Search() {
           style={{ width: 18, height: 18 }} src={sunchIcon} alt="sunch icon"
         />
         <textarea
-          className='search flex-1 outline-none p-1 rounded-xl pl-9 pr-14 placeholder:opacity-50'
+          className='search rounded-xl resize-none overflow-y-hidden min-h-9 border box-border flex-1 outline-none p-1 pl-9 pr-14 placeholder:opacity-50 placeholder:text-foreground'
           ref={textareaRef}
           autoFocus
           onFocus={()=> setSettings(false)}
@@ -95,7 +96,7 @@ export default function Search() {
           onTranscriptData={setInput}
         />
         <MoreVertical size={20}
-          className='fixed right-2  top-2 cursor-pointer' color='var(--foreground-color)'
+          className='fixed right-2  top-2 cursor-pointer'
           onClick={() =>(settings ? setSettings(false) : setSettings(true))}
         />
       </div>

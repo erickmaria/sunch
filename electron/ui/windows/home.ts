@@ -61,6 +61,10 @@ class Window {
 
     })
 
+    ipcMain.on('dispatch-sync-config', async (e: Electron.IpcMainEvent, key: string, value: unknown) => {
+      win.webContents.send('sync-config', {key, value} );
+    })
+
     ipcMain.on('searchReady', () => {
 
       const win = Window.getInstance().bw
@@ -70,17 +74,10 @@ class Window {
       }
     })
 
-    ipcMain.on('open-window', async (e: Electron.IpcMainEvent, windowName: string) => {
-      switch (windowName) {
-        case "settings":
-          SettingsWindow.getInstance().bw.show()
+    win.on("ready-to-show", () => {
+      if (process.env.VITE_DEV_SERVER_URL) {
+        win.show()
       }
-    });
-
-
-    ipcMain.on('exit', () => {
-      Window.instance = Window.getInstance()
-      Window.instance.bw.hide()
     })
 
     win.on("ready-to-show", () => {

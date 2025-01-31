@@ -1,5 +1,5 @@
 import { Computer, Moon, Sun, LogOut } from 'lucide-react'
-import { useThemeContext } from '../../contexts/ThemeProvider'
+import { Themes, useThemeContext } from '../../contexts/ThemeProvider'
 import { SettingsActions } from './SettingsActions'
 import { SettingsIcon } from './SettingsIcon'
 import { SettingsOptions } from './SettingsOptions'
@@ -8,6 +8,7 @@ import { SettingsTittle } from './SettingsTittle'
 import Separator from '../Separator/Separator'
 import Selectable from '../Selectable/Selectable'
 import { useUserSettings } from '../../hooks/useUserSettings'
+import { useEffect, useState } from 'react'
 
 const SettingsContent = {
     Root: SettingsRoot,
@@ -24,7 +25,16 @@ interface SearchSettingsProps{
 export function SearchSettings({setSettings}: SearchSettingsProps) {
 
     const { changeThemeTo, getCurrentTheme } = useThemeContext();
-    const { getConfigValue, setConfigValue } = useUserSettings()
+    const { getConfigValue, setConfigValue, syncConfig } = useUserSettings();
+
+    function setTheme(value: string){
+        changeThemeTo(value as Themes)
+        syncConfig("general.theme", value)
+    }
+
+    function setAIModel(value: string){
+        setConfigValue('models.current', value)
+    }
 
     return (
         <>
@@ -35,17 +45,17 @@ export function SearchSettings({setSettings}: SearchSettingsProps) {
                         <div className="setting-options-switch-field setting-options-switch-size">
 
                             <input type="radio" id="theme-switcher-radio-light" name="theme-switcher-radio-switch" value="light" defaultChecked={getCurrentTheme() === 'light'} />
-                            <label onClick={() => { changeThemeTo('light') }} htmlFor="theme-switcher-radio-light" aria-label="Light theme">
+                            <label onClick={() => { setTheme('light') }} htmlFor="theme-switcher-radio-light" aria-label="Light theme">
                                 <Sun size={15} />
                             </label>
 
                             <input type="radio" id="theme-switcher-radio-dark" name="theme-switcher-radio-switch" value="dark" defaultChecked={getCurrentTheme() === 'dark'} />
-                            <label onClick={() => { changeThemeTo('dark') }} htmlFor="theme-switcher-radio-dark" aria-label="Dark theme">
+                            <label onClick={() => { setTheme('dark') }} htmlFor="theme-switcher-radio-dark" aria-label="Dark theme">
                                 <Moon size={15} />
                             </label>
 
                             <input type="radio" id="theme-switcher-radio-auto" name="theme-switcher-radio-switch" value="auto" defaultChecked={getCurrentTheme() === 'auto'} />
-                            <label onClick={() => { changeThemeTo('auto') }} htmlFor="theme-switcher-radio-auto" aria-label="System theme">
+                            <label onClick={() => { setTheme('auto') }} htmlFor="theme-switcher-radio-auto" aria-label="System theme">
                                 <Computer size={15} />
                             </label>
 
@@ -59,17 +69,17 @@ export function SearchSettings({setSettings}: SearchSettingsProps) {
                         <div className="setting-options-switch-field setting-options-switch-size">
 
                             <input type="radio" id="genai-switcher-radio-gemini" name="genai-switcher-radio-switch" value="gemini" defaultChecked={getConfigValue('models.current') === 'gemini'} />
-                            <label onClick={() => { setConfigValue('models.current', 'gemini') }} htmlFor="genai-switcher-radio-gemini" aria-label="Gemini Generative AI">
+                            <label onClick={() => { setAIModel('gemini') }} htmlFor="genai-switcher-radio-gemini" aria-label="Gemini Generative AI">
                                 Gemini
                             </label>
 
                             <input type="radio" id="genai-switcher-radio-gpt" name="genai-switcher-radio-switch" value="gpt" defaultChecked={getConfigValue('models.current') === 'gpt'} />
-                            <label onClick={() => { setConfigValue('models.current', 'gpt') }} htmlFor="genai-switcher-radio-gpt" aria-label="GPT Generative AI">
+                            <label onClick={() => {setAIModel('gpt') }} htmlFor="genai-switcher-radio-gpt" aria-label="GPT Generative AI">
                                 GPT
                             </label>
 
                             <input type="radio" id="genai-switcher-radio-both" name="genai-switcher-radio-switch" value="both" defaultChecked={getConfigValue('models.current') === 'both'} />
-                            <label onClick={() => { setConfigValue('models.current', 'both') }} htmlFor="genai-switcher-radio-both" aria-label="Both Generative AI">
+                            <label onClick={() => {setAIModel('both') }} htmlFor="genai-switcher-radio-both" aria-label="Both Generative AI">
                                 Both
                             </label>
 
@@ -78,7 +88,10 @@ export function SearchSettings({setSettings}: SearchSettingsProps) {
                 </SettingsContent.Options>
                 <Separator />
                 <SettingsContent.Options>
-                    <Selectable onClick={() => {window.system.openWindow("settings")}}>
+                    <Selectable onClick={() => {
+                        setSettings(false)
+                        window.system.openWindow("home")
+                    }}>
                         Advanced Settings
                     </Selectable>
                 </SettingsContent.Options>
@@ -86,7 +99,8 @@ export function SearchSettings({setSettings}: SearchSettingsProps) {
                 <SettingsContent.Options>
                     <Selectable onClick={() => { 
                         setSettings(false)
-                        window.system.exit()
+                        // window.system.exit()
+                        window.system.closeWindow("home")
                         }}>
                         <div className='flex flex-row justify-between items-center'>
                             <p>Exit</p>

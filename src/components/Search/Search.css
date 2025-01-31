@@ -1,19 +1,8 @@
 .search {
-    background-color: var(--background-color);
-    resize: none;
-    overflow-y: hidden;
-    min-height: 35px;
-
     border: 1px solid rgb(49, 49, 49);
-    box-sizing: border-box;
-}
-
-.search::placeholder {
-    color: var(--foreground-color);
+    background-color: var(--background-color);
 }
 
 .search-icon {
-    user-select: none;
-    -webkit-user-select: none;
     -webkit-app-region: drag;
 }

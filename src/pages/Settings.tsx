@@ -1,10 +1,176 @@
 
+import { Tab, Tabs } from "@/components/Tabs/Tabs"
+import { CSSProperties, useEffect, useState } from "react"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
+import { MdOutlineNotificationsActive, MdOutlineNotificationsOff } from "react-icons/md";
+import { ChatGptIcon } from 'hugeicons-react';
+import { RiGeminiFill } from "react-icons/ri";
+import Separator from "@/components/Separator/Separator";
+import { Input } from "@/components/ui/input";
+import { X } from "lucide-react";
+import { useThemeContext, Themes } from "@/contexts/ThemeProvider";
+import { useUserSettings } from "@/hooks/useUserSettings";
+
 export default function Settings() {
+
+  const linePageStyle: CSSProperties = {
+    backgroundColor: 'var(--background-color)',
+  }
+
+  const lineSelectStyle: CSSProperties = {
+    backgroundColor: 'var(--background-secondary-color)',
+    color: 'var(--foreground-color)'
+  }
+
+  const lineSelectContextStyle: CSSProperties = {
+    backgroundColor: 'var(--background-secondary-color)',
+  }
+
+  const lineTitleStyle: CSSProperties = {
+    color: 'var(--primary-text-color)'
+  }
+
+  const { changeThemeTo, getCurrentTheme, theme } = useThemeContext();
+  const { syncConfig } =  useUserSettings()
+  const [notification, setNotification] = useState<boolean>(false);
+
   return (
     <>
-    <div className="w-screen h-screen bg-slate-900 flex justify-center items-center">
-      <p>Settings</p>
-    </div>
+      <div data-theme={theme} style={linePageStyle} className="w-screen h-screen">
+        <div className="absolute right-1 mt-1 cursor-pointer">
+          <X
+            onClick={() => { window.system.closeWindow("settings") }}
+            style={lineTitleStyle}
+            className="hover:bg-red-500" />
+        </div>
+        <Tabs initialTabIndex={0}>
+          <Tab label="General">
+            <div className="flex justify-between  mt-5 mb-5">
+              <h1 style={lineTitleStyle} className="text-lg text-border">Themes</h1>
+              <Select onValueChange={(value) => {
+                changeThemeTo(value as Themes)
+                syncConfig('general.theme', theme as string)
+              }} defaultValue={getCurrentTheme()} value={getCurrentTheme()} >
+                <SelectTrigger style={lineSelectStyle} className="w-[200px]">
+                  <SelectValue placeholder="Theme" />
+                </SelectTrigger>
+                <SelectContent style={lineSelectContextStyle}>
+                  <SelectItem value="light">Light</SelectItem>
+                  <SelectItem value="dark">Dark</SelectItem>
+                  <SelectItem value="auto">System</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex justify-between mt-5 mb-5">
+              <h1 style={lineTitleStyle} className="text-lg text-border">Lenguague</h1>
+              <Select>
+                <SelectTrigger style={lineSelectStyle} className="w-[200px]">
+                  <SelectValue placeholder="Lenguague" />
+                </SelectTrigger>
+                <SelectContent style={lineSelectContextStyle}>
+                  <SelectItem value="es-us">English</SelectItem>
+                  <SelectItem value="pt-br">Portuguese</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Separator color={'var(--background-color)'} />
+            <div className=" flex items-center space-x-4 rounded-md border p-4 mt-5">
+              {notification ? <MdOutlineNotificationsActive size={30} /> : <MdOutlineNotificationsOff size={30} />}
+              <div className="flex-1 space-y-1">
+                <p className="text-sm font-medium leading-none">
+                  Push Notifications
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Send notifications to device.
+                </p>
+              </div>
+              <Switch
+                onCheckedChange={(checked) => { setNotification(checked) }}
+              />
+            </div>
+
+          </Tab>
+          <Tab label="Models">
+            <div className="flex justify-between mt-5 mb-5">
+              <h1 style={lineTitleStyle} className="text-lg text-border">Select Model</h1>
+              <Select>
+                <SelectTrigger style={lineSelectStyle} className="w-[200px]">
+                  <SelectValue placeholder="Model" />
+                </SelectTrigger>
+                <SelectContent style={lineSelectContextStyle}>
+                  <SelectItem value="both">All</SelectItem>
+                  <SelectItem value="gemini">Gemini</SelectItem>
+                  <SelectItem value="gpt">GPT</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Separator color={'var(--background-color)'} />
+            <div className=" rounded-md border p-4 mt-5">
+              <div className=" flex items-center space-x-4">
+                <RiGeminiFill size={30} />
+                <div className="flex-1 space-y-1">
+                  <p className="text-sm font-medium leading-none">
+                    Gemini
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Set configuration
+                  </p>
+                </div>
+                <Select>
+                  <SelectTrigger style={lineSelectStyle} className="w-[200px]">
+                    <SelectValue placeholder="Gemini Version" />
+                  </SelectTrigger>
+                  <SelectContent style={lineSelectContextStyle}>
+                    <SelectItem value="gemini-pro">gemini-pro</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center space-x-4 justify-between  mt-5">
+                <p className="pl-2 text-sm text-muted-foreground">
+                  Api Key
+                </p>
+                <Input type="password" className="w-[500px]" />
+              </div>
+            </div>
+
+            <div className=" rounded-md border p-4 mt-5">
+              <div className=" flex items-center space-x-4">
+                <ChatGptIcon size={30} />
+                <div className="flex-1 space-y-1">
+                  <p className="text-sm font-medium leading-none">
+                    GPT
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Set configuration
+                  </p>
+                </div>
+                <Select>
+                  <SelectTrigger style={lineSelectStyle} className="w-[200px]">
+                    <SelectValue placeholder="GPT Version" />
+                  </SelectTrigger>
+                  <SelectContent style={lineSelectContextStyle}>
+                    <SelectItem value="gpt-3.5-turbo">gpt-3.5-turbo</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center space-x-4 justify-between  mt-5">
+                <p className="pl-2 text-sm text-muted-foreground">
+                  Api Key
+                </p>
+                <Input type="password" className="w-[500px]" />
+              </div>
+            </div>
+
+          </Tab>
+        </Tabs>
+      </div>
     </>
   )
 }

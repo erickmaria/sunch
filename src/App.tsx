@@ -1,13 +1,20 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 import './App.css'
-import { useThemeContext } from './contexts/ThemeProvider'
+import { Themes, useThemeContext } from './contexts/ThemeProvider'
 import Home from './pages/Home';
 import Settings from './pages/Settings';
+import { useEffect } from 'react';
 
 
 export default function App() {
 
-  const { theme } = useThemeContext();
+  const { changeThemeTo, theme } = useThemeContext()
+
+  useEffect(() => {
+    window.system.syncConfig((data) => {
+      changeThemeTo(data as unknown as Themes)
+    });
+  }, [theme]);
 
   return (
     <>
@@ -16,7 +23,7 @@ export default function App() {
         <BrowserRouter>
           <Routes>
             <Route index path="/" element={<Home />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="/settings" element={<Settings/>} />
           </Routes>
         </BrowserRouter>
       </div>
