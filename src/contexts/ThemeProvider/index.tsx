@@ -20,7 +20,7 @@ const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
     const getDefaultTheme = (): Themes =>  window.matchMedia("(prefers-color-scheme: dark)").matches == true ? 'dark' : 'light'
 
-    const { getConfigValue, setConfigValue, syncConfig } = useUserSettings()
+    const { getConfigValue, setConfigValue } = useUserSettings()
     
     const [theme, setTheme] = useState<Themes>('auto');
 

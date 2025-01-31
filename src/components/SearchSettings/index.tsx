@@ -8,7 +8,6 @@ import { SettingsTittle } from './SettingsTittle'
 import Separator from '../Separator/Separator'
 import Selectable from '../Selectable/Selectable'
 import { useUserSettings } from '../../hooks/useUserSettings'
-import { useEffect, useState } from 'react'
 
 const SettingsContent = {
     Root: SettingsRoot,
@@ -99,7 +98,6 @@ export function SearchSettings({setSettings}: SearchSettingsProps) {
                 <SettingsContent.Options>
                     <Selectable onClick={() => { 
                         setSettings(false)
-                        // window.system.exit()
                         window.system.closeWindow("home")
                         }}>
                         <div className='flex flex-row justify-between items-center'>

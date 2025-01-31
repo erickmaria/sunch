@@ -1,8 +1,10 @@
 import { Notification } from 'electron'
 import { IconColofulData } from '../helpers/icondata'
 import { toggleWindow } from '../utils/wintoggle'
+import { store } from '../store/config'
 
 export function runningNotification () {
+    if (store.get('general.notification.enable') == false) return
     new Notification({ 
         icon: IconColofulData,
         title: 'Sunch running on System Tray', 
@@ -12,6 +14,7 @@ export function runningNotification () {
 }
 
 export function stillRunningNotification () {
+    if (store.get('general.notification.enable') == false) return
     // adding delay to not show notification when the app is closing
     setTimeout(()=>{
         new Notification({ 
@@ -24,6 +27,7 @@ export function stillRunningNotification () {
 }
 
 export function searchReadyNotification () {
+    if (store.get('general.notification.enable') == false) return
     new Notification({ 
         icon: IconColofulData,
         title: 'Sunch your search is ready',

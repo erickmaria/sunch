@@ -8,7 +8,6 @@ import { MoreVertical } from 'lucide-react';
 import { SearchSettings } from '../SearchSettings/index';
 import { useGetAnswer } from '../../hooks/useGetAnswer';
 import { SlashCommands } from '../../slash_comands/slash';
-import { useThemeContext } from '@/contexts/ThemeProvider';
 
 export default function Search() {
 

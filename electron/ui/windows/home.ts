@@ -92,6 +92,8 @@ class Window {
       setTimeout(() => {
         Window.instance = Window.getInstance()
         Window.instance.bw.hide()
+
+        SettingsWindow.getInstance().bw.hide()
       }, 100)
     })
 

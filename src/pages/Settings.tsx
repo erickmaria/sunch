@@ -38,8 +38,12 @@ export default function Settings() {
   }
 
   const { changeThemeTo, getCurrentTheme, theme } = useThemeContext();
-  const { syncConfig } =  useUserSettings()
+  const { setConfigValue, getConfigValue, syncConfig } = useUserSettings()
   const [notification, setNotification] = useState<boolean>(false);
+
+  useEffect(() => {
+    setConfigValue('general.notification.enable', notification)
+  },[notification])
 
   return (
     <>
@@ -54,10 +58,11 @@ export default function Settings() {
           <Tab label="General">
             <div className="flex justify-between  mt-5 mb-5">
               <h1 style={lineTitleStyle} className="text-lg text-border">Themes</h1>
-              <Select onValueChange={(value) => {
-                changeThemeTo(value as Themes)
-                syncConfig('general.theme', theme as string)
-              }} defaultValue={getCurrentTheme()} value={getCurrentTheme()} >
+              <Select defaultValue={getCurrentTheme()} value={getCurrentTheme()}
+                onValueChange={(value) => {
+                  changeThemeTo(value as Themes)
+                  syncConfig('general.theme', value as string)
+                }} >
                 <SelectTrigger style={lineSelectStyle} className="w-[200px]">
                   <SelectValue placeholder="Theme" />
                 </SelectTrigger>
@@ -70,7 +75,10 @@ export default function Settings() {
             </div>
             <div className="flex justify-between mt-5 mb-5">
               <h1 style={lineTitleStyle} className="text-lg text-border">Lenguague</h1>
-              <Select>
+              <Select defaultValue={getConfigValue('general.language')}
+                onValueChange={(value) => {
+                  setConfigValue('general.language', value)
+                }}>
                 <SelectTrigger style={lineSelectStyle} className="w-[200px]">
                   <SelectValue placeholder="Lenguague" />
                 </SelectTrigger>
