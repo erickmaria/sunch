@@ -33,6 +33,7 @@ export function SearchSettings({setSettings}: SearchSettingsProps) {
 
     function setAIModel(value: string){
         setConfigValue('models.current', value)
+        syncConfig("models.current", value)
     }
 
     return (

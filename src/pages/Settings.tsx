@@ -40,10 +40,15 @@ export default function Settings() {
   const { changeThemeTo, getCurrentTheme, theme } = useThemeContext();
   const { setConfigValue, getConfigValue, syncConfig } = useUserSettings()
   const [notification, setNotification] = useState<boolean>(false);
+  const [gptApiKey, setGptApiKey] = useState<string>('');
+  const [geminiApiKey, setGeminiApiKey] = useState<string>('');
+
 
   useEffect(() => {
     setConfigValue('general.notification.enable', notification)
   },[notification])
+
+  
 
   return (
     <>
@@ -58,7 +63,7 @@ export default function Settings() {
           <Tab label="General">
             <div className="flex justify-between  mt-5 mb-5">
               <h1 style={lineTitleStyle} className="text-lg text-border">Themes</h1>
-              <Select defaultValue={getCurrentTheme()} value={getCurrentTheme()}
+              <Select value={getCurrentTheme()}
                 onValueChange={(value) => {
                   changeThemeTo(value as Themes)
                   syncConfig('general.theme', value as string)
@@ -108,7 +113,11 @@ export default function Settings() {
           <Tab label="Models">
             <div className="flex justify-between mt-5 mb-5">
               <h1 style={lineTitleStyle} className="text-lg text-border">Select Model</h1>
-              <Select>
+              <Select value={getConfigValue('models.current')}
+                onValueChange={(value) => {
+                  setConfigValue('models.current', value)
+                  syncConfig('models.current', value as string)
+                }}>
                 <SelectTrigger style={lineSelectStyle} className="w-[200px]">
                   <SelectValue placeholder="Model" />
                 </SelectTrigger>
@@ -131,7 +140,11 @@ export default function Settings() {
                     Set configuration
                   </p>
                 </div>
-                <Select>
+                <Select value={getConfigValue('models.gemini.version')}
+                onValueChange={(value) => {
+                  setConfigValue('models.gemini.version', value)
+                  syncConfig('models.gemini.version', value as string)
+                }}>
                   <SelectTrigger style={lineSelectStyle} className="w-[200px]">
                     <SelectValue placeholder="Gemini Version" />
                   </SelectTrigger>
@@ -144,7 +157,9 @@ export default function Settings() {
                 <p className="pl-2 text-sm text-muted-foreground">
                   Api Key
                 </p>
-                <Input type="password" className="w-[500px]" />
+                <Input defaultValue={getConfigValue("models.gemini.apikey")} type="password" className="w-[500px]" onChange={(e) =>{
+                  setConfigValue('models.gemini.apikey', e.target.value)
+                }} />
               </div>
             </div>
 
@@ -159,7 +174,10 @@ export default function Settings() {
                     Set configuration
                   </p>
                 </div>
-                <Select>
+                <Select value={getConfigValue('models.gpt.version')}
+                onValueChange={(value) => {
+                  setConfigValue('models.gpt.version', value)
+                }}>
                   <SelectTrigger style={lineSelectStyle} className="w-[200px]">
                     <SelectValue placeholder="GPT Version" />
                   </SelectTrigger>
@@ -172,7 +190,9 @@ export default function Settings() {
                 <p className="pl-2 text-sm text-muted-foreground">
                   Api Key
                 </p>
-                <Input type="password" className="w-[500px]" />
+                <Input defaultValue={getConfigValue("models.gpt.apikey")} type="password" className="w-[500px]" onChange={(e) =>{
+                  setConfigValue('models.gpt.apikey', e.target.value)
+                }} />
               </div>
             </div>
 
