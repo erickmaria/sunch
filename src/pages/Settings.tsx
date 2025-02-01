@@ -40,15 +40,12 @@ export default function Settings() {
   const { changeThemeTo, getCurrentTheme, theme } = useThemeContext();
   const { setConfigValue, getConfigValue, syncConfig } = useUserSettings()
   const [notification, setNotification] = useState<boolean>(false);
-  const [gptApiKey, setGptApiKey] = useState<string>('');
-  const [geminiApiKey, setGeminiApiKey] = useState<string>('');
-
 
   useEffect(() => {
     setConfigValue('general.notification.enable', notification)
-  },[notification])
+  }, [notification])
 
-  
+
 
   return (
     <>
@@ -140,16 +137,17 @@ export default function Settings() {
                     Set configuration
                   </p>
                 </div>
-                <Select value={getConfigValue('models.gemini.version')}
-                onValueChange={(value) => {
-                  setConfigValue('models.gemini.version', value)
-                  syncConfig('models.gemini.version', value as string)
-                }}>
+                <Select defaultValue={getConfigValue('models.gemini.version')}
+                  onValueChange={(value) => {
+                    setConfigValue('models.gemini.version', value)
+                  }}>
                   <SelectTrigger style={lineSelectStyle} className="w-[200px]">
                     <SelectValue placeholder="Gemini Version" />
                   </SelectTrigger>
                   <SelectContent style={lineSelectContextStyle}>
-                    <SelectItem value="gemini-pro">gemini-pro</SelectItem>
+                    <SelectItem value="gemini-1.5-pro">Gemini 1.5 Pro</SelectItem>
+                    <SelectItem value="gemini-1.5-flash">Gemini 1.5 Flash</SelectItem>
+                    <SelectItem value="gemini-1.5-flash-8b">Gemini 1.5 Flash 8B</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -157,7 +155,7 @@ export default function Settings() {
                 <p className="pl-2 text-sm text-muted-foreground">
                   Api Key
                 </p>
-                <Input defaultValue={getConfigValue("models.gemini.apikey")} type="password" className="w-[500px]" onChange={(e) =>{
+                <Input defaultValue={getConfigValue("models.gemini.apikey")} type="password" className="w-[500px]" onChange={(e) => {
                   setConfigValue('models.gemini.apikey', e.target.value)
                 }} />
               </div>
@@ -174,15 +172,17 @@ export default function Settings() {
                     Set configuration
                   </p>
                 </div>
-                <Select value={getConfigValue('models.gpt.version')}
-                onValueChange={(value) => {
-                  setConfigValue('models.gpt.version', value)
-                }}>
+                <Select defaultValue={getConfigValue('models.gpt.version')}
+                  onValueChange={(value) => {
+                    setConfigValue('models.gpt.version', value)
+                  }}>
                   <SelectTrigger style={lineSelectStyle} className="w-[200px]">
                     <SelectValue placeholder="GPT Version" />
                   </SelectTrigger>
                   <SelectContent style={lineSelectContextStyle}>
-                    <SelectItem value="gpt-3.5-turbo">gpt-3.5-turbo</SelectItem>
+                    <SelectItem value="gpt-4-turbo">GPT 4 turbo</SelectItem>
+                    <SelectItem value="gpt-4o">GPT 4o</SelectItem>
+                    <SelectItem value="gpt-4o-mini">GPT 4o Mini</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -190,9 +190,11 @@ export default function Settings() {
                 <p className="pl-2 text-sm text-muted-foreground">
                   Api Key
                 </p>
-                <Input defaultValue={getConfigValue("models.gpt.apikey")} type="password" className="w-[500px]" onChange={(e) =>{
-                  setConfigValue('models.gpt.apikey', e.target.value)
-                }} />
+                <Input
+                  defaultValue={getConfigValue("models.gpt.apikey")}
+                  type="password" className="w-[500px]" onChange={(e) => {
+                    setConfigValue('models.gpt.apikey', e.target.value)
+                  }} />
               </div>
             </div>
 
