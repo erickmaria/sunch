@@ -72,7 +72,7 @@ export default function Search() {
     <>
       <div className='flex flex-row'>
         <img
-          className='search-icon fixed left-2 top-2'
+          className='draggable fixed left-2 top-2'
           style={{ width: 18, height: 18 }} src={sunchIcon} alt="sunch icon"
         />
         <textarea

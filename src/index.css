@@ -24,6 +24,11 @@
     background-clip: content-box;
 }
 
+.draggable  {
+    -webkit-app-region: drag;
+}
+
+
 [data-theme="dark"] {
     --background-color: #17191A;
     --foreground-color: #BDBDBD;

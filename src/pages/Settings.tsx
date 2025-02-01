@@ -45,17 +45,17 @@ export default function Settings() {
     setConfigValue('general.notification.enable', notification)
   }, [notification])
 
-
-
   return (
     <>
       <div data-theme={theme} style={linePageStyle} className="w-screen h-screen">
-        <div className="absolute right-1 mt-1 cursor-pointer">
+
+        <div className="absolute z-10 right-1 mt-1 cursor-pointer">
           <X
             onClick={() => { window.system.closeWindow("settings") }}
             style={lineTitleStyle}
             className="hover:bg-red-500" />
         </div>
+        <div className="draggable absolute right-8 w-[170px] h-[33px]"></div>
         <Tabs initialTabIndex={0}>
           <Tab label="General">
             <div className="flex justify-between  mt-5 mb-5">

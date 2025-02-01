@@ -2,7 +2,3 @@
     border: 1px solid rgb(49, 49, 49);
     background-color: var(--background-color);
 }
-
-.search-icon {
-    -webkit-app-region: drag;
-}
