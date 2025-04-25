@@ -41,19 +41,29 @@ export default function Settings() {
   const { setConfigValue, getConfigValue, syncConfig } = useUserSettings()
   const [notification, setNotification] = useState<boolean>(false);
 
+  const [version, setVersion] = useState<string>("");
+
   useEffect(() => {
     setConfigValue('general.notification.enable', notification)
   }, [notification])
 
+  useEffect(() => {
+    window.system.getAppVersion().then((v)=> {
+      setVersion(v);
+    })
+  }, []);
+
   return (
     <>
       <div data-theme={theme} style={linePageStyle} className="w-screen h-screen">
-
         <div className="absolute z-10 right-1 mt-1 cursor-pointer">
           <X
             onClick={() => { window.system.closeWindow("settings") }}
             style={lineTitleStyle}
             className="hover:bg-red-500" />
+        </div>
+        <div className="fixed bottom-1 right-1 z-20">
+          <p>version: { version } </p>
         </div>
         <div className="draggable absolute right-8 w-[170px] h-[33px]"></div>
         <Tabs initialTabIndex={0}>

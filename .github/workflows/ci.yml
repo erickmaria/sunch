@@ -67,6 +67,7 @@ jobs:
   test-release:
     if: github.event_name == 'pull_request'
     name: Test Release
+    environment: manual_approval
     needs:
       - lint
       - build

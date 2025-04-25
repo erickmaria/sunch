@@ -20,7 +20,7 @@ export default class GPTService implements Service {
   }
 
   getModel(): string {
-    return window.system.store.get('models.gpt  .version')
+    return window.system.store.get('models.gpt.version')
   }
 
   async execute(prompt: string): Promise<string> {

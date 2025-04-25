@@ -19,6 +19,7 @@ declare global {
       openWindow(windowName: string);
       syncConfig: (callback: (data: { key: string, value: unknown}) => void) => void;
       dispatchSyncConfig: (key: string, value: unknown) => void;
+      getAppVersion: () => Promise<string>;
     };
     env: {
       readonly SUNCH_GEMINI_API_KEY : string;

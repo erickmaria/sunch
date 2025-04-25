@@ -8,6 +8,7 @@
 - [#15](https://github.com/erickmaria/sunch/pull/15) Recreate the window when it closes
 - [#16](https://github.com/erickmaria/sunch/pull/16) Hide settings component when textarea on focus
 - [#19](https://github.com/erickmaria/sunch/pull/19) Add exit button on settings
+- [#20](https://github.com/erickmaria/sunch/pull/20) Feat auto update
 
 ### Fixed
 
