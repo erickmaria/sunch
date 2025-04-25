@@ -70,6 +70,10 @@ if (!gotTheLock) {
             SettingsWindow.getInstance().bw.hide()
         }
       })
+
+      ipcMain.handle('get-app-version', async () => {
+        return app.getVersion()
+      });
   
 
     })

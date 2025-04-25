@@ -30,9 +30,8 @@ contextBridge.exposeInMainWorld('system', {
     syncConfig: (callback: (data: any) => void) => ipcRenderer.on('sync-config', (_event, data) => {
         callback(data);
     }),
+    getAppVersion: () => ipcRenderer.invoke('get-app-version')
 })
-
-
 
 contextBridge.exposeInMainWorld('env', {
     SUNCH_GEMINI_API_KEY: process.env.SUNCH_GEMINI_API_KEY,
