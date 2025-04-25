@@ -34,7 +34,7 @@ const Tabs: React.FC<TabsProps> = ({ children, initialTabIndex = 0 }) => {
   );
 };
 
-const Tab: React.FC<TabProps> = ({ label, children }) => {
+const Tab: React.FC<TabProps> = ({ children }) => {
   return <>{children}</>;
 };
 

@@ -5,6 +5,7 @@ import { Tray } from './ui/tray';
 import { Shortcuts } from './helpers/shortcuts';
 import { store } from './store/config';
 import { SettingsWindow } from './ui/windows/settings';
+import { autoUpdater } from "electron-updater"
 
 const data = { lock: 'app.lock' }
 const gotTheLock = app.requestSingleInstanceLock(data)
@@ -88,7 +89,7 @@ if (!gotTheLock) {
     .then(() => runningNotification())
     .then(() => Shortcuts.register())
     .then(() => console.log("[INFO][GENERAL] app running!"))
-
+    .then(() => autoUpdater.checkForUpdatesAndNotify())
   // app.on('window-all-closed', (e: Event) => {
   //   e.preventDefault()
   // })
