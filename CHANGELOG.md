@@ -1,10 +1,5 @@
 # Changelog
 
-### Updated
-
-- chore: change windown electron to system
-- chore: add word wrap on search result
-
 ## Unreleased
 
 ### Added
@@ -12,11 +7,17 @@
 - [#13](https://github.com/erickmaria/sunch/pull/13) Add slash command `/clear`
 - [#15](https://github.com/erickmaria/sunch/pull/15) Recreate the window when it closes
 - [#16](https://github.com/erickmaria/sunch/pull/16) Hide settings component when textarea on focus
+- [#19](https://github.com/erickmaria/sunch/pull/19) Add exit button on settings
 
 ### Fixed
 
 - [#12](https://github.com/erickmaria/sunch/pull/12) App quitting when close window
 - [#14](https://github.com/erickmaria/sunch/pull/14) Now when click keybinds `Shift+Enter` textarea will resize
+
+### Updated
+
+- chore: change windown electron to system
+- chore: add word wrap on search result
 
 ## v1.2.1 - 2024-05-09
 

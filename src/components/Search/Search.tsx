@@ -5,7 +5,7 @@ import Loading from '../Loading/Loading';
 import sunchIcon from '../../assets/icon.svg'
 import { Microphone } from '../Microphone/Microphone';
 import { MoreVertical } from 'lucide-react';
-import { Settings } from '../Settings/index';
+import { SearchSettings } from '../SearchSettings/index';
 import { useGetAnswer } from '../../hooks/useGetAnswer';
 import { SlashCommands } from '../../slash_comands/slash';
 
@@ -18,6 +18,7 @@ export default function Search() {
   const {awaiting, makeQuestion } = useGetAnswer({})
 
   const resizeTextarea = () => {
+
     if (textareaRef.current) {
       const textarea = textareaRef.current;
       textarea.style.height = 'auto';
@@ -26,9 +27,7 @@ export default function Search() {
   };
 
   useEffect(() => {
-
     resizeTextarea()
-
   }, [input])
 
   async function keyDownHandler(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -71,13 +70,13 @@ export default function Search() {
 
   return (
     <>
-      <div className='flex flex-row items-center'>
+      <div className='flex flex-row'>
         <img
-          className='search-icon absolute left-2'
+          className='draggable fixed left-2 top-2'
           style={{ width: 18, height: 18 }} src={sunchIcon} alt="sunch icon"
         />
         <textarea
-          className='search flex-1 outline-none p-1 rounded-xl pl-9 pr-14 placeholder:opacity-50'
+          className='search rounded-xl resize-none overflow-y-hidden min-h-9 border box-border flex-1 outline-none p-1 pl-9 pr-14 placeholder:opacity-50 placeholder:text-foreground'
           ref={textareaRef}
           autoFocus
           onFocus={()=> setSettings(false)}
@@ -90,16 +89,17 @@ export default function Search() {
           onKeyDown={e => keyDownHandler(e)}
         ></textarea>
         <Microphone
+        className='fixed right-8 top-2 cursor-pointer'
           lang='pt-BR'
           onErrorMessage={setValues} 
           onTranscriptData={setInput}
         />
         <MoreVertical size={20}
-          className='absolute right-2 cursor-pointer' color='var(--foreground-color)'
+          className='fixed right-2  top-2 cursor-pointer'
           onClick={() =>(settings ? setSettings(false) : setSettings(true))}
         />
       </div>
-      {settings && <Settings /> }
+      {settings && <SearchSettings setSettings={setSettings} /> }
       {awaiting ? !settings &&  <Loading /> : !settings && <Result contents={values} />}
     </>
   )

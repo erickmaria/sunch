@@ -7,9 +7,10 @@ interface MicrophoneProps {
     lang: string
     onErrorMessage: Dispatch<SetStateAction<string[]>>
     onTranscriptData: Dispatch<SetStateAction<string>>
+    className: string | undefined 
 }
 
-export function Microphone({onErrorMessage, onTranscriptData, lang }: MicrophoneProps ) {
+export function Microphone({onErrorMessage, onTranscriptData, lang, className }: MicrophoneProps ) {
     const { isListening, startRecording, stopRecording, transcript, hasError } = useSpeechRecognition({lang: lang})
 
     useEffect(()=>{
@@ -29,7 +30,7 @@ export function Microphone({onErrorMessage, onTranscriptData, lang }: Microphone
 
     return (
         <>
-            <div onClick={toogleRecording} className='absolute right-8 cursor-pointer' style={{
+            <div onClick={toogleRecording} className={className} style={{
             color: 'var(--foreground-color)'
           }}>
                 {isListening ? (

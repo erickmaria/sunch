@@ -1,43 +1,51 @@
-import { GenerativeModel, GoogleGenerativeAI, HarmBlockThreshold, HarmCategory } from "@google/generative-ai"
+import { GoogleGenerativeAI, HarmBlockThreshold, HarmCategory } from "@google/generative-ai"
 import { Service } from "./service";
 
 export default class GeminiService implements Service {
 
-    private genAI: GoogleGenerativeAI
-    private model: GenerativeModel
+    private genAI: GoogleGenerativeAI;
     chatMode: boolean;
+    private safetySettings = [
+        {
+            category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+            threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+        },
+        {
+            category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+            threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+        },
+        {
+            category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+            threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+        },
+        {
+            category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+            threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
+    ];
 
     constructor(chatMode?: boolean) {
-
         this.chatMode = <boolean>chatMode
+        this.genAI = new GoogleGenerativeAI(this.getApiKey())
+    }
 
-        const safetySettings = [
-            {
-                category: HarmCategory.HARM_CATEGORY_HARASSMENT,
-                threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-            },
-            {
-                category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-                threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-            },
-            {
-                category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-                threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-            },
-            {
-                category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-                threshold: HarmBlockThreshold.BLOCK_NONE,
-            },
-        ];
+    getApiKey(): string {
+        return window.system.store.get('models.gemini.apikey') || window.env?.SUNCH_GEMINI_API_KEY || process.env.SUNCH_GEMINI_API_KEY || ""
+    }
 
-        this.genAI = new GoogleGenerativeAI( window.system.store.get('models.gemini.apikey') ||  window.env?.SUNCH_GEMINI_API_KEY || process.env.SUNCH_GEMINI_API_KEY || "")
-
-        this.model = this.genAI.getGenerativeModel({ model: window.system.store.get('models.gemini.version'), safetySettings });
+    getModel(): string {
+        return window.system.store.get('models.gemini.version')
     }
 
     async execute(prompt: string): Promise<string> {
 
-        const result = await this.model.generateContent(prompt)
+        if (this.genAI.apiKey != this.getApiKey()) {
+            this.genAI.apiKey = this.getApiKey()
+        }
+        
+        const model = this.genAI.getGenerativeModel({ model: this.getModel(), safetySettings: this.safetySettings });
+
+        const result = await model.generateContent(prompt)
         const response = result.response;
 
         return response.text();

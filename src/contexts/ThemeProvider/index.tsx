@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useUserSettings } from "../../hooks/useUserSettings";
 
-type Themes = 'light' | 'dark' | 'auto' 
+export type Themes = 'light' | 'dark' | 'auto' 
 
 type ThemeContextValue = {
     theme: Themes | string;
@@ -13,7 +13,8 @@ interface ThemeProviderProps {
     children: React.ReactNode;
 }
 
-const ThemeContext = createContext<ThemeContextValue>({ theme: window.system.store.get('models')} as ThemeContextValue);
+const ThemeContext = createContext<ThemeContextValue>({ theme: window.system.store.get('general.theme')} as ThemeContextValue);
+
 
 const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
@@ -24,15 +25,13 @@ const ThemeProvider = ({ children }: ThemeProviderProps) => {
     const [theme, setTheme] = useState<Themes>('auto');
 
     useEffect(() => {
-
         if(getConfigValue('general.theme') == "auto"){
             setConfigValue('general.theme', 'auto')
             setTheme(getDefaultTheme())
             return
         }
-
         setTheme(getConfigValue('general.theme'));
-    }, []);
+    },[theme]);
 
     const changeThemeTo = (theme: Themes) => {
 
@@ -43,7 +42,7 @@ const ThemeProvider = ({ children }: ThemeProviderProps) => {
         }
 
         setTheme(theme);
-        setConfigValue('general.theme', theme)
+        setConfigValue('general.theme', theme as string)
     };
 
     const getCurrentTheme = (): string => {
@@ -51,9 +50,11 @@ const ThemeProvider = ({ children }: ThemeProviderProps) => {
     };
 
     return (
+        <>
         <ThemeContext.Provider value={{ theme, changeThemeTo, getCurrentTheme }}>
             {children}
         </ThemeContext.Provider>
+        </>
     );
 };
 
