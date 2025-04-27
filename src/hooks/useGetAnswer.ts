@@ -21,11 +21,11 @@ export function useGetAnswer({ chatMode }: OptionGetAnswer) {
         const svc = Array<Service>()
 
         if (genAI == 'gemini') {
-            svc.push(new GeminiService(chatMode))
+            svc.push(GeminiService.getInstance())
         } else if (genAI == 'gpt') {
-            svc.push(new GPTService(chatMode))
+            svc.push(GPTService.getInstance(chatMode))
         } else if (genAI == 'both') {
-            svc.push(new GeminiService(chatMode), new GPTService(chatMode))
+            svc.push(GeminiService.getInstance(chatMode), GPTService.getInstance(chatMode))
         } else {
             throw new Error('cant instace Generative AI service, invalid value.')
         }

@@ -17,20 +17,24 @@ import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
 import { useThemeContext, Themes } from "@/contexts/ThemeProvider";
 import { useUserSettings } from "@/hooks/useUserSettings";
+import GPTService from "@/services/GPTService";
+import GeminiService from "@/services/GeminiService";
 
 export default function Settings() {
 
   const linePageStyle: CSSProperties = {
-    backgroundColor: 'var(--background-color)',
+    backgroundColor: 'var(--background-secondary-color)',
   }
 
   const lineSelectStyle: CSSProperties = {
-    backgroundColor: 'var(--background-secondary-color)',
-    color: 'var(--foreground-color)'
+    // backgroundColor: 'var(--background-color)',
+    // color: 'var(--foreground-color)'
   }
 
   const lineSelectContextStyle: CSSProperties = {
-    backgroundColor: 'var(--background-secondary-color)',
+    // backgroundColor: 'var(--foreground-color)',
+    // color: 'var(--foreground-color)',
+    maxHeight: '300px'
   }
 
   const lineTitleStyle: CSSProperties = {
@@ -40,22 +44,41 @@ export default function Settings() {
   const { changeThemeTo, getCurrentTheme, theme } = useThemeContext();
   const { setConfigValue, getConfigValue, syncConfig } = useUserSettings()
   const [notification, setNotification] = useState<boolean>(false);
-
   const [version, setVersion] = useState<string>("");
+  const [gptModels, setGptModels] = useState<Array<string>>([]);
+  const [geminiModels, setGeminiModels] = useState<Array<string>>([]);
+
 
   useEffect(() => {
     setConfigValue('general.notification.enable', notification)
   }, [notification])
 
   useEffect(() => {
-    window.system.getAppVersion().then((v)=> {
+    window.system.getAppVersion().then((v) => {
       setVersion(v);
     })
+
+    GPTService.getInstance()
+      .listModels().then((models) => {
+        setGptModels(models)
+      }).catch((err) => {
+        setGptModels(err)
+      })
+
+    GeminiService.getInstance()
+      .listModels().then((models) => {
+        setGeminiModels(models)
+      }).catch((err) => {
+        console.log(err)
+        setGeminiModels(err)
+      })
+
   }, []);
+
 
   return (
     <>
-      <div data-theme={theme} style={linePageStyle} className="w-screen h-screen">
+      <div data-theme={theme} style={linePageStyle} className="bg-black w-screen h-screen">
         <div className="absolute z-10 right-1 mt-1 cursor-pointer">
           <X
             onClick={() => { window.system.closeWindow("settings") }}
@@ -63,7 +86,7 @@ export default function Settings() {
             className="hover:bg-red-500" />
         </div>
         <div className="fixed bottom-1 right-1 z-20">
-          <p>version: { version } </p>
+          <p>version: {version} </p>
         </div>
         <div className="draggable absolute right-8 w-[170px] h-[33px]"></div>
         <Tabs initialTabIndex={0}>
@@ -95,12 +118,12 @@ export default function Settings() {
                   <SelectValue placeholder="Lenguague" />
                 </SelectTrigger>
                 <SelectContent style={lineSelectContextStyle}>
-                  <SelectItem value="es-us">English</SelectItem>
+                  <SelectItem className="hover:" value="es-us">English</SelectItem>
                   <SelectItem value="pt-br">Portuguese</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <Separator color={'var(--background-color)'} />
+            <Separator color={'var(--background-secondary-color)'} />
             <div className=" flex items-center space-x-4 rounded-md border p-4 mt-5">
               {notification ? <MdOutlineNotificationsActive size={30} /> : <MdOutlineNotificationsOff size={30} />}
               <div className="flex-1 space-y-1">
@@ -135,7 +158,7 @@ export default function Settings() {
                 </SelectContent>
               </Select>
             </div>
-            <Separator color={'var(--background-color)'} />
+            <Separator color={'var(--background-secondary-color)'} />
             <div className=" rounded-md border p-4 mt-5">
               <div className=" flex items-center space-x-4">
                 <RiGeminiFill size={30} />
@@ -155,9 +178,12 @@ export default function Settings() {
                     <SelectValue placeholder="Gemini Version" />
                   </SelectTrigger>
                   <SelectContent style={lineSelectContextStyle}>
-                    <SelectItem value="gemini-1.5-pro">Gemini 1.5 Pro</SelectItem>
+                    {geminiModels.map((model) => {
+                      return <SelectItem value={model}>{model}</SelectItem>;
+                    })}
+                    {/* <SelectItem value="gemini-1.5-pro">Gemini 1.5 Pro</SelectItem>
                     <SelectItem value="gemini-1.5-flash">Gemini 1.5 Flash</SelectItem>
-                    <SelectItem value="gemini-1.5-flash-8b">Gemini 1.5 Flash 8B</SelectItem>
+                    <SelectItem value="gemini-1.5-flash-8b">Gemini 1.5 Flash 8B</SelectItem> */}
                   </SelectContent>
                 </Select>
               </div>
@@ -190,9 +216,9 @@ export default function Settings() {
                     <SelectValue placeholder="GPT Version" />
                   </SelectTrigger>
                   <SelectContent style={lineSelectContextStyle}>
-                    <SelectItem value="gpt-4-turbo">GPT 4 turbo</SelectItem>
-                    <SelectItem value="gpt-4o">GPT 4o</SelectItem>
-                    <SelectItem value="gpt-4o-mini">GPT 4o Mini</SelectItem>
+                    {gptModels.map((model) => {
+                      return <SelectItem value={model}>{model}</SelectItem>;
+                    })}
                   </SelectContent>
                 </Select>
               </div>

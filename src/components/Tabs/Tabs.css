@@ -16,7 +16,7 @@
 }
 
 li.active {
-  background-color: var(--background-secondary-color);
+  background-color: var(--background-color);
   color: var(--primary-text-color);
   /* border: 2px solid var(--foreground-color); */
   /* border-bottom: 2px solid var(--foreground-color); */
@@ -24,9 +24,9 @@ li.active {
 }
 
 .tab-content {
-  border: 1px solid var(--background-secondary-color);
+  border: 1px solid var(--background-color);
   padding: 20px;
   height: 100dvh;
-  background-color: var(--background-secondary-color);
+  background-color: var(--background-color);
   margin-top: -1px;
 }
