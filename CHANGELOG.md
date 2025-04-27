@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v1.3.0 - 2025-04-27
+
 ### Added
 
 - [#13](https://github.com/erickmaria/sunch/pull/13) Add slash command `/clear`
@@ -9,6 +11,7 @@
 - [#16](https://github.com/erickmaria/sunch/pull/16) Hide settings component when textarea on focus
 - [#19](https://github.com/erickmaria/sunch/pull/19) Add exit button on settings
 - [#20](https://github.com/erickmaria/sunch/pull/20) Feat auto update
+- [#21](https://github.com/erickmaria/sunch/pull/21) Load models dynamically
 
 ### Fixed
 
