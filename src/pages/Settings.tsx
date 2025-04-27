@@ -58,6 +58,11 @@ export default function Settings() {
       setVersion(v);
     })
 
+    loadModels()
+
+  }, []);
+
+  function loadModels() {
     GPTService.getInstance()
       .listModels().then((models) => {
         setGptModels(models)
@@ -73,7 +78,7 @@ export default function Settings() {
         setGeminiModels(err)
       })
 
-  }, []);
+  }
 
 
   return (
@@ -170,7 +175,7 @@ export default function Settings() {
                     Set configuration
                   </p>
                 </div>
-                <Select defaultValue={getConfigValue('models.gemini.version')}
+                <Select onOpenChange={loadModels} defaultValue={getConfigValue('models.gemini.version')}
                   onValueChange={(value) => {
                     setConfigValue('models.gemini.version', value)
                   }}>
@@ -181,9 +186,6 @@ export default function Settings() {
                     {geminiModels.map((model) => {
                       return <SelectItem value={model}>{model}</SelectItem>;
                     })}
-                    {/* <SelectItem value="gemini-1.5-pro">Gemini 1.5 Pro</SelectItem>
-                    <SelectItem value="gemini-1.5-flash">Gemini 1.5 Flash</SelectItem>
-                    <SelectItem value="gemini-1.5-flash-8b">Gemini 1.5 Flash 8B</SelectItem> */}
                   </SelectContent>
                 </Select>
               </div>
@@ -208,7 +210,7 @@ export default function Settings() {
                     Set configuration
                   </p>
                 </div>
-                <Select defaultValue={getConfigValue('models.gpt.version')}
+                <Select onOpenChange={loadModels} defaultValue={getConfigValue('models.gpt.version')}
                   onValueChange={(value) => {
                     setConfigValue('models.gpt.version', value)
                   }}>
