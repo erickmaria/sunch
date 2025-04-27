@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v1.3.0 - 2025-04-27
+
 ### Added
 
 - [#13](https://github.com/erickmaria/sunch/pull/13) Add slash command `/clear`
