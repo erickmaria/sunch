@@ -6,13 +6,22 @@ export default class GPTService implements Service {
   private genAI: OpenAI
   chatMode: boolean;
 
-  constructor(chatMode?: boolean) {
-    this.chatMode = <boolean>chatMode
+  private constructor(chatMode = false) {
+
+    this.chatMode = chatMode
 
     this.genAI = new OpenAI({
       apiKey: this.getApiKey(),
       dangerouslyAllowBrowser: true
     });
+  }
+
+  private static instance: GPTService;
+  public static getInstance(chatMode = false): GPTService {
+    if (!GPTService.instance) {
+      GPTService.instance = new GPTService(chatMode);
+    }
+    return GPTService.instance;
   }
 
   getApiKey(): string {
@@ -42,4 +51,20 @@ export default class GPTService implements Service {
 
     return completion.choices[0].message.content || ""
   }
+
+  async listModels(): Promise<Array<string>> {
+    return await this.genAI.models.list()
+      .then((response) => {
+        return response.data
+          // .filter((model) => model.id.includes("gpt"))
+          .map((model) => model.id);
+
+      })
+      .catch((error) => {
+        console.error("Error listing models:", error);
+
+        return [];
+      });
+  }
+
 }

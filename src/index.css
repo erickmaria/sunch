@@ -51,12 +51,8 @@
 
 @layer base {
     :root {
-        --background-color: #17191A;
-        --foreground-color: #BDBDBD;
-        --background-secondary-color: #292a2a;
-        --primary-text-color: #BDBDBD;
-        /* --background: 0 0% 100%; */
-        /* --foreground: 0 0% 3.9%; */
+        --background-color: #BDBDBD;
+        --foreground-color: #17191A;
         --card: 0 0% 100%;
         --card-foreground: 0 0% 3.9%;
         --popover: 0 0% 100%;
@@ -84,12 +80,8 @@
     }
 
     .dark {
-        --background-color: #BDBDBD;
-        --foreground-color: #17191A;
-        --background-secondary-color: #adadad;
-        --primary-text-color: #131314;
-        /* --background: 0 0% 3.9%; */
-        /* --foreground: 0 0% 98%; */
+        --background-color: #17191A;
+        --foreground-color: #BDBDBD;
         --card: 0 0% 3.9%;
         --card-foreground: 0 0% 98%;
         --popover: 0 0% 3.9%;

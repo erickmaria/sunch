@@ -28,7 +28,7 @@
     "start": "electron ."
   },
   "dependencies": {
-    "@google/generative-ai": "^0.2.0",
+    "@google/genai": "^0.10.0",
     "@radix-ui/react-select": "^2.1.5",
     "@radix-ui/react-switch": "^1.1.2",
     "class-variance-authority": "^0.7.1",

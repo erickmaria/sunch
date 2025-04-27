@@ -1,0 +1,70 @@
+project:
+  name: Sunch
+  version: 0.0.1
+  description: Create a environment for Sunch.
+container:
+  always-update: false
+  auto-stop: false
+  build: |
+    FROM ubuntu:22.04
+
+    ENV TZ=America/Sao_Paulo
+
+    RUN apt-get update && \
+        apt-get install \
+        openssh-server \
+        unzip \
+        nano \
+        curl \
+        wget \  
+        git \
+        sudo -y && \
+        mkdir /var/run/sshd
+
+    # RUM DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
+    RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
+
+    # INSTALL STARSHIP
+    RUN curl -sS https://starship.rs/install.sh > install.sh && \
+        sh install.sh -y && \
+        echo 'eval "$(starship init bash)"' >> ~/.bashrc && \
+        mkdir -p ~/.config && touch ~/.config/starship.toml && \
+        echo '\
+        add_newline = false\
+        ' > ~/.config/starship.toml && \
+        rm -f install.sh
+
+    # ADD USER
+    RUN groupadd -g 1001 envcontainer  && \
+        useradd -ms /bin/bash -u 1001 -g envcontainer envcontainer && \
+        echo 'envcontainer:envcontainer' | chpasswd && \
+        echo "envcontainer ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+    USER envcontainer
+
+    # ADD STARSHIP TO NON ROOT USER
+    RUN echo 'eval "$(starship init bash)"' >> ~/.bashrc && \
+        mkdir -p ~/.config && touch ~/.config/starship.toml && \
+        echo '\
+        add_newline = false\
+        ' > ~/.config/starship.toml
+
+    RUN git config --global user.email "erickmaria08@gmail.com" && \
+        git config --global user.name "Erick Maria"
+
+    RUN mkdir -p /home/envcontainer/.vscode-server
+    
+    # Start SSH server
+    CMD ["sudo", "/usr/sbin/sshd", "-D"]
+mounts:
+  - /home/erickmariarodriguesdasilva/Projects/Assistant/containers/.envcontainer/.kube:/home/envcontainer/.kube:bind
+  - /home/erickmariarodriguesdasilva/Projects/Assistant/containers/.envcontainer/.vscode-server:/home/envcontainer/.vscode-server:bind
+  - /var/run/docker.sock:/var/run/docker.sock:bind
+
+
+# Dynamically in the entrypoint script:
+# ```
+# DOCKER_GID=$(stat -c '%g' /var/run/docker.sock)
+# groupadd -for -g $DOCKER_GID docker
+# usermod -aG docker myuser
+# exec gosu myuser "$@"
+# ```

@@ -4,11 +4,11 @@ import * as SwitchPrimitives from "@radix-ui/react-switch"
 import { cn } from "@/lib/utils"
 
 const linePrimaryStyle: React.CSSProperties = {
-  backgroundColor: 'var(--background-color)',
+  backgroundColor: 'var(--background-secondary-color)',
 }
 
 const lineSecondaryStyle: React.CSSProperties = {
-  backgroundColor: 'var(--background-secondary-color)',
+  backgroundColor: 'var(--background-color)',
 }
 
 const Switch = React.forwardRef<
