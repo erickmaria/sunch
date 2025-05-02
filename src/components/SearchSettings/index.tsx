@@ -54,7 +54,7 @@ export function SearchSettings({setSettings}: SearchSettingsProps) {
                                 <Moon size={15} />
                             </label>
 
-                            <input type="radio" id="theme-switcher-radio-auto" name="theme-switcher-radio-switch" value="auto" defaultChecked={theme === 'system'} />
+                            <input type="radio" id="theme-switcher-radio-auto" name="theme-switcher-radio-switch" value="system" defaultChecked={theme === 'system'} />
                             <label onClick={() => { saveTheme('system') }} htmlFor="theme-switcher-radio-auto" aria-label="System theme">
                                 <Computer size={15} />
                             </label>

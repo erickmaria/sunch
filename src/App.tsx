@@ -4,19 +4,17 @@ import Home from './pages/Home';
 import Settings from './pages/Settings';
 import { useEffect } from 'react';
 import { Theme, useTheme } from './contexts/ThemeProvider';
-import { useUserSettings } from './hooks/useUserSettings';
 
 
 export default function App() {
 
-  // const { setTheme, theme } = useTheme()
-  // const { syncConfig } = useUserSettings();
+  const { setTheme, theme } = useTheme()
 
-
-  // useEffect(() => {
-  //   syncConfig("general.theme", theme)
-  //   setTheme(theme)
-  // }, [theme]);
+  useEffect(() => {
+    window.system.syncConfig((data) => {
+      if(data.key == "general.theme") setTheme(data.value as unknown as Theme)
+    });
+  }, [theme]);
 
   return (
     <>

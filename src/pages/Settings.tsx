@@ -23,8 +23,6 @@ import GeminiService from "@/services/GeminiService";
 export default function Settings() {
 
   const lineSelectContextStyle: CSSProperties = {
-    // backgroundColor: 'var(--foreground-color)',
-    // color: 'var(--foreground-color)',
     maxHeight: '300px'
   }
 
@@ -34,7 +32,6 @@ export default function Settings() {
   const [version, setVersion] = useState<string>("");
   const [gptModels, setGptModels] = useState<Array<string>>([]);
   const [geminiModels, setGeminiModels] = useState<Array<string>>([]);
-
 
   useEffect(() => {
     setConfigValue('general.notification.enable', notification)

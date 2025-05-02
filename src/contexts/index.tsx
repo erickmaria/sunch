@@ -7,10 +7,8 @@ interface AppProviderProps {
 
 export default function AppProvider({ children }: AppProviderProps) {
 
-  window.system.syncConfig
-
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <ThemeProvider>
         {children}
     </ThemeProvider>
   )

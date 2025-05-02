@@ -71,6 +71,7 @@
 
 // export { ThemeProvider, useThemeContext };
 
+import { useUserSettings } from "@/hooks/useUserSettings"
 import { createContext, useContext, useEffect, useState } from "react"
 
 export type Theme = "dark" | "light" | "system"
@@ -103,6 +104,9 @@ export function ThemeProvider({
         () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
     )
 
+    const { setConfigValue } = useUserSettings()
+
+
     useEffect(() => {
         const root = window.document.documentElement
 
@@ -126,6 +130,8 @@ export function ThemeProvider({
         setTheme: (theme: Theme) => {
             localStorage.setItem(storageKey, theme)
             setTheme(theme)
+            setConfigValue('general.theme', theme as string)
+
         },
     }
 
