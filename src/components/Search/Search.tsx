@@ -76,7 +76,7 @@ export default function Search() {
           style={{ width: 18, height: 18 }} src={sunchIcon} alt="sunch icon"
         />
         <textarea
-          className='search rounded-xl resize-none overflow-y-hidden min-h-9 border box-border flex-1 outline-none p-1 pl-9 pr-14 placeholder:opacity-50 placeholder:text-foreground'
+          className='search bg-background rounded-xl resize-none overflow-y-hidden min-h-9 border box-border flex-1 outline-hidden p-1 pl-9 pr-14 placeholder:opacity-50 placeholder:text-foreground'
           ref={textareaRef}
           autoFocus
           onFocus={()=> setSettings(false)}
