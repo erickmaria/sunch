@@ -111,7 +111,7 @@ export default function Settings() {
                 </SelectContent>
               </Select>
             </div>
-            <Separator color={'var(--background-secondary-color)'} />
+            <Separator color={'var(--secondary)'} />
             <div className=" flex items-center space-x-4 rounded-md border p-4 mt-5">
               {notification ? <MdOutlineNotificationsActive size={30} /> : <MdOutlineNotificationsOff size={30} />}
               <div className="flex-1 space-y-1">
@@ -146,7 +146,7 @@ export default function Settings() {
                 </SelectContent>
               </Select>
             </div>
-            <Separator color={'var(--background-secondary-color)'} />
+            <Separator color={'var(--secondary)'} />
             <div className=" rounded-md border p-4 mt-5">
               <div className=" flex items-center space-x-4">
                 <RiGeminiFill size={30} />

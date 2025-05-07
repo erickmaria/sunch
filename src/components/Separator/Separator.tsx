@@ -8,7 +8,7 @@ interface SeparatorProps {
 
 export default function  Separator({ color, margin, thickness }: SeparatorProps) {
   const lineStyle: CSSProperties = {
-    backgroundColor: color  || 'var(--background-secondary-color)',
+    backgroundColor: color  || 'var(--secondary)',
     height: thickness || '1px',
     margin: margin || '5px'
   }
@@ -17,3 +17,4 @@ export default function  Separator({ color, margin, thickness }: SeparatorProps)
     <div style={lineStyle} ></div>
   )
 }
+  

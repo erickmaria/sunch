@@ -1,5 +1,4 @@
 .result {
-    background-color: transparent;
     padding: 1px;
     margin: 1px auto;
     border-radius: 8px;
@@ -23,7 +22,6 @@
 }
 
 .result-panel {
-    background-color: var(--background);
     overflow: auto;
     height: 100%;
     border-radius: 8px;
