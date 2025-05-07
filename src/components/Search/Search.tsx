@@ -68,18 +68,6 @@ export default function Search() {
 
   }
 
-  const resultFromLLM = `
-    # Summary
-    This is a generated result.
-    
-    ## Code Example
-    \`\`\`typescript
-    const greet = (name: string) => {
-      return \`Hello, \${name}!\`;
-    }
-    \`\`\`
-    `;
-
   return (
     <>
       <div className='flex flex-row'>
@@ -112,7 +100,7 @@ export default function Search() {
         />
       </div>
       {settings && <SearchSettings setSettings={setSettings} /> }
-      {awaiting ? !settings &&  <Loading /> : !settings && <Result contents={[resultFromLLM]} />}
+      {awaiting ? !settings &&  <Loading /> : !settings && <Result contents={values} />}
     </>
   )
 }

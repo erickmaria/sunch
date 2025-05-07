@@ -135,7 +135,7 @@ export default function Settings() {
                 onValueChange={(value) => {
                   setConfigValue('models.current', value)
                   syncConfig('models.current', value as string)
-                }}> 
+                }}>
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Model" />
                 </SelectTrigger>
@@ -176,9 +176,12 @@ export default function Settings() {
                 <p className="pl-2 text-sm text-muted-foreground">
                   Api Key
                 </p>
-                <Input defaultValue={getConfigValue("models.gemini.apikey")} type="password" className="w-[500px]" onChange={(e) => {
-                  setConfigValue('models.gemini.apikey', e.target.value)
-                }} />
+                <Input defaultValue={getConfigValue("models.gemini.apikey")}
+                  type="password"
+                  placeholder="provide your API key"
+                  className="w-[500px] placeholder:text-xs placeholder:opacity-20" onChange={(e) => {
+                    setConfigValue('models.gemini.apikey', e.target.value)
+                  }} />
               </div>
             </div>
 
@@ -213,7 +216,9 @@ export default function Settings() {
                 </p>
                 <Input
                   defaultValue={getConfigValue("models.gpt.apikey")}
-                  type="password" className="w-[500px]" onChange={(e) => {
+                  type="password"
+                  placeholder="provide your API key"
+                  className="w-[500px] placeholder:text-xs placeholder:opacity-20" onChange={(e) => {
                     setConfigValue('models.gpt.apikey', e.target.value)
                   }} />
               </div>
