@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { ThemeProvider } from './ThemeProvider';
 
 interface AppProviderProps {
