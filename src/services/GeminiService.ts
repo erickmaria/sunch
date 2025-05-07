@@ -114,7 +114,7 @@ export default class GeminiService implements Service {
         // const result = await model.generateContent(prompt)
         // const response = result.response;
 
-        return Promise.resolve(response.text!);
+        return Promise.resolve(response.text || '');
     }
 
 
@@ -124,7 +124,7 @@ export default class GeminiService implements Service {
             .then(data => {
                 
                if (data instanceof Object){
-                 if (data.hasOwnProperty('error')){
+                 if (Object.prototype.hasOwnProperty.call(data, 'error')){
                     return [];
                  }
                }
