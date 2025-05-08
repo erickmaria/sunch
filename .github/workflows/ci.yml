@@ -178,5 +178,5 @@ jobs:
           ## Release version: ${{ needs.release.outputs.project_version }}
           #### Releases:
             - windows: ${{ fromJson(needs.read.outputs.result).artifact-url.windows-latest }}
-            - ubuntu: BBBBBBBBBBB
-            - macos: CCCCCCCCCC
+            - ubuntu: ${{ fromJson(needs.read.outputs.result).artifact-url.ubuntu-latest }}
+            - macos: ${{ fromJson(needs.read.outputs.result).artifact-url.macos-latest }}
