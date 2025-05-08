@@ -145,10 +145,10 @@ jobs:
       - uses: cloudposse/github-action-matrix-outputs-write@v1
         id: out
         with:
-          matrix-step-name: ${{ github.job }}
+          matrix-step-name: releases
           matrix-key: ${{ matrix.os }}
           outputs: |-
-            artifact-url: "sadfasdfasdfasdfasdf"
+            artifact-url: ${{ steps.gerenate_test_release_artifacts.outputs.artifact-url }}
   read:
     runs-on: ubuntu-latest
     needs: 
@@ -157,23 +157,23 @@ jobs:
       - uses: cloudposse/github-action-matrix-outputs-read@v1
         id: read
         with:
-          matrix-step-name: release
-  #   outputs:
-  #     result: "${{ steps.read.outputs.result }}"
+          matrix-step-name: releases
+    outputs:
+      result: "${{ steps.read.outputs.result }}"
   
-  # publish:
-  #   if: github.event_name == 'pull_request'
-  #   name: Publish Releases on Comment PR
-  #   runs-on: ubuntu-latest
-  #   needs:
-  #     - read
-  #   steps:
-  #   - name: List releases
-  #     run: echo  ${{ fromJson(needs.read.outputs.result) }}
-  #   # - name: Comment PR
-  #   #   uses: thollander/actions-comment-pull-request@v3
-  #   #   message: |
-  #   #         Hello world ! :wave:
+  publish:
+    if: github.event_name == 'pull_request'
+    name: Publish Releases on Comment PR
+    runs-on: ubuntu-latest
+    needs:
+      - read
+    steps:
+    - name: List releases
+      run: echo  ${{ fromJson(needs.read.outputs.result) }}
+    # - name: Comment PR
+    #   uses: thollander/actions-comment-pull-request@v3
+    #   message: |
+    #         Hello world ! :wave:
 
 
       
