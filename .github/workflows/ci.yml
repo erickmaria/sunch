@@ -167,8 +167,10 @@ jobs:
       - read
       - release
     steps:
-    # - name: List releases
-    #   run: echo  ${{ toJson(needs.read.outputs) }}
+    - name: List releases
+      run: |
+        echo "${{ toJson(needs.read.outputs) }}"
+        echo "${{ toJson(needs.release.outputs) }}"
     - name: Comment PR
       uses: thollander/actions-comment-pull-request@v3
       with:
