@@ -21,7 +21,7 @@ export const userSettingsSchema = {
 			}
 		},
 		default: {
-			theme: 'auto',
+			theme: 'system',
 			language: 'es-us'	
 		},
 	},

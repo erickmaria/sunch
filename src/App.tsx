@@ -1,29 +1,28 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 import './App.css'
-import { Themes, useThemeContext } from './contexts/ThemeProvider'
 import Home from './pages/Home';
 import Settings from './pages/Settings';
 import { useEffect } from 'react';
+import { Theme, useTheme } from './contexts/ThemeProvider';
 
 
 export default function App() {
 
-  const { changeThemeTo, theme } = useThemeContext()
+  const { setTheme, theme } = useTheme()
 
   useEffect(() => {
     window.system.syncConfig((data) => {
-      changeThemeTo(data as unknown as Themes)
+      if(data.key == "general.theme") setTheme(data.value as unknown as Theme)
     });
   }, [theme]);
 
   return (
     <>
-      {/* <div data-theme={theme} className='transition-opacity duration-500 ease-out opacity-60 hover:transition-opacity hover:ease-out hover:duration-500 hover:opacity-100' > */}
-      <div data-theme={theme}>
+      <div>
         <BrowserRouter>
           <Routes>
             <Route index path="/" element={<Home />} />
-            <Route path="/settings" element={<Settings/>} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </BrowserRouter>
       </div>

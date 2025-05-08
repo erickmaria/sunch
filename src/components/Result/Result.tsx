@@ -11,7 +11,7 @@ export default function Result({ contents }: ResultProps) {
   if (contents.length > 0) {
     return (
       <>
-        <div className='result' style={ (contents.length > 1) ? { backgroundColor: 'var(--background-secondary-color)' } : { backgroundColor: 'var(--background-color)' }  } >
+        <div className='result bg-background' >
           <PanelGroup direction="horizontal" >
               {contents.map((content, index) => (
                 <>

@@ -1,5 +1,6 @@
 .tabs {
   display: flex;
+  /* background-color: var(--background); */
   list-style: none;
   padding: 0;
   margin: 0;
@@ -9,24 +10,21 @@
 .tabs li {
   padding: 5px 20px;
   cursor: pointer;
-  color: var(--primary-text-color);
   /* border: 1px solid transparent; */
   border-radius: 5px 5px 0 0;
   margin-right: 5px;
 }
 
-li.active {
-  background-color: var(--background-color);
-  color: var(--primary-text-color);
-  /* border: 2px solid var(--foreground-color); */
-  /* border-bottom: 2px solid var(--foreground-color); */
+li:not(.active) {
+  background-color: var(--color-secondary);
+  /* border: 2px solid var(--foreground);
+  border-bottom: 2px solid var(--foreground); */
   font-weight: 500;
 }
 
 .tab-content {
-  border: 1px solid var(--background-color);
+  border: 1px solid transparent;
   padding: 20px;
   height: 100dvh;
-  background-color: var(--background-color);
   margin-top: -1px;
 }

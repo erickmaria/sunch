@@ -1,5 +1,5 @@
 import { Computer, Moon, Sun, LogOut } from 'lucide-react'
-import { Themes, useThemeContext } from '../../contexts/ThemeProvider'
+import { useTheme, Theme } from '../../contexts/ThemeProvider'
 import { SettingsActions } from './SettingsActions'
 import { SettingsIcon } from './SettingsIcon'
 import { SettingsOptions } from './SettingsOptions'
@@ -23,12 +23,12 @@ interface SearchSettingsProps{
 
 export function SearchSettings({setSettings}: SearchSettingsProps) {
 
-    const { changeThemeTo, getCurrentTheme } = useThemeContext();
+    const { setTheme, theme } = useTheme();
     const { getConfigValue, setConfigValue, syncConfig } = useUserSettings();
 
-    function setTheme(value: string){
-        changeThemeTo(value as Themes)
-        syncConfig("general.theme", value)
+    function saveTheme(theme: Theme){
+        setTheme(theme)
+        syncConfig("general.theme", theme)
     }
 
     function setAIModel(value: string){
@@ -44,18 +44,18 @@ export function SearchSettings({setSettings}: SearchSettingsProps) {
                     <SettingsContent.Action>
                         <div className="setting-options-switch-field setting-options-switch-size">
 
-                            <input type="radio" id="theme-switcher-radio-light" name="theme-switcher-radio-switch" value="light" defaultChecked={getCurrentTheme() === 'light'} />
-                            <label onClick={() => { setTheme('light') }} htmlFor="theme-switcher-radio-light" aria-label="Light theme">
+                            <input type="radio" id="theme-switcher-radio-light" name="theme-switcher-radio-switch" value="light" defaultChecked={theme === 'light'} />
+                            <label onClick={() => { saveTheme('light') }} htmlFor="theme-switcher-radio-light" aria-label="Light theme">
                                 <Sun size={15} />
                             </label>
 
-                            <input type="radio" id="theme-switcher-radio-dark" name="theme-switcher-radio-switch" value="dark" defaultChecked={getCurrentTheme() === 'dark'} />
-                            <label onClick={() => { setTheme('dark') }} htmlFor="theme-switcher-radio-dark" aria-label="Dark theme">
+                            <input type="radio" id="theme-switcher-radio-dark" name="theme-switcher-radio-switch" value="dark" defaultChecked={theme === 'dark'} />
+                            <label onClick={() => { saveTheme('dark') }} htmlFor="theme-switcher-radio-dark" aria-label="Dark theme">
                                 <Moon size={15} />
                             </label>
 
-                            <input type="radio" id="theme-switcher-radio-auto" name="theme-switcher-radio-switch" value="auto" defaultChecked={getCurrentTheme() === 'auto'} />
-                            <label onClick={() => { setTheme('auto') }} htmlFor="theme-switcher-radio-auto" aria-label="System theme">
+                            <input type="radio" id="theme-switcher-radio-auto" name="theme-switcher-radio-switch" value="system" defaultChecked={theme === 'system'} />
+                            <label onClick={() => { saveTheme('system') }} htmlFor="theme-switcher-radio-auto" aria-label="System theme">
                                 <Computer size={15} />
                             </label>
 

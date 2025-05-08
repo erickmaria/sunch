@@ -15,39 +15,23 @@ import { RiGeminiFill } from "react-icons/ri";
 import Separator from "@/components/Separator/Separator";
 import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
-import { useThemeContext, Themes } from "@/contexts/ThemeProvider";
+import { Theme, useTheme } from "@/contexts/ThemeProvider";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import GPTService from "@/services/GPTService";
 import GeminiService from "@/services/GeminiService";
 
 export default function Settings() {
 
-  const linePageStyle: CSSProperties = {
-    backgroundColor: 'var(--background-secondary-color)',
-  }
-
-  const lineSelectStyle: CSSProperties = {
-    // backgroundColor: 'var(--background-color)',
-    // color: 'var(--foreground-color)'
-  }
-
   const lineSelectContextStyle: CSSProperties = {
-    // backgroundColor: 'var(--foreground-color)',
-    // color: 'var(--foreground-color)',
     maxHeight: '300px'
   }
 
-  const lineTitleStyle: CSSProperties = {
-    color: 'var(--primary-text-color)'
-  }
-
-  const { changeThemeTo, getCurrentTheme, theme } = useThemeContext();
+  const { setTheme, theme } = useTheme();
   const { setConfigValue, getConfigValue, syncConfig } = useUserSettings()
   const [notification, setNotification] = useState<boolean>(false);
   const [version, setVersion] = useState<string>("");
   const [gptModels, setGptModels] = useState<Array<string>>([]);
   const [geminiModels, setGeminiModels] = useState<Array<string>>([]);
-
 
   useEffect(() => {
     setConfigValue('general.notification.enable', notification)
@@ -83,43 +67,42 @@ export default function Settings() {
 
   return (
     <>
-      <div data-theme={theme} style={linePageStyle} className="bg-black w-screen h-screen">
+      <div data-theme={theme} className="bg-background w-screen h-screen">
         <div className="absolute z-10 right-1 mt-1 cursor-pointer">
           <X
             onClick={() => { window.system.closeWindow("settings") }}
-            style={lineTitleStyle}
             className="hover:bg-red-500" />
         </div>
         <div className="fixed bottom-1 right-1 z-20">
           <p>version: {version} </p>
         </div>
-        <div className="draggable absolute right-8 w-[170px] h-[33px]"></div>
+        <div className="bg-secondary draggable absolute right-8 w-[170px] h-[33px]"></div>
         <Tabs initialTabIndex={0}>
           <Tab label="General">
             <div className="flex justify-between  mt-5 mb-5">
-              <h1 style={lineTitleStyle} className="text-lg text-border">Themes</h1>
-              <Select value={getCurrentTheme()}
-                onValueChange={(value) => {
-                  changeThemeTo(value as Themes)
-                  syncConfig('general.theme', value as string)
+              <h1 className="text-lg">Themes</h1>
+              <Select value={theme}
+                onValueChange={(value: Theme) => {
+                  setTheme(value)
+                  syncConfig('general.theme', value)
                 }} >
-                <SelectTrigger style={lineSelectStyle} className="w-[200px]">
+                <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Theme" />
                 </SelectTrigger>
                 <SelectContent style={lineSelectContextStyle}>
                   <SelectItem value="light">Light</SelectItem>
                   <SelectItem value="dark">Dark</SelectItem>
-                  <SelectItem value="auto">System</SelectItem>
+                  <SelectItem value="system">System</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="flex justify-between mt-5 mb-5">
-              <h1 style={lineTitleStyle} className="text-lg text-border">Lenguague</h1>
+              <h1 className="text-lg">Lenguague</h1>
               <Select defaultValue={getConfigValue('general.language')}
                 onValueChange={(value) => {
                   setConfigValue('general.language', value)
                 }}>
-                <SelectTrigger style={lineSelectStyle} className="w-[200px]">
+                <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Lenguague" />
                 </SelectTrigger>
                 <SelectContent style={lineSelectContextStyle}>
@@ -128,7 +111,7 @@ export default function Settings() {
                 </SelectContent>
               </Select>
             </div>
-            <Separator color={'var(--background-secondary-color)'} />
+            <Separator color={'var(--secondary)'} />
             <div className=" flex items-center space-x-4 rounded-md border p-4 mt-5">
               {notification ? <MdOutlineNotificationsActive size={30} /> : <MdOutlineNotificationsOff size={30} />}
               <div className="flex-1 space-y-1">
@@ -147,13 +130,13 @@ export default function Settings() {
           </Tab>
           <Tab label="Models">
             <div className="flex justify-between mt-5 mb-5">
-              <h1 style={lineTitleStyle} className="text-lg text-border">Select Model</h1>
+              <h1 className="text-lg">Select Model</h1>
               <Select value={getConfigValue('models.current')}
                 onValueChange={(value) => {
                   setConfigValue('models.current', value)
                   syncConfig('models.current', value as string)
                 }}>
-                <SelectTrigger style={lineSelectStyle} className="w-[200px]">
+                <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Model" />
                 </SelectTrigger>
                 <SelectContent style={lineSelectContextStyle}>
@@ -163,7 +146,7 @@ export default function Settings() {
                 </SelectContent>
               </Select>
             </div>
-            <Separator color={'var(--background-secondary-color)'} />
+            <Separator color={'var(--secondary)'} />
             <div className=" rounded-md border p-4 mt-5">
               <div className=" flex items-center space-x-4">
                 <RiGeminiFill size={30} />
@@ -179,7 +162,7 @@ export default function Settings() {
                   onValueChange={(value) => {
                     setConfigValue('models.gemini.version', value)
                   }}>
-                  <SelectTrigger style={lineSelectStyle} className="w-[200px]">
+                  <SelectTrigger className="w-[200px]">
                     <SelectValue placeholder="Gemini Version" />
                   </SelectTrigger>
                   <SelectContent style={lineSelectContextStyle}>
@@ -193,9 +176,12 @@ export default function Settings() {
                 <p className="pl-2 text-sm text-muted-foreground">
                   Api Key
                 </p>
-                <Input defaultValue={getConfigValue("models.gemini.apikey")} type="password" className="w-[500px]" onChange={(e) => {
-                  setConfigValue('models.gemini.apikey', e.target.value)
-                }} />
+                <Input defaultValue={getConfigValue("models.gemini.apikey")}
+                  type="password"
+                  placeholder="provide your API key"
+                  className="w-[500px] placeholder:text-xs placeholder:opacity-20" onChange={(e) => {
+                    setConfigValue('models.gemini.apikey', e.target.value)
+                  }} />
               </div>
             </div>
 
@@ -214,7 +200,7 @@ export default function Settings() {
                   onValueChange={(value) => {
                     setConfigValue('models.gpt.version', value)
                   }}>
-                  <SelectTrigger style={lineSelectStyle} className="w-[200px]">
+                  <SelectTrigger className="w-[200px]">
                     <SelectValue placeholder="GPT Version" />
                   </SelectTrigger>
                   <SelectContent style={lineSelectContextStyle}>
@@ -230,7 +216,9 @@ export default function Settings() {
                 </p>
                 <Input
                   defaultValue={getConfigValue("models.gpt.apikey")}
-                  type="password" className="w-[500px]" onChange={(e) => {
+                  type="password"
+                  placeholder="provide your API key"
+                  className="w-[500px] placeholder:text-xs placeholder:opacity-20" onChange={(e) => {
                     setConfigValue('models.gpt.apikey', e.target.value)
                   }} />
               </div>

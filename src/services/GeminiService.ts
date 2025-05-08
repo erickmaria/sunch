@@ -114,7 +114,7 @@ export default class GeminiService implements Service {
         // const result = await model.generateContent(prompt)
         // const response = result.response;
 
-        return Promise.resolve(response.text!);
+        return Promise.resolve(response.text || '');
     }
 
 
@@ -122,6 +122,12 @@ export default class GeminiService implements Service {
         return await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${this.getApiKey()}`)
             .then(response => response.json())
             .then(data => {
+                
+               if (data instanceof Object){
+                 if (Object.prototype.hasOwnProperty.call(data, 'error')){
+                    return [];
+                 }
+               }
                 return (data.models as Array<any>).map((model) => (model.name as string).replaceAll('models/', ''))
             })
             .catch(error => { return error });
