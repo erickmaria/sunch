@@ -175,8 +175,8 @@ jobs:
       uses: thollander/actions-comment-pull-request@v3
       with:
         message: |
-          ## Release version: "${{ needs.release.outputs.project_version }}"
+          ## Release version: ${{ needs.release.outputs.project_version }}
           #### Releases:
-            - windows: AAAAAAAAAAAA
+            - windows: ${{ fromJson(needs.read.outputs.result).artifact-url.windows-latest }}
             - ubuntu: BBBBBBBBBBB
             - macos: CCCCCCCCCC
