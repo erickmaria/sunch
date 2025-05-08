@@ -27,6 +27,7 @@ jobs:
             echo "Changelog needs to be updated."
             exit 1
           fi
+  
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -138,18 +139,33 @@ jobs:
             ./releases/${{ steps.get_project_version.outputs.project_version }}/*.dmg
             ./releases/${{ steps.get_project_version.outputs.project_version }}/*.deb
       
-      # - name:  Append Release to publish file
-      #   run: echo ${{steps.gerenate_test_release_artifacts.outputs.artifact-url}} > publish.txt
-
+      - uses: cloudposse/github-action-matrix-outputs-write@v1
+        id: out
+        with:
+          matrix-step-name: ${{ github.job }}
+          matrix-key: ${{ matrix.platform }}
+          outputs: |-
+            image: ${{ steps.build.outputs.image }}:${{ steps.build.outputs.tag }}
+  read:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: cloudposse/github-action-matrix-outputs-read@v1
+        id: read
+        with:
+          matrix-step-name: release
+    outputs:
+      result: "${{ steps.read.outputs.result }}"
+  
   publish:
     if: github.event_name == 'pull_request'
     name: Publish Releases on Comment PR
     runs-on: ubuntu-latest
     needs:
-      - release
+      - read
     steps:
     - name: List releases
-      run: echo ${{ needs.release.outputs.release_artifacts }}
+      run: echo  ${{ fromJson(needs.read.outputs.result) }}
     # - name: Comment PR
     #   uses: thollander/actions-comment-pull-request@v3
     #   message: |
