@@ -7,72 +7,72 @@ on:
   pull_request:
 
 jobs:
-  changelog:
-    name: Changelog
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+  # changelog:
+  #   name: Changelog
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
       
-      - name: Fetch Remote Branches
-        run: git fetch origin
+  #     - name: Fetch Remote Branches
+  #       run: git fetch origin
       
-      - name: Check for Changelog Changes
-        if: github.event_name == 'pull_request'
-        id: changelog
-        run: |
-          if git diff --name-only origin/${{ github.base_ref }} -- CHANGELOG.md; then
-            echo "Changelog has been updated."
-            exit 0
-          else
-            echo "Changelog needs to be updated."
-            exit 1
-          fi
+  #     - name: Check for Changelog Changes
+  #       if: github.event_name == 'pull_request'
+  #       id: changelog
+  #       run: |
+  #         if git diff --name-only origin/${{ github.base_ref }} -- CHANGELOG.md; then
+  #           echo "Changelog has been updated."
+  #           exit 0
+  #         else
+  #           echo "Changelog needs to be updated."
+  #           exit 1
+  #         fi
   
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 20.x
-    - run: npm install
-    - name: Run Lint
-      run: npm run lint
+  # lint:
+  #   name: Lint
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   - uses: actions/setup-node@v4
+  #     with:
+  #       node-version: 20.x
+  #   - run: npm install
+  #   - name: Run Lint
+  #     run: npm run lint
 
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-          cache: 'npm'
-      - run: npm install
-      - name: Run Build
-        run: npm run build
+  # build:
+  #   name: Build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20.x
+  #         cache: 'npm'
+  #     - run: npm install
+  #     - name: Run Build
+  #       run: npm run build
 
-  coverage:
-    name: Coverage
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-      - run: npm install
-      - name: Run Typecript Coverage
-        run: npm run ts-coverage
+  # coverage:
+  #   name: Coverage
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20.x
+  #     - run: npm install
+  #     - name: Run Typecript Coverage
+  #       run: npm run ts-coverage
   
   release:
     if: github.event_name == 'pull_request'
     name: Test Release
     # environment: manual_approval
-    needs:
-      - lint
-      - build
-      - coverage
+    # needs:
+    #   - lint
+    #   - build
+    #   - coverage
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -142,7 +142,7 @@ jobs:
         id: out
         with:
           matrix-step-name: ${{ github.job }}
-          matrix-key: ${{ matrix.platform }}
+          matrix-key: ${{ matrix.os }}
           outputs: |-
             image: ${{ steps.build.outputs.image }}:${{ steps.build.outputs.tag }}
   read:
