@@ -80,7 +80,7 @@ jobs:
     outputs:
       project_version: ${{ steps.get_project_version.outputs.project_version }}
       project_platform: ${{ steps.get_project_version.outputs.project_platform }}
-      artifact_url: ${{ steps.gerenate_test_release_artifacts.outputs.artifact-url }}
+      # artifact_url: ${{ steps.gerenate_test_release_artifacts.outputs.artifact-url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -142,26 +142,24 @@ jobs:
       # - name: Show Generate Output
       #   run: echo ${{ steps.gerenate_test_release_artifacts.outputs }}
 
-      # - uses: cloudposse/github-action-matrix-outputs-write@v1
-      #   id: out
-      #   with:
-      #     matrix-step-name: ${{ github.job }}
-      #     matrix-key: ${{ matrix.os }}
-      #     outputs: |-
-      #       artifact-url: ${{ steps.gerenate_test_release_artifacts.outputs.artifact-url }}
+      - uses: cloudposse/github-action-matrix-outputs-write@v1
+        id: out
+        with:
+          matrix-step-name: ${{ github.job }}
+          matrix-key: ${{ matrix.os }}
+          outputs: |-
+            artifact-url: "sadfasdfasdfasdfasdf"
   read:
     runs-on: ubuntu-latest
     needs: 
       - release
     steps:
-      - name: Show Generate Output
-        run: echo ${{ toJson(needs.release.outputs) }}
-  #     - uses: cloudposse/github-action-matrix-outputs-read@v1
-  #       id: read
-  #       with:
-  #         matrix-step-name: release
-  # #   outputs:
-  # #     result: "${{ steps.read.outputs.result }}"
+      - uses: cloudposse/github-action-matrix-outputs-read@v1
+        id: read
+        with:
+          matrix-step-name: release
+  #   outputs:
+  #     result: "${{ steps.read.outputs.result }}"
   
   # publish:
   #   if: github.event_name == 'pull_request'
