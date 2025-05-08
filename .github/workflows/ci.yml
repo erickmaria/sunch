@@ -53,7 +53,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: release-artifacts-sunch-v${{ steps.get_project_version.outputs.project_version }}-${{ steps.get_project_version.outputs.project_platform }}
-        retention-days: 5
+        retention-days: 1
         path: |
           ./release/${{ steps.get_project_version.outputs.project_version }}/*.exe
           ./release/${{ steps.get_project_version.outputs.project_version }}/*.dmg
@@ -68,8 +68,8 @@ jobs:
     - name: Download artifacts
       uses: actions/download-artifact@v4
       with:
-        pattern: release-artifacts-sunch-v${{ needs.build.outputs.project_version }}
-        # merge-multiple: true
+        pattern: release-artifacts-sunch-v${{ needs.build.outputs.project_version }}-*
+        merge-multiple: true
         # path: releases/
     
     - name: Display structure of downloaded files
