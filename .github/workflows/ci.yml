@@ -10,7 +10,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
     outputs:
@@ -37,17 +37,17 @@ jobs:
         echo "project_platform=$(node -e 'console.log(process.platform)')" >> "$GITHUB_OUTPUT"
         echo "project_platform=$(node -e 'console.log(process.platform)')" >> $ENV:GITHUB_OUTPUT
 
-    # - if: matrix.os == 'ubuntu-latest'
-    #   name: Build ${{ matrix.os }}
-    #   run: npm run build:linux
+    - if: matrix.os == 'ubuntu-latest'
+      name: Build ${{ matrix.os }}
+      run: npm run build:linux
 
     # - if: matrix.os == 'windows-latest'
     #   name: Build ${{ matrix.os }}
     #   run: npm run build:windows
 
-    - if: matrix.os == 'macos-latest'
-      name: Build ${{ matrix.os }}
-      run: npm run build:macos
+    # - if: matrix.os == 'macos-latest'
+    #   name: Build ${{ matrix.os }}
+    #   run: npm run build:macos
 
     - name: Archive artifacts
       uses: actions/upload-artifact@v4
@@ -69,11 +69,11 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         pattern: release-artifacts-sunch-v${{ needs.build.outputs.project_version }}
-        merge-multiple: true
-        path: ./release
+        # merge-multiple: true
+        # path: releases/
     
-    - name: Show releases
-      run: tree
+    - name: Display structure of downloaded files
+      run: ls -R
     
     # - name: Upload Release Asset 
     #   uses: softprops/action-gh-release@v2
