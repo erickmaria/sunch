@@ -80,7 +80,6 @@ jobs:
     outputs:
       project_version: ${{ steps.get_project_version.outputs.project_version }}
       project_platform: ${{ steps.get_project_version.outputs.project_platform }}
-      # artifact_url: ${{ steps.gerenate_test_release_artifacts.outputs.artifact-url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -138,9 +137,6 @@ jobs:
             ./release/${{ steps.get_project_version.outputs.project_version }}/*.exe
             ./release/${{ steps.get_project_version.outputs.project_version }}/*.dmg
             ./release/${{ steps.get_project_version.outputs.project_version }}/*.deb
-      
-      # - name: Show Generate Output
-      #   run: echo ${{ steps.gerenate_test_release_artifacts.outputs }}
 
       - uses: cloudposse/github-action-matrix-outputs-write@v1
         id: out
@@ -160,6 +156,8 @@ jobs:
           matrix-step-name: releases
     outputs:
       result: "${{ steps.read.outputs.result }}"
+      # project_version: "${{ needs.release.outputs.project_version }}"
+
   
   publish:
     if: github.event_name == 'pull_request'
@@ -167,14 +165,19 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - read
+      - release
     steps:
     - name: List releases
-      run: echo  ${{ toJson(needs.read.outputs.result) }}
+      run: echo  ${{ toJson(needs.read.outputs) }}
     - name: Comment PR
       uses: thollander/actions-comment-pull-request@v3
       with:
         message: |
-          releases: ${{ toJson(needs.read.outputs.result) }}
+          ## Release version: ${{ needs.release.outputs.project_version }}
+          #### Releases:
+            - windows: ${{ fromJson(fromJson(needs.read.outputs.result).artifact-url).windows-latest }}
+            - ubuntu: ${{ fromJson(fromJson(needs.read.outputs.result).artifact-url).ubuntu-latest }}
+            - macos: ${{ fromJson(fromJson(needs.read.outputs.result).artifact-url).macos-latest }}
 
 
       
