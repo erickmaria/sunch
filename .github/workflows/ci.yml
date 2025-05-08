@@ -80,7 +80,6 @@ jobs:
     outputs:
       project_version: ${{ steps.get_project_version.outputs.project_version }}
       project_platform: ${{ steps.get_project_version.outputs.project_platform }}
-      release_artifacts: ${{ steps.gerenate_test_release_artifacts.outputs.artifact-url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -148,7 +147,8 @@ jobs:
             image: ${{ steps.build.outputs.image }}:${{ steps.build.outputs.tag }}
   read:
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: 
+      - release
     steps:
       - uses: cloudposse/github-action-matrix-outputs-read@v1
         id: read
