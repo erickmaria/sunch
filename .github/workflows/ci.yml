@@ -138,13 +138,16 @@ jobs:
             ./releases/${{ steps.get_project_version.outputs.project_version }}/*.dmg
             ./releases/${{ steps.get_project_version.outputs.project_version }}/*.deb
       
+      - name: Show Generate Output
+        run: echo ${{ fromJson(steps.gerenate_test_release_artifacts.outputs) }}
+
       - uses: cloudposse/github-action-matrix-outputs-write@v1
         id: out
         with:
           matrix-step-name: ${{ github.job }}
           matrix-key: ${{ matrix.os }}
           outputs: |-
-            artifact-url: "${{ steps.gerenate_test_release_artifacts.outputs.artifact-url }}"
+            url: "${{ steps.gerenate_test_release_artifacts.outputs.artifact-url }}"
   read:
     runs-on: ubuntu-latest
     needs: 
