@@ -7,150 +7,215 @@ on:
   pull_request:
 
 jobs:
-  changelog:
-    if: github.event_name == 'pull_request'
-    name: Changelog
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Fetch Remote Branches
-        run: git fetch origin
-      
-      - name: Check for Changelog Changes
-        id: changelog
-        run: |
-          if git diff --name-only origin/${{ github.base_ref }} -- CHANGELOG.md; then
-            echo "Changelog has been updated."
-            exit 0
-          else
-            echo "Changelog needs to be updated."
-            exit 1
-          fi
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 20.x
-    - run: npm install
-    - name: Run Lint
-      run: npm run lint
-
   build:
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-          cache: 'npm'
-      - run: npm install
-      - name: Run Build
-        run: npm run build
-
-  coverage:
-    name: Coverage
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-      - run: npm install
-      - name: Run Typecript Coverage
-        run: npm run ts-coverage
-  
-  test-release:
-    if: github.event_name == 'pull_request'
-    name: Test Release
-    # environment: manual_approval
-    needs:
-      - lint
-      - build
-      - coverage
+    if: startsWith(github.event.pull_request.title, 'Release:')
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+
     runs-on: ${{ matrix.os }}
     outputs:
       project_version: ${{ steps.get_project_version.outputs.project_version }}
       project_platform: ${{ steps.get_project_version.outputs.project_platform }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run:  npm install
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
 
-      - if: matrix.os == 'windows-latest'
-        name: Create Test Version ${{ matrix.os }}
-        run: |
-          $currentDate = Get-Date -Format "yyyyMMddfffffff"
-          $version = npm pkg get version | ForEach-Object { $_.Replace('"', '') }
-          $prNumber = ${{ github.event.pull_request.number  }}
-          $newVersion = "${version}-pr-${prNumber}-${currentDate}"
-          npm version $newVersion --no-git-tag-version
+    - name: Install dependencies
+      run:
+        npm install
 
-      - if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
-        name: Create Test Version ${{ matrix.os }}
-        run: |
-          current_date=$(date +'%Y%m%d%s')
-          version=$(npm pkg get version | xargs)
-          newversion=${version}-pr-${{ github.event.pull_request.number  }}-${current_date}
-          npm version ${newversion} --no-git-tag-version
+    - name: Get project version (using package.json)
+      id: get_project_version
+      run: |
+        echo "project_version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+        echo "project_version=$(node -p "require('./package.json').version")" >> $ENV:GITHUB_OUTPUT
+        echo "project_platform=$(node -e 'console.log(process.platform)')" >> "$GITHUB_OUTPUT"
+        echo "project_platform=$(node -e 'console.log(process.platform)')" >> $ENV:GITHUB_OUTPUT
 
-      - name: Get project version (using package.json)
-        id: get_project_version
-        run: |
-          echo "project_version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
-          echo "project_version=$(node -p "require('./package.json').version")" >> $ENV:GITHUB_OUTPUT
-          echo "project_platform=$(node -e 'console.log(process.platform)')" >> "$GITHUB_OUTPUT"
-          echo "project_platform=$(node -e 'console.log(process.platform)')" >> $ENV:GITHUB_OUTPUT
+    - if: matrix.os == 'ubuntu-latest'
+      name: Build ${{ matrix.os }}
+      run: npm run build:linux
 
+    - if: matrix.os == 'windows-latest'
+      name: Build ${{ matrix.os }}
+      run: npm run build:windows
 
-      - if: matrix.os == 'ubuntu-latest'
-        name: Build Test Release ${{ matrix.os }}
-        run: npm run build:linux
+    - if: matrix.os == 'macos-latest'
+      name: Build ${{ matrix.os }}
+      run: npm run build:macos
 
-      - if: matrix.os == 'windows-latest'
-        name: Build Test Release ${{ matrix.os }}
-        run: npm run build:windows
-
-      - if: matrix.os == 'macos-latest'
-        name: Build Test Release ${{ matrix.os }}
-        run: npm run build:macos
-
-      - name: Archive artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-artifacts-sunch-v${{ steps.get_project_version.outputs.project_version }}-${{ steps.get_project_version.outputs.project_platform }}
-          retention-days: 5
-          path: |
-            ./release/${{ steps.get_project_version.outputs.project_version }}/*.exe
-            ./release/${{ steps.get_project_version.outputs.project_version }}/*.dmg
-            ./release/${{ steps.get_project_version.outputs.project_version }}/*.deb
-      - name: Show Releases
-        uses: actions/download-artifact@v4
-        with:
-          pattern: release-artifacts-sunch-v${{ needs.build.outputs.project_version }}
-          merge-multiple: true
-          path: ./release
-      - name: Show Releases
-        run: ls -lha ./release
-
+    - name: Archive artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-artifacts-sunch-v${{ steps.get_project_version.outputs.project_version }}-${{ steps.get_project_version.outputs.project_platform }}
+        retention-days: 5
+        path: |
+          ./release/${{ steps.get_project_version.outputs.project_version }}/*.exe
+          ./release/${{ steps.get_project_version.outputs.project_version }}/*.dmg
+          ./release/${{ steps.get_project_version.outputs.project_version }}/*.deb
         
-      # - name:  Generate Test Release artifacts
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: release-artifacts-sunch-v${{ steps.get_project_version.outputs.project_version }}-${{ steps.get_project_version.outputs.project_platform }}
-      #     retention-days: 1
-      #     path: |
-      #       ./release/${{ steps.get_project_version.outputs.project_version }}/*.exe
-      #       ./release/${{ steps.get_project_version.outputs.project_version }}/*.dmg
-      #       ./release/${{ steps.get_project_version.outputs.project_version }}/*.deb
+  release:
+    if: startsWith(github.event.pull_request.title, 'Release:')
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        pattern: release-artifacts-sunch-v${{ needs.build.outputs.project_version }}
+        merge-multiple: true
+        path: ./release
+    
+    - name: Show releases
+      run: ls -lha ./release
+    
+    # - name: Upload Release Asset 
+    #   uses: softprops/action-gh-release@v2
+    #   with:
+    #     tag_name: v${{ needs.build.outputs.project_version }}
+    #     body_path: release_note.md
+    #     fail_on_unmatched_files: false
+    #     files: |
+    #       ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_amd64.deb
+    #       ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_x64.exe
+    #       ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_x64.dmg
+
+# jobs:
+#   changelog:
+#     name: Changelog
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+      
+#       - name: Fetch Remote Branches
+#         run: git fetch origin
+      
+#       - name: Check for Changelog Changes
+#         if: github.event_name == 'pull_request'
+#         id: changelog
+#         run: |
+#           if git diff --name-only origin/${{ github.base_ref }} -- CHANGELOG.md; then
+#             echo "Changelog has been updated."
+#             exit 0
+#           else
+#             echo "Changelog needs to be updated."
+#             exit 1
+#           fi
+#   lint:
+#     name: Lint
+#     runs-on: ubuntu-latest
+#     steps:
+#     - uses: actions/checkout@v4
+#     - uses: actions/setup-node@v4
+#       with:
+#         node-version: 20.x
+#     - run: npm install
+#     - name: Run Lint
+#       run: npm run lint
+
+#   build:
+#     name: Build
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: actions/setup-node@v4
+#         with:
+#           node-version: 20.x
+#           cache: 'npm'
+#       - run: npm install
+#       - name: Run Build
+#         run: npm run build
+
+#   coverage:
+#     name: Coverage
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: actions/setup-node@v4
+#         with:
+#           node-version: 20.x
+#       - run: npm install
+#       - name: Run Typecript Coverage
+#         run: npm run ts-coverage
+  
+#   test-release:
+#     if: github.event_name == 'pull_request'
+#     name: Test Release
+#     environment: manual_approval
+#     needs:
+#       - lint
+#       - build
+#       - coverage
+#     strategy:
+#       matrix:
+#         os: [ubuntu-latest, windows-latest, macos-latest]
+#     runs-on: ${{ matrix.os }}
+#     outputs:
+#       project_version: ${{ steps.get_project_version.outputs.project_version }}
+#       project_platform: ${{ steps.get_project_version.outputs.project_platform }}
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: actions/setup-node@v4
+#         with:
+#           node-version: 20.x
+
+#       - name: Install dependencies
+#         run:  npm install
+
+#       - if: matrix.os == 'windows-latest'
+#         name: Create Test Version ${{ matrix.os }}
+#         run: |
+#           $currentDate = Get-Date -Format "yyyyMMddfffffff"
+#           $version = npm pkg get version | ForEach-Object { $_.Replace('"', '') }
+#           $prNumber = ${{ github.event.pull_request.number  }}
+#           $newVersion = "${version}-pr-${prNumber}-${currentDate}"
+#           npm version $newVersion --no-git-tag-version
+
+#       - if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
+#         name: Create Test Version ${{ matrix.os }}
+#         run: |
+#           current_date=$(date +'%Y%m%d%s')
+#           version=$(npm pkg get version | xargs)
+#           newversion=${version}-pr-${{ github.event.pull_request.number  }}-${current_date}
+#           npm version ${newversion} --no-git-tag-version
+
+#       - name: Get project version (using package.json)
+#         id: get_project_version
+#         run: |
+#           echo "project_version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+#           echo "project_version=$(node -p "require('./package.json').version")" >> $ENV:GITHUB_OUTPUT
+#           echo "project_platform=$(node -e 'console.log(process.platform)')" >> "$GITHUB_OUTPUT"
+#           echo "project_platform=$(node -e 'console.log(process.platform)')" >> $ENV:GITHUB_OUTPUT
+
+
+#       - if: matrix.os == 'ubuntu-latest'
+#         name: Build Test Release ${{ matrix.os }}
+#         run: npm run build:linux
+
+#       - if: matrix.os == 'windows-latest'
+#         name: Build Test Release ${{ matrix.os }}
+#         run: npm run build:windows
+
+#       - if: matrix.os == 'macos-latest'
+#         name: Build Test Release ${{ matrix.os }}
+#         run: npm run build:macos
+
+#       - name:  Generate Test Release artifacts
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: release-artifacts-sunch-v${{ steps.get_project_version.outputs.project_version }}-${{ steps.get_project_version.outputs.project_platform }}
+#           retention-days: 1
+#           path: |
+#             ./release/${{ steps.get_project_version.outputs.project_version }}/*.exe
+#             ./release/${{ steps.get_project_version.outputs.project_version }}/*.dmg
+#             ./release/${{ steps.get_project_version.outputs.project_version }}/*.deb
