@@ -37,13 +37,13 @@ jobs:
         echo "project_platform=$(node -e 'console.log(process.platform)')" >> "$GITHUB_OUTPUT"
         echo "project_platform=$(node -e 'console.log(process.platform)')" >> $ENV:GITHUB_OUTPUT
 
-    - if: matrix.os == 'ubuntu-latest'
-      name: Build ${{ matrix.os }}
-      run: npm run build:linux
+    # - if: matrix.os == 'ubuntu-latest'
+    #   name: Build ${{ matrix.os }}
+    #   run: npm run build:linux
 
-    - if: matrix.os == 'windows-latest'
-      name: Build ${{ matrix.os }}
-      run: npm run build:windows
+    # - if: matrix.os == 'windows-latest'
+    #   name: Build ${{ matrix.os }}
+    #   run: npm run build:windows
 
     - if: matrix.os == 'macos-latest'
       name: Build ${{ matrix.os }}
@@ -75,7 +75,7 @@ jobs:
         path: ./release
     
     - name: Show releases
-      run: ls -lha ./release
+      run: tree
     
     # - name: Upload Release Asset 
     #   uses: softprops/action-gh-release@v2
