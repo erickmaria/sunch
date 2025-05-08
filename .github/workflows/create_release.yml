@@ -55,9 +55,9 @@ jobs:
         name: release-artifacts-sunch-v${{ steps.get_project_version.outputs.project_version }}-${{ steps.get_project_version.outputs.project_platform }}
         retention-days: 5
         path: |
-          ./release/${{ steps.get_project_version.outputs.project_version }}/*.exe
-          ./release/${{ steps.get_project_version.outputs.project_version }}/*.dmg
-          ./release/${{ steps.get_project_version.outputs.project_version }}/*.deb
+          ./releases/${{ steps.get_project_version.outputs.project_version }}/*.exe
+          ./releases/${{ steps.get_project_version.outputs.project_version }}/*.dmg
+          ./releases/${{ steps.get_project_version.outputs.project_version }}/*.deb
         
   release:
     if: startsWith(github.event.pull_request.title, 'Release:')
@@ -71,9 +71,9 @@ jobs:
     - name: Download artifacts
       uses: actions/download-artifact@v4
       with:
-        pattern: release-artifacts-sunch-v${{ needs.build.outputs.project_version }}
+        pattern: release-artifacts-sunch-v${{ needs.build.outputs.project_version }}-*
         merge-multiple: true
-        path: ./release
+        path: ./releases
     
     - name: Generate Release Note
       run: |
@@ -98,6 +98,6 @@ jobs:
         body_path: release_note.md
         fail_on_unmatched_files: false
         files: |
-          ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_amd64.deb
-          ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_x64.exe
-          ./release/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_x64.dmg
+          ./releases/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_amd64.deb
+          ./releases/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_x64.exe
+          ./releases/${{ github.event.repository.name }}_${{ needs.build.outputs.project_version }}_x64.dmg
