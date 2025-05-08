@@ -169,11 +169,12 @@ jobs:
       - read
     steps:
     - name: List releases
-      run: echo  ${{ fromJson(needs.read.outputs.result) }}
-    # - name: Comment PR
-    #   uses: thollander/actions-comment-pull-request@v3
-    #   message: |
-    #         Hello world ! :wave:
+      run: echo  ${{ toJson(needs.read.outputs.result) }}
+    - name: Comment PR
+      uses: thollander/actions-comment-pull-request@v3
+      with:
+        message: |
+          releases: ${{ toJson(needs.read.outputs.result) }}
 
 
       
