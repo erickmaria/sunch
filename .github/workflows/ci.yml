@@ -174,12 +174,9 @@ jobs:
     - name: Comment PR
       uses: thollander/actions-comment-pull-request@v3
       with:
-        message: |
+        message: |-
           ## Release version: ${{ needs.release.outputs.project_version }}
           #### Releases:
             - windows: ${{ fromJson(fromJson(needs.read.outputs.result).artifact-url).windows-latest }}
             - ubuntu: ${{ fromJson(fromJson(needs.read.outputs.result).artifact-url).ubuntu-latest }}
             - macos: ${{ fromJson(fromJson(needs.read.outputs.result).artifact-url).macos-latest }}
-
-
-      
