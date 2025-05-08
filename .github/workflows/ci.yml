@@ -10,7 +10,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     runs-on: ${{ matrix.os }}
     outputs:
@@ -41,13 +41,13 @@ jobs:
       name: Build ${{ matrix.os }}
       run: npm run build:linux
 
-    # - if: matrix.os == 'windows-latest'
-    #   name: Build ${{ matrix.os }}
-    #   run: npm run build:windows
+    - if: matrix.os == 'windows-latest'
+      name: Build ${{ matrix.os }}
+      run: npm run build:windows
 
-    # - if: matrix.os == 'macos-latest'
-    #   name: Build ${{ matrix.os }}
-    #   run: npm run build:macos
+    - if: matrix.os == 'macos-latest'
+      name: Build ${{ matrix.os }}
+      run: npm run build:macos
 
     - name: Archive artifacts
       uses: actions/upload-artifact@v4
@@ -70,7 +70,7 @@ jobs:
       with:
         pattern: release-artifacts-sunch-v${{ needs.build.outputs.project_version }}-*
         merge-multiple: true
-        # path: releases/
+        path: releases/
     
     - name: Display structure of downloaded files
       run: ls -R
