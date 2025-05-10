@@ -18,9 +18,9 @@ export default function Result({ contents }: ResultProps) {
                 {(index > 0) && <PanelResizeHandle  /> }
                   <Panel>
                     <div className='result-panel' style={ (index > 0) ? { whiteSpace: 'pre-wrap' } : { whiteSpace: 'wrap' } } >
-                      <pre>
+                      <code>
                         <MarkdownHighlighter key={index} markdown={content} />
-                      </pre>
+                      </code>
                     </div>
                   </Panel>
                 </>

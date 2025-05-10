@@ -147,6 +147,10 @@
     background-clip: content-box;
   }
 
+  ::-webkit-scrollbar-corner  {
+    display: none;
+  }
+
   .draggable {
     -webkit-app-region: drag;
   }

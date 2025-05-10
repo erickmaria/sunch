@@ -1,24 +1,49 @@
 .result {
-    padding: 1px;
-    margin: 1px auto;
     border-radius: 8px;
     width: 100%;
     max-height: 800px;
-    text-align: start;
-    overflow-y: scroll;
+    /* height: 800px; */
     font-size: 0.875em;
-    border: 1px solid rgb(49, 49, 49);
-    box-sizing: border-box;
+    padding: 01rem;
+    overflow-y: auto;
+}
+
+
+.result h1 {
+    font-size: 1.4em;
+    line-height: 1.1;
+}
+
+/* 
+.result ul li::before {
+    content: "● ";
+}
+.result ol li::before {
+    content: "● ";
+}  */
+
+
+.result ol li {
+    background-color: var(--color-primary-foreground);
+    /* background-color: transparent; */
+    padding-left: 30px;
+}
+
+.result ul li {
+    padding-left: 30px;
+    background-color: var(--color-primary-foreground);
+    /* background-color: transparent; */
+    background-color: transparent;
 }
 
 .result::-webkit-scrollbar {
     display: none;
 }
 
-.result-panel>pre {
+.result-panel {
     white-space: pre-wrap;
     word-break: break-word;
-    line-height: normal;
+    line-height: 02rem;
 }
 
 .result-panel {
