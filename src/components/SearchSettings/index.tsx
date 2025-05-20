@@ -1,4 +1,4 @@
-import { Computer, Moon, Sun, LogOut } from 'lucide-react'
+import { Computer, Moon, Sun, LogOut, ArrowBigDown, ArrowDown, ArrowDown01Icon } from 'lucide-react'
 import { useTheme, Theme } from '../../contexts/ThemeProvider'
 import { SettingsActions } from './SettingsActions'
 import { SettingsIcon } from './SettingsIcon'
@@ -8,6 +8,7 @@ import { SettingsTittle } from './SettingsTittle'
 import Separator from '../Separator/Separator'
 import Selectable from '../Selectable/Selectable'
 import { useUserSettings } from '../../hooks/useUserSettings'
+import { ArrowDown02Icon } from 'hugeicons-react'
 
 const SettingsContent = {
     Root: SettingsRoot,
@@ -66,23 +67,21 @@ export function SearchSettings({setSettings}: SearchSettingsProps) {
                 <SettingsContent.Options>
                     <SettingsContent.Tittle name='Generative AI' />
                     <SettingsContent.Action>
-                        <div className="setting-options-switch-field setting-options-switch-size">
+                        <div className="setting-options-switch-field setting-options-switch-size space-x-0.5">
 
-                            <input type="radio" id="genai-switcher-radio-gemini" name="genai-switcher-radio-switch" value="gemini" defaultChecked={getConfigValue('models.current') === 'gemini'} />
+                            <input type="checkbox" id="genai-switcher-radio-gemini" name="genai-switcher-radio-switch" value="gemini" defaultChecked={getConfigValue('models.current') === 'gemini'} />
                             <label onClick={() => { setAIModel('gemini') }} htmlFor="genai-switcher-radio-gemini" aria-label="Gemini Generative AI">
                                 Gemini
                             </label>
 
-                            <input type="radio" id="genai-switcher-radio-gpt" name="genai-switcher-radio-switch" value="gpt" defaultChecked={getConfigValue('models.current') === 'gpt'} />
+                            <input type="checkbox" id="genai-switcher-radio-gpt" name="genai-switcher-radio-switch" value="gpt" defaultChecked={getConfigValue('models.current') === 'gpt'} />
                             <label onClick={() => {setAIModel('gpt') }} htmlFor="genai-switcher-radio-gpt" aria-label="GPT Generative AI">
                                 GPT
                             </label>
-
-                            <input type="radio" id="genai-switcher-radio-both" name="genai-switcher-radio-switch" value="both" defaultChecked={getConfigValue('models.current') === 'both'} />
-                            <label onClick={() => {setAIModel('both') }} htmlFor="genai-switcher-radio-both" aria-label="Both Generative AI">
-                                Both
-                            </label>
-
+                            
+                           <button>
+                            V
+                           </button>
                         </div>
                     </SettingsContent.Action>
                 </SettingsContent.Options>

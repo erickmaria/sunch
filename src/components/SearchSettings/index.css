@@ -20,7 +20,8 @@
 
 .setting-options-switch-field {
   background-color: var(--secondary);
-  border: 2px solid var(--secondary);
+  /* border: 2px solid var(--secondary); */
+  padding: 2px;
   border-radius: 8px;
   display: flex;
   position: relative;
