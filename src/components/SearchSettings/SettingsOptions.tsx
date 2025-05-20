@@ -8,7 +8,7 @@ interface SettingsOptionsProps {
 export function SettingsOptions({ children }: SettingsOptionsProps) {
     return (
         <>
-            <div className="setting-options">
+            <div className="flex align-middle justify-between pl-2 pt-1 pr-0.5">
                 { children }
             </div >
         </>

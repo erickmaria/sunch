@@ -1,23 +1,3 @@
-.settings {
-  padding: 6px;
-  /* margin-top: 1px; */
-  /* margin-left: auto; */
-  /* width: 31%; */
-  /* border: 1px solid rgb(49, 49, 49); */
-  /* box-sizing: border-box; */
-  user-select: none;
-  width: 100%;
-}
-
-.setting-options {
-  align-items: center;
-  display: flex;
-  gap: 12px;
-  justify-content: space-between;
-  width: 100%;
-}
-
-
 .setting-options-switch-field {
   background-color: var(--secondary);
   /* border: 2px solid var(--secondary); */
@@ -34,20 +14,21 @@
   left: 0;
   position: absolute !important;
   top: 0;
-  width: 1px
+  width: 1px;
 }
 .setting-options-switch-size label {
+  justify-content: center;
   background-color: #0000;
   border-radius: 8px;
   color: #6e6e80;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 500;
   line-height: 16px;
-  padding: 4px 8px;
+  padding: 2px 8px;
   text-align: center;
   text-transform: capitalize;
-  transition: all .15s ease-in-out
+  transition: all .15s ease-in-out;
 }
 
 /* .setting-options-switch-size label:hover {
