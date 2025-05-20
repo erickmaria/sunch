@@ -1,4 +1,4 @@
-import { Computer, Moon, Sun, LogOut } from 'lucide-react'
+import { Computer, Moon, Sun } from 'lucide-react'
 import { useTheme, Theme } from '../../contexts/ThemeProvider'
 import { SettingsActions } from './SettingsActions'
 import { SettingsIcon } from './SettingsIcon'
@@ -6,7 +6,6 @@ import { SettingsOptions } from './SettingsOptions'
 import { SettingsRoot } from './SettingsRoot'
 import { SettingsTittle } from './SettingsTittle'
 import Separator from '../Separator/Separator'
-import Selectable from '../Selectable/Selectable'
 import { useUserSettings } from '../../hooks/useUserSettings'
 import { ArrowDown01Icon, ChatGptIcon, GoogleGeminiIcon } from 'hugeicons-react'
 

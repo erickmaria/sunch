@@ -68,7 +68,7 @@ const SlashCommands = (() => {
     const commands: Array<Commands> = []
 
     function validate(input: string): ((...props: any) => unknown) | undefined {
-        for (let cmd of commands) {
+        for (const cmd of commands) {
             if (input.startsWith(cmd.key)) {
                 return cmd.callback
             }

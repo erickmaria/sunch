@@ -1,5 +1,4 @@
 import {} from '';
-import { V } from "node_modules/react-router/dist/development/route-data-Cw8htKcF.d.mts";
 
 declare global {
   interface Window {

@@ -86,14 +86,14 @@ export default function Search({ id }: SearchProps) {
               style={{ width: 22, height: 22 }} src={sunchIcon} alt="sunch icon"
             />
           </div>
-          <div className='w-full pb-2'>
-            <Input
+          <div className='w-full'>
+            {/* <Input
               className='rounded-md placeholder:opacity-40'
-            />
-            {/* <textarea
-              className='w-fcull min-h-fit rounded-md bg-secondary p-1 resize-none laceholder:opacity-50 placeholder:opacity-40'
+            /> */}
+            <textarea
+              className='min-w-full rounded-md bg-secondary p-2 resize-none placeholder:opacity-40'
               ref={textareaRef}
-              // autoFocus
+              autoFocus
               // onFocus={() => setSettings(false)}
               name='search'
               id='search'
@@ -102,7 +102,7 @@ export default function Search({ id }: SearchProps) {
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => keyDownHandler(e)}
-            /> */}
+            />
           </div>
           <div className='pl-2 pt-1.5 pr-4'>
             <Microphone
