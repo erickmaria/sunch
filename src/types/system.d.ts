@@ -17,6 +17,7 @@ declare global {
       // exit();
       closeWindow(windowName: string);
       openWindow(windowName: string);
+      minimizeWindow(windowName: string);
       syncConfig: (callback: (data: { key: string, value: unknown}) => void) => void;
       dispatchSyncConfig: (key: string, value: unknown) => void;
       getAppVersion: () => Promise<string>;

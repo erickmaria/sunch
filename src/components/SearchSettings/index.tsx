@@ -71,12 +71,12 @@ export function SearchSettings({ setSettings }: SearchSettingsProps) {
                         <div className='flex space-x-1'>
                             <div className="setting-options-switch-field setting-options-switch-size space-x-0.5">
 
-                                <input type="checkbox" id="genai-switcher-radio-gemini" name="genai-switcher-radio-switch" value="gemini" defaultChecked={getConfigValue('models.current') === 'gemini'} />
+                                <input type="radio" id="genai-switcher-radio-gemini" name="genai-switcher-radio-switch" value="gemini" defaultChecked={getConfigValue('models.current') === 'gemini'} />
                                 <label onClick={() => { setAIModel('gemini') }} htmlFor="genai-switcher-radio-gemini" aria-label="Gemini Generative AI">
                                     Gemini
                                 </label>
 
-                                <input type="checkbox" id="genai-switcher-radio-gpt" name="genai-switcher-radio-switch" value="gpt" defaultChecked={getConfigValue('models.current') === 'gpt'} />
+                                <input type="radio" id="genai-switcher-radio-gpt" name="genai-switcher-radio-switch" value="gpt" defaultChecked={getConfigValue('models.current') === 'gpt'} />
                                 <label onClick={() => { setAIModel('gpt') }} htmlFor="genai-switcher-radio-gpt" aria-label="GPT Generative AI">
                                     GPT
                                 </label>

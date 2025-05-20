@@ -4,10 +4,11 @@ import Result from '@/components/Result/Result';
 import Loading from '@/components/Loading/Loading';
 import sunchIcon from '@/assets/icon.svg'
 import { Microphone } from '@/components/Microphone/Microphone';
-import { Container, File, Globe, Menu, MoreVertical, Plus, Search, Settings2 } from 'lucide-react';
+import { Container, File, Globe, Menu, Minimize2, MoreVertical, Plus, Search, Settings2, Slash, Underline, X } from 'lucide-react';
 import { SearchSettings } from '@/components/SearchSettings/index';
 import { useGetAnswer } from '@/hooks/useGetAnswer';
 import { SlashCommands } from '@/slash_comands/slash';
+import { Minimize01Icon, Minimize03Icon, Minimize04Icon, SolidLine01Icon, Underpants01Icon } from 'hugeicons-react';
 
 export default function Home() {
 
@@ -77,6 +78,23 @@ export default function Home() {
   return (
     <>
       <div id="main-container" className='bg-background rounded-xl'>
+        <div className=' flex flex-row justify-between p-0.5'>
+          <div>Tabs</div>
+          <div className='flex space-x-0.5'> 
+            <div className="cursor-pointer">
+              <SolidLine01Icon
+                size={20}
+                onClick={() => { window.system.minimizeWindow("home") }}
+                className="w-full h-full hover:bg-secondary" />
+            </div>
+             <div className="cursor-pointer">
+              <X
+                size={22}
+                onClick={() => { window.system.closeWindow("home") }}
+                className="w-full h-full hover:bg-red-500 rounded-tr-xl hover:text-white" />
+            </div>
+          </div>
+        </div>
         <div className='border rounded-xl flex flex-col justify-center min-h-[90px] pt-2 pl-0.5 pr-0.5'>
           <div className='flex flex-row space-x-1 align-middle'>
             <div className='draggable p-2'>

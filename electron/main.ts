@@ -56,25 +56,41 @@ if (!gotTheLock) {
         switch (windowName) {
           case "home":
             HomeWidown.getInstance().bw.show()
+            break;
           case "settings":
             SettingsWindow.getInstance().bw.show()
+            break;
         }
       });
-  
+
       ipcMain.on('close-window', async (e: Electron.IpcMainEvent, windowName: string) => {
 
         switch (windowName) {
           case "home":
             HomeWidown.getInstance().bw.hide()
+            break;
           case "settings":
             SettingsWindow.getInstance().bw.hide()
+            break;
+        }
+      })
+
+      ipcMain.on('minimize-window', async (e: Electron.IpcMainEvent, windowName: string) => {
+
+        switch (windowName) {
+          case "home":
+            HomeWidown.getInstance().bw.minimize()
+            break;
+          case "settings":
+            SettingsWindow.getInstance().bw.minimize()
+            break;
         }
       })
 
       ipcMain.handle('get-app-version', async () => {
         return app.getVersion()
       });
-  
+
 
     })
     .then(() => {
