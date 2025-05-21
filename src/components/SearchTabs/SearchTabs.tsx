@@ -12,6 +12,7 @@ interface Tab {
 
 interface TabItemProps {
   tab: Tab;
+  tabsLength: number
   active: boolean;
   onClick: () => void;
   onClose: () => void;
@@ -62,6 +63,7 @@ export function SearchTabs() {
                 <SearchTabsItem
                   key={tab.id}
                   tab={tab}
+                  tabsLength={tabs.length}
                   active={tab.id === activeTab}
                   onClick={() => handleTabClick(tab.id)}
                   onClose={() => handleCloseTab(tab.id)}
@@ -104,7 +106,7 @@ export function SearchTabs() {
   );
 }
 
-function SearchTabsItem({ tab, active, onClick, onClose }: TabItemProps) {
+function SearchTabsItem({ tab, tabsLength, active, onClick, onClose }: TabItemProps) {
   return (
     <>
       <div className={`flex items-center ${active ? "bg-background" : "bg-secondary"}`}>
@@ -115,13 +117,15 @@ function SearchTabsItem({ tab, active, onClick, onClose }: TabItemProps) {
         >
           <span>{tab.title}</span>
           <div className={`p-0.5 hover:rounded-4xl space-x-1 ${active ? "hover:bg-background" : "hover:bg-secondary"}`}>
+            { tabsLength > 1 &&
             <X
               className="w-4 h-4"
               onClick={(e) => {
                 e.stopPropagation();
                 onClose();
               }}
-            />
+              />
+            }
           </div>
         </div>
       </div>

@@ -7,8 +7,6 @@ import { SlashCommands } from '@/slash_comands/slash';
 import { usePersistedState } from '@/hooks/usePersistedState';
 import Result from '../Result/Result';
 import Loading from '../Loading/Loading';
-import { SearchSettings } from '../SearchSettings';
-import { Input } from '../ui/input';
 
 interface SearchProps {
   id: string
@@ -19,7 +17,7 @@ export default function Search({ id }: SearchProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [input, setInput] = usePersistedState<string>(id + "-input", "");
   const [values, setValues] = usePersistedState<Array<string>>(id + "-values", Array<string>);
-  const { awaiting, makeQuestion } = useGetAnswer({})
+  const { awaiting, makeQuestion } = useGetAnswer({id})
 
   SlashCommands.add('/clear', function (setValue: React.Dispatch<React.SetStateAction<Array<string>>>, setInput: React.Dispatch<React.SetStateAction<string>>) {
     setValue([])
@@ -79,17 +77,14 @@ export default function Search({ id }: SearchProps) {
 
   return (
     <>
-      <div className='flex flex-col justify-center pt-2 pl-2'>
-        <div className='flex flex-row  justify-center align-middle'>
-          <div className='draggable p-1 pr-2'>
+      <div className='border-b rounded-xl flex flex-col justify-center pt-2'>
+        <div className='flex flex-row justify-center align-middle'>
+          <div className='draggable p-2'>
             <img
               style={{ width: 22, height: 22 }} src={sunchIcon} alt="sunch icon"
             />
           </div>
           <div className='w-full'>
-            {/* <Input
-              className='rounded-md placeholder:opacity-40'
-            /> */}
             <textarea
               className='min-w-full rounded-md bg-secondary p-2 resize-none placeholder:opacity-40'
               ref={textareaRef}
@@ -104,7 +99,7 @@ export default function Search({ id }: SearchProps) {
               onKeyDown={e => keyDownHandler(e)}
             />
           </div>
-          <div className='pl-2 pt-1.5 pr-4'>
+          <div className='pl-2 pt-2 pr-4'>
             <Microphone
               className=''
               lang='pt-BR'
@@ -138,7 +133,7 @@ export default function Search({ id }: SearchProps) {
           </div>
         </div> */}
       </div>
-      {awaiting && <Result contents={values} />}
+      {awaiting ?  <Loading /> : <Result contents={values} />}
       {/* {awaiting ? !settings && <Loading /> : !settings && <Result contents={values} />} */}
       {/* {settings && <SearchSettings setSettings={setSettings} />} */}
     </>
