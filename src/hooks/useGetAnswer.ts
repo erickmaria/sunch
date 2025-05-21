@@ -3,14 +3,16 @@ import GeminiService from "../services/GeminiService";
 import GPTService from "../services/GPTService";
 import { useUserSettings } from "./useUserSettings";
 import { Service } from "../services/service";
+import { usePersistedState } from "./usePersistedState";
 
 interface OptionGetAnswer {
+    id: string
     chatMode?: boolean
 }
 
-export function useGetAnswer({ chatMode }: OptionGetAnswer) {
+export function useGetAnswer({ id, chatMode }: OptionGetAnswer) {
 
-    const [awaiting, setAwaiting] = useState(false);
+    const [awaiting, setAwaiting] = usePersistedState<boolean>(id + "-awaiting", false);
 
     const { getConfigValue } = useUserSettings()
 

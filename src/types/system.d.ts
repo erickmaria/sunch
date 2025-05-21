@@ -1,5 +1,4 @@
 import {} from '';
-import { V } from "node_modules/react-router/dist/development/route-data-Cw8htKcF.d.mts";
 
 declare global {
   interface Window {
@@ -17,6 +16,7 @@ declare global {
       // exit();
       closeWindow(windowName: string);
       openWindow(windowName: string);
+      minimizeWindow(windowName: string);
       syncConfig: (callback: (data: { key: string, value: unknown}) => void) => void;
       dispatchSyncConfig: (key: string, value: unknown) => void;
       getAppVersion: () => Promise<string>;
