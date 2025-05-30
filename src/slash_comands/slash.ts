@@ -1,4 +1,4 @@
-type Callback = () => void
+// type Callback = () => void
 type Commands = {
     key: string,
     callback: (...props: any) => unknown

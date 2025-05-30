@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { BrowserWindow, ipcMain } from "electron";
 import { searchReadyNotification, stillRunningNotification } from "../../notifications/notifcation";
 import { join } from 'path';
 import { SettingsWindow } from "./settings";
@@ -35,6 +35,7 @@ class Window {
         nodeIntegration: true,
         experimentalFeatures: true,
       },
+      resizable: false,
       frame: false,
       transparent: true,
       show: false,

@@ -1,5 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
-import { searchReadyNotification, stillRunningNotification } from "../../notifications/notifcation";
+import { BrowserWindow, ipcMain } from "electron";
 import { join } from 'path';
 
 class Window {

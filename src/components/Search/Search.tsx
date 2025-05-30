@@ -4,7 +4,6 @@ import sunchIcon from '@/assets/icon.svg'
 import { Microphone } from '@/components/Microphone/Microphone';
 import { useGetAnswer } from '@/hooks/useGetAnswer';
 import { SlashCommands } from '@/slash_comands/slash';
-import { usePersistedState } from '@/hooks/usePersistedState';
 import Result from '../Result/Result';
 import Loading from '../Loading/Loading';
 
@@ -82,7 +81,7 @@ export default function Search({ id }: SearchProps) {
     <>
       <div className='border-b rounded-xl flex flex-col justify-center pt-2'>
         <div className='flex flex-row justify-center align-middle '>
-          <div className='draggable p-1.5'>
+          <div className='draggable p-1.5 hover:cursor-move'>
             <img
               style={{ width: 22, height: 22 }} src={sunchIcon} alt="sunch icon"
             />

@@ -1,4 +1,4 @@
-import { Computer, LogOut, Moon, Sun } from 'lucide-react'
+import { Computer, Moon, Sun } from 'lucide-react'
 import { useTheme, Theme } from '../../contexts/ThemeProvider'
 import { SettingsActions } from './SettingsActions'
 import { SettingsIcon } from './SettingsIcon'
