@@ -1,5 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
-import { searchReadyNotification, stillRunningNotification } from "../../notifications/notifcation";
+import { BrowserWindow, ipcMain } from "electron";
 import { join } from 'path';
 
 class Window {
@@ -50,7 +49,7 @@ class Window {
       win.loadURL(process.env.VITE_DEV_SERVER_URL + "settings", {
 
       })
-      if (process.env.SUNCH_DEVTOOLS_ENABLED === 'true') {
+      if (process.env.SUNCH_PAGE_SETTINGS_DEVTOOLS_ENABLED === 'true') {
         win.webContents.openDevTools({ mode: 'detach' })
       }
     } else {

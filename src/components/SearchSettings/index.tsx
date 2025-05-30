@@ -1,4 +1,4 @@
-import { Computer, Moon, Sun, LogOut } from 'lucide-react'
+import { Computer, Moon, Sun } from 'lucide-react'
 import { useTheme, Theme } from '../../contexts/ThemeProvider'
 import { SettingsActions } from './SettingsActions'
 import { SettingsIcon } from './SettingsIcon'
@@ -6,8 +6,9 @@ import { SettingsOptions } from './SettingsOptions'
 import { SettingsRoot } from './SettingsRoot'
 import { SettingsTittle } from './SettingsTittle'
 import Separator from '../Separator/Separator'
-import Selectable from '../Selectable/Selectable'
 import { useUserSettings } from '../../hooks/useUserSettings'
+import { ArrowDown01Icon, ChatGptIcon, GoogleGeminiIcon } from 'hugeicons-react'
+import Selectable from '../Selectable/Selectable'
 
 const SettingsContent = {
     Root: SettingsRoot,
@@ -17,27 +18,28 @@ const SettingsContent = {
     Action: SettingsActions
 }
 
-interface SearchSettingsProps{
+interface SearchSettingsProps {
     setSettings: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function SearchSettings({setSettings}: SearchSettingsProps) {
+export function SearchSettings({ setSettings }: SearchSettingsProps) {
 
     const { setTheme, theme } = useTheme();
     const { getConfigValue, setConfigValue, syncConfig } = useUserSettings();
 
-    function saveTheme(theme: Theme){
+    function saveTheme(theme: Theme) {
         setTheme(theme)
         syncConfig("general.theme", theme)
     }
 
-    function setAIModel(value: string){
+    function setAIModel(value: string) {
         setConfigValue('models.current', value)
         syncConfig("models.current", value)
     }
 
     return (
         <>
+            <Separator margin='2px'/>
             <SettingsContent.Root>
                 <SettingsContent.Options>
                     <SettingsContent.Tittle name='Themes' />
@@ -63,48 +65,39 @@ export function SearchSettings({setSettings}: SearchSettingsProps) {
                     </SettingsContent.Action>
                 </SettingsContent.Options>
                 <Separator thickness='0' />
+                {/* <Separator /> */}
                 <SettingsContent.Options>
-                    <SettingsContent.Tittle name='Generative AI' />
+                    <SettingsContent.Tittle name='AI' />
                     <SettingsContent.Action>
-                        <div className="setting-options-switch-field setting-options-switch-size">
+                        <div className='flex space-x-1'>
+                            <div className="setting-options-switch-field setting-options-switch-size space-x-0.5">
 
-                            <input type="radio" id="genai-switcher-radio-gemini" name="genai-switcher-radio-switch" value="gemini" defaultChecked={getConfigValue('models.current') === 'gemini'} />
-                            <label onClick={() => { setAIModel('gemini') }} htmlFor="genai-switcher-radio-gemini" aria-label="Gemini Generative AI">
-                                Gemini
-                            </label>
+                                <input type="radio" id="genai-switcher-radio-gemini" name="genai-switcher-radio-switch" value="gemini" defaultChecked={getConfigValue('models.current') === 'gemini'} />
+                                <label onClick={() => { setAIModel('gemini') }} htmlFor="genai-switcher-radio-gemini" aria-label="Gemini Generative AI">
+                                    <GoogleGeminiIcon size={15} />
+                                </label>
 
-                            <input type="radio" id="genai-switcher-radio-gpt" name="genai-switcher-radio-switch" value="gpt" defaultChecked={getConfigValue('models.current') === 'gpt'} />
-                            <label onClick={() => {setAIModel('gpt') }} htmlFor="genai-switcher-radio-gpt" aria-label="GPT Generative AI">
-                                GPT
-                            </label>
-
-                            <input type="radio" id="genai-switcher-radio-both" name="genai-switcher-radio-switch" value="both" defaultChecked={getConfigValue('models.current') === 'both'} />
-                            <label onClick={() => {setAIModel('both') }} htmlFor="genai-switcher-radio-both" aria-label="Both Generative AI">
-                                Both
-                            </label>
-
+                                <input type="radio" id="genai-switcher-radio-gpt" name="genai-switcher-radio-switch" value="gpt" defaultChecked={getConfigValue('models.current') === 'gpt'} />
+                                <label onClick={() => { setAIModel('gpt') }} htmlFor="genai-switcher-radio-gpt" aria-label="GPT Generative AI">
+                                    <ChatGptIcon size={15} />
+                                </label>
+                            </div>
+                            <div className='hover:bg-secondary rounded-[8px]'>
+                                {/* <Button className='w-[30px] h-[28px] bg-primary'> */}
+                                <ArrowDown01Icon strokeWidth={1.5} />
+                                {/* </Button> */}
+                            </div>
                         </div>
                     </SettingsContent.Action>
                 </SettingsContent.Options>
                 <Separator />
                 <SettingsContent.Options>
-                    <Selectable onClick={() => {
+                    <Selectable
+                    onClick={() => {
                         setSettings(false)
-                        window.system.openWindow("home")
+                        window.system.openWindow("settings")
                     }}>
-                        Advanced Settings
-                    </Selectable>
-                </SettingsContent.Options>
-                <Separator />
-                <SettingsContent.Options>
-                    <Selectable onClick={() => { 
-                        setSettings(false)
-                        window.system.closeWindow("home")
-                        }}>
-                        <div className='flex flex-row justify-between items-center'>
-                            <p>Exit</p>
-                            <LogOut size={18} />
-                        </div>
+                        <SettingsContent.Tittle name='Advanced Settings' />
                     </Selectable>
                 </SettingsContent.Options>
             </SettingsContent.Root >

@@ -5,12 +5,13 @@ import { useUserSettings } from "./useUserSettings";
 import { Service } from "../services/service";
 
 interface OptionGetAnswer {
+    id: string
     chatMode?: boolean
 }
 
 export function useGetAnswer({ chatMode }: OptionGetAnswer) {
 
-    const [awaiting, setAwaiting] = useState(false);
+    const [awaiting, setAwaiting] = useState<boolean>(false);
 
     const { getConfigValue } = useUserSettings()
 
@@ -57,9 +58,12 @@ export function useGetAnswer({ chatMode }: OptionGetAnswer) {
             if (error instanceof Error) {
                 throw error
             }
-        } finally {
+        } 
+        finally {
             setAwaiting(false)
         }
+
+        setAwaiting(false)
 
     }
 

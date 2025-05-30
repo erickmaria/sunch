@@ -1,21 +1,37 @@
-import './Search.css'
+
 import { useEffect, useRef, useState } from 'react'
+import sunchIcon from '@/assets/icon.svg'
+import { Microphone } from '@/components/Microphone/Microphone';
+import { useGetAnswer } from '@/hooks/useGetAnswer';
+import { SlashCommands } from '@/slash_comands/slash';
 import Result from '../Result/Result';
 import Loading from '../Loading/Loading';
-import sunchIcon from '../../assets/icon.svg'
-import { Microphone } from '../Microphone/Microphone';
-import { MoreVertical } from 'lucide-react';
-import { SearchSettings } from '../SearchSettings/index';
-import { useGetAnswer } from '../../hooks/useGetAnswer';
-import { SlashCommands } from '../../slash_comands/slash';
+import { Globe } from 'lucide-react';
+import { ArrowDown01Icon, Attachment02Icon } from 'hugeicons-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
-export default function Search() {
+interface SearchProps {
+  id: string
+}
+
+export default function Search({ id }: SearchProps) {
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [input, setInput] = useState('');
-  const [values, setValues] = useState(Array<string>);
-  const [settings, setSettings] = useState(false)
-  const {awaiting, makeQuestion } = useGetAnswer({})
+
+  const [input, setInput] = useState<string>("");
+  const [values, setValues] = useState<Array<string>>(Array<string>);
+  const [openOptions, setOpenOptions] = useState(false);
+
+  const { awaiting, makeQuestion } = useGetAnswer({ id })
+
+  SlashCommands.add('/clear', function (setValue: React.Dispatch<React.SetStateAction<Array<string>>>, setInput: React.Dispatch<React.SetStateAction<string>>) {
+    setValue([])
+    setInput('')
+  })
 
   const resizeTextarea = () => {
 
@@ -38,28 +54,29 @@ export default function Search() {
 
     if (e.key == "Enter") {
       e.preventDefault()
-      
+
       if (input.length == 0) return
 
-      if (SlashCommands.validate('/clear', input)){
-        setValues([])
-        setInput('')
+      const callback = SlashCommands.execute(input)
+      if (callback !== undefined) {
+        callback(setValues, setInput)
         return
       }
 
-      try{
+      try {
         const result = await makeQuestion(input);
+        console.log(result)
 
-        if (result !== undefined){
+
+        if (result !== undefined) {
           setValues(result)
           setInput('')
         }
-      }catch(err){
-        if(err instanceof Error){
+      } catch (err) {
+        if (err instanceof Error) {
           setValues([err.message])
         }
       }
-
 
       window.system.searchReady({
         ready: true
@@ -70,37 +87,90 @@ export default function Search() {
 
   return (
     <>
-      <div className='flex flex-row'>
-        <img
-          className='draggable fixed left-2 top-2'
-          style={{ width: 18, height: 18 }} src={sunchIcon} alt="sunch icon"
-        />
-        <textarea
-          className='search bg-background rounded-xl resize-none overflow-y-hidden min-h-9 border box-border flex-1 outline-hidden p-1 pl-9 pr-14 placeholder:opacity-50 placeholder:text-foreground'
-          ref={textareaRef}
-          autoFocus
-          onFocus={()=> setSettings(false)}
-          name='search'
-          id='search'
-          rows={1}
-          placeholder='Ask your question'
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => keyDownHandler(e)}
-        ></textarea>
-        <Microphone
-        className='fixed right-8 top-2 cursor-pointer'
-          lang='pt-BR'
-          onErrorMessage={setValues} 
-          onTranscriptData={setInput}
-        />
-        <MoreVertical size={20}
-          className='fixed right-2  top-2 cursor-pointer'
-          onClick={() =>(settings ? setSettings(false) : setSettings(true))}
-        />
+      <div className='border-b rounded-xl flex flex-col justify-center pt-2'>
+        <div className='flex flex-row justify-center align-middle '>
+          <div className='draggable p-1.5 hover:cursor-move'>
+            <img
+              style={{ width: 22, height: 22 }} src={sunchIcon} alt="sunch icon"
+            />
+          </div>
+          <div className='w-[99%]'>
+            <textarea
+             className='min-w-full min-h-[33px] p-1 rounded-xl resize-none bg-input/10 placeholder:opacity-40'
+              ref={textareaRef}
+              autoFocus
+              // onFocus={() => setSettings(false)}
+              name='search'
+              id='search'
+              rows={1}
+              placeholder='Ask something'
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => keyDownHandler(e)}
+            />
+          </div>
+          <div className='p-1.5'>
+            <ArrowDown01Icon strokeWidth={1.5} onClick={() => (openOptions ? setOpenOptions(false) : setOpenOptions(true))} />
+          </div>
+        </div>
+        {openOptions &&
+          <div className='flex justify-between w-full border-2 pr-1 pl-1 pb-0.5 border-transparent'>
+            <div className='flex'>
+              <div className='flex space-x-1'>
+                <div className='flex items-center w-fit h-fit hover:bg-secondary rounded-md'>
+                  <div className='flex p-1'>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Attachment02Icon size={20} />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Upload file</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                </div>
+                <div className='flex items-center w-fit h-fit hover:bg-secondary rounded-md'>
+                  <input type='checkbox' className='peer/web-search hidden' id="web-search" />
+                  <label htmlFor="web-search" className='peer-checked/web-search:bg-blue-800 rounded-md p-1'>
+                    <div className='flex'>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Globe size={20} />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Web Search</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </label>
+
+                </div>
+              </div>
+            </div>
+            <div className='flex'>
+              <div className='p-1'>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div>
+                      <Microphone
+                        className=''
+                        lang='pt-BR'
+                        onErrorMessage={setValues}
+                        onTranscriptData={setInput}
+                      />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Use Voice</p>
+                  </TooltipContent>
+                </Tooltip>
+
+              </div>
+            </div>
+          </div>
+        }
       </div>
-      {settings && <SearchSettings setSettings={setSettings} /> }
-      {awaiting ? !settings &&  <Loading /> : !settings && <Result contents={values} />}
+      {awaiting ? <Loading /> : <Result contents={values} />}
     </>
   )
 }
