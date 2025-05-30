@@ -1,4 +1,4 @@
-import { Computer, Moon, Sun } from 'lucide-react'
+import { Computer, LogOut, Moon, Sun } from 'lucide-react'
 import { useTheme, Theme } from '../../contexts/ThemeProvider'
 import { SettingsActions } from './SettingsActions'
 import { SettingsIcon } from './SettingsIcon'
@@ -8,6 +8,7 @@ import { SettingsTittle } from './SettingsTittle'
 import Separator from '../Separator/Separator'
 import { useUserSettings } from '../../hooks/useUserSettings'
 import { ArrowDown01Icon, ChatGptIcon, GoogleGeminiIcon } from 'hugeicons-react'
+import Selectable from '../Selectable/Selectable'
 
 const SettingsContent = {
     Root: SettingsRoot,
@@ -89,27 +90,16 @@ export function SearchSettings({ setSettings }: SearchSettingsProps) {
                         </div>
                     </SettingsContent.Action>
                 </SettingsContent.Options>
-                {/* <Separator />
+                <Separator />
                 <SettingsContent.Options>
-                    <Selectable onClick={() => {
+                    <Selectable
+                    onClick={() => {
                         setSettings(false)
                         window.system.openWindow("settings")
                     }}>
-                        Advanced Settings
+                        <SettingsContent.Tittle name='Advanced Settings' />
                     </Selectable>
                 </SettingsContent.Options>
-                <Separator />
-                <SettingsContent.Options>
-                    <Selectable onClick={() => {
-                        setSettings(false)
-                        window.system.closeWindow("home")
-                    }}>
-                        <div className='flex flex-row justify-between items-center'>
-                            <p>Exit</p>
-                            <LogOut size={18} />
-                        </div>
-                    </Selectable>
-                </SettingsContent.Options> */}
             </SettingsContent.Root >
         </>
     )

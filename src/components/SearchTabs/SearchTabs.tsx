@@ -1,8 +1,9 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import { Plus, X } from "lucide-react";
 import Search from "../Search/Search";
 import { Settings02Icon, SolidLine01Icon } from "hugeicons-react";
 import { SearchSettings } from "../SearchSettings";
+import { KeepAlive } from "keepalive-for-react";
 
 interface Tab {
   id: string;
@@ -29,6 +30,7 @@ export function SearchTabs() {
   ]);
 
   const [activeTab, setActiveTab] = useState<string>("1");
+
   const [settings, setSettings] = useState<boolean>(false)
 
   const handleTabClick = (id: string) => setActiveTab(id);
@@ -52,6 +54,10 @@ export function SearchTabs() {
     setTabs((prev) => [...prev, newTab]);
     setActiveTab(newId);
   };
+
+  const page = useMemo(() => {
+    return tabs.find(tab => tab.id === activeTab);
+  }, [activeTab]);
 
   return (
     <>
@@ -79,8 +85,7 @@ export function SearchTabs() {
               </div>
             }
           </div>
-          {/* <div className="bg-secondary draggable w-fit h-[24px]"></div> */}
-          <div className="flex">
+          <div className="flex">  
             <Settings02Icon
               onClick={() => (settings ? setSettings(false) : setSettings(true))}
               className="hover:bg-secondary  p-1" />
@@ -88,18 +93,16 @@ export function SearchTabs() {
               onClick={() => { window.system.minimizeWindow("home") }}
               className="hover:bg-secondary  p-1" />
             <X
+              size={22}
               onClick={() => { window.system.closeWindow("home") }}
               className="hover:bg-red-500 hover:text-white p-0.5" />
           </div>
         </div>
         {settings && <SearchSettings setSettings={setSettings} />}
         <div className="">
-          {/* {tabs
-        .filter(tab => tab.id == activeTab)
-        .map(tab => (
-          tab.children
-        ))} */}
-          {tabs.find((t) => t.id === activeTab)?.children}
+           <KeepAlive transition={true} activeCacheKey={activeTab}>
+                {page && page.children}
+            </KeepAlive>
         </div>
       </div>
     </>
@@ -117,13 +120,13 @@ function SearchTabsItem({ tab, tabsLength, active, onClick, onClose }: TabItemPr
         >
           <span>{tab.title}</span>
           <div className={`p-0.5 hover:rounded-4xl space-x-1 ${active ? "hover:bg-background" : "hover:bg-secondary"}`}>
-            { tabsLength > 1 &&
-            <X
-              className="w-4 h-4"
-              onClick={(e) => {
-                e.stopPropagation();
-                onClose();
-              }}
+            {tabsLength > 1 &&
+              <X
+                className="w-4 h-4"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClose();
+                }}
               />
             }
           </div>

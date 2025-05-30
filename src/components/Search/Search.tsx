@@ -1,5 +1,5 @@
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import sunchIcon from '@/assets/icon.svg'
 import { Microphone } from '@/components/Microphone/Microphone';
 import { useGetAnswer } from '@/hooks/useGetAnswer';
@@ -15,8 +15,10 @@ interface SearchProps {
 export default function Search({ id }: SearchProps) {
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [input, setInput] = usePersistedState<string>(id + "-input", "");
-  const [values, setValues] = usePersistedState<Array<string>>(id + "-values", Array<string>);
+
+  const [input, setInput] = useState<string>("");
+  const [values, setValues] = useState<Array<string>>(Array<string>);
+
   const { awaiting, makeQuestion } = useGetAnswer({id})
 
   SlashCommands.add('/clear', function (setValue: React.Dispatch<React.SetStateAction<Array<string>>>, setInput: React.Dispatch<React.SetStateAction<string>>) {
@@ -56,6 +58,8 @@ export default function Search({ id }: SearchProps) {
 
       try {
         const result = await makeQuestion(input);
+        console.log(result)
+  
 
         if (result !== undefined) {
           setValues(result)
@@ -67,7 +71,6 @@ export default function Search({ id }: SearchProps) {
         }
       }
 
-
       window.system.searchReady({
         ready: true
       })
@@ -78,15 +81,15 @@ export default function Search({ id }: SearchProps) {
   return (
     <>
       <div className='border-b rounded-xl flex flex-col justify-center pt-2'>
-        <div className='flex flex-row justify-center align-middle'>
-          <div className='draggable p-2'>
+        <div className='flex flex-row justify-center align-middle '>
+          <div className='draggable p-1.5'>
             <img
               style={{ width: 22, height: 22 }} src={sunchIcon} alt="sunch icon"
             />
           </div>
-          <div className='w-full'>
+          <div className='w-[99%]'>
             <textarea
-              className='min-w-full rounded-md bg-secondary p-2 resize-none placeholder:opacity-40'
+              className='min-w-full min-h-[33px] rounded-md bg-secondary p-1 resize-none placeholder:opacity-40'
               ref={textareaRef}
               autoFocus
               // onFocus={() => setSettings(false)}
@@ -99,7 +102,7 @@ export default function Search({ id }: SearchProps) {
               onKeyDown={e => keyDownHandler(e)}
             />
           </div>
-          <div className='pl-2 pt-2 pr-4'>
+          <div className='pl-2 pt-1.5 pr-4'>
             <Microphone
               className=''
               lang='pt-BR'

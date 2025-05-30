@@ -3,16 +3,15 @@ import GeminiService from "../services/GeminiService";
 import GPTService from "../services/GPTService";
 import { useUserSettings } from "./useUserSettings";
 import { Service } from "../services/service";
-import { usePersistedState } from "./usePersistedState";
 
 interface OptionGetAnswer {
     id: string
     chatMode?: boolean
 }
 
-export function useGetAnswer({ id, chatMode }: OptionGetAnswer) {
+export function useGetAnswer({ chatMode }: OptionGetAnswer) {
 
-    const [awaiting, setAwaiting] = usePersistedState<boolean>(id + "-awaiting", false);
+    const [awaiting, setAwaiting] = useState<boolean>(false);
 
     const { getConfigValue } = useUserSettings()
 
@@ -59,9 +58,12 @@ export function useGetAnswer({ id, chatMode }: OptionGetAnswer) {
             if (error instanceof Error) {
                 throw error
             }
-        } finally {
+        } 
+        finally {
             setAwaiting(false)
         }
+
+        setAwaiting(false)
 
     }
 
