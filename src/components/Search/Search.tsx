@@ -6,13 +6,16 @@ import { useGetAnswer } from '@/hooks/useGetAnswer';
 import { SlashCommands } from '@/slash_comands/slash';
 import Result from '../Result/Result';
 import Loading from '../Loading/Loading';
-import { Globe } from 'lucide-react';
-import { ArrowDown01Icon, Attachment02Icon } from 'hugeicons-react';
+import { ArrowDown01Icon, Attachment02Icon, CenterFocusIcon, ChatGptIcon, GoogleGeminiIcon } from 'hugeicons-react';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { SettingsSwitcher, SettingsSwitcherItem } from '../SearchSettings/SettingsSwitcher';
+import { useUserSettings } from '@/hooks/useUserSettings';
+import { SettingsOptions } from '../SearchSettings/SettingsOptions';
+import { SettingsTittle } from '../SearchSettings/SettingsTittle';
 
 interface SearchProps {
   id: string
@@ -20,13 +23,16 @@ interface SearchProps {
 
 export default function Search({ id }: SearchProps) {
 
+  const { getConfigValue } = useUserSettings();
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [input, setInput] = useState<string>("");
   const [values, setValues] = useState<Array<string>>(Array<string>);
   const [openOptions, setOpenOptions] = useState(false);
+  const [genAI, setGenAI] = useState(getConfigValue('models.current'));
 
-  const { awaiting, makeQuestion } = useGetAnswer({ id })
+  const { awaiting, makeQuestion } = useGetAnswer({ id, genAI })
 
   SlashCommands.add('/clear', function (setValue: React.Dispatch<React.SetStateAction<Array<string>>>, setInput: React.Dispatch<React.SetStateAction<string>>) {
     setValue([])
@@ -88,7 +94,7 @@ export default function Search({ id }: SearchProps) {
   return (
     <>
       <div className='border-b rounded-xl flex flex-col justify-center pt-2'>
-        <div className='flex flex-row justify-center align-middle '>
+        <div className='flex flex-row justify-center align-middle'>
           <div className='draggable p-1.5 hover:cursor-move'>
             <img
               style={{ width: 22, height: 22 }} src={sunchIcon} alt="sunch icon"
@@ -96,7 +102,7 @@ export default function Search({ id }: SearchProps) {
           </div>
           <div className='w-[99%]'>
             <textarea
-             className='min-w-full min-h-[33px] p-1 rounded-xl resize-none bg-input/10 placeholder:opacity-40'
+              className='min-w-full min-h-[33px] p-1 rounded-xl resize-none bg-input/10 placeholder:opacity-40'
               ref={textareaRef}
               autoFocus
               // onFocus={() => setSettings(false)}
@@ -114,8 +120,20 @@ export default function Search({ id }: SearchProps) {
           </div>
         </div>
         {openOptions &&
-          <div className='flex justify-between w-full border-2 pr-1 pl-1 pb-0.5 border-transparent'>
+          <div className='flex justify-between align-middle w-full border-2 pr-1 pl-1 pb-0.5 border-transparent'>
             <div className='flex'>
+               <div className='flex'>
+                <SettingsOptions>
+                  <div className='pt-1.5 pr-2 pl-1'>
+                    <SettingsTittle name='AI' />
+                  </div>
+                  <SettingsSwitcher name="AI" defaultValue={getConfigValue('models.current')}>
+                    <SettingsSwitcherItem onClick={() => setGenAI('gemini')} value='gemini' icon={<GoogleGeminiIcon size={15} />} />
+                    <SettingsSwitcherItem onClick={() => setGenAI('gpt')} value='gpt' icon={<ChatGptIcon size={15} />} />
+                  </SettingsSwitcher>
+                </SettingsOptions>
+              </div>
+              <span className='pl-2 p-0.5 opacity-40'>|</span>
               <div className='flex space-x-1'>
                 <div className='flex items-center w-fit h-fit hover:bg-secondary rounded-md'>
                   <div className='flex p-1'>
@@ -135,15 +153,14 @@ export default function Search({ id }: SearchProps) {
                     <div className='flex'>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Globe size={20} />
+                          <CenterFocusIcon size={20} />
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>Web Search</p>
+                          <p>Take a screenshot</p>
                         </TooltipContent>
                       </Tooltip>
                     </div>
                   </label>
-
                 </div>
               </div>
             </div>
@@ -164,7 +181,6 @@ export default function Search({ id }: SearchProps) {
                     <p>Use Voice</p>
                   </TooltipContent>
                 </Tooltip>
-
               </div>
             </div>
           </div>

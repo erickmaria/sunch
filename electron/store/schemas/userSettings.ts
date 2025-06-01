@@ -22,7 +22,7 @@ export const userSettingsSchema = {
 		},
 		default: {
 			theme: 'system',
-			language: 'es-us'	
+			language: 'es-us'
 		},
 	},
 	models: {

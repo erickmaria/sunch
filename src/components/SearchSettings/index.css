@@ -1,7 +1,6 @@
 .setting-options-switch-field {
   background-color: var(--secondary);
-  /* border: 2px solid var(--secondary); */
-  padding: 2px;
+  border: 2px solid var(--secondary);
   border-radius: 8px;
   display: flex;
   position: relative;
@@ -10,7 +9,7 @@
 .setting-options-switch-field input {
   clip: rect(0, 0, 0, 0);
   border: 0;
-  height: 1px;
+  /* height: 1px; */
   left: 0;
   position: absolute !important;
   top: 0;
@@ -22,18 +21,14 @@
   border-radius: 8px;
   color: #6e6e80;
   cursor: pointer;
-  font-size: 10px;
+  /* font-size: 10px; */
   font-weight: 500;
   line-height: 16px;
-  padding: 2px 8px;
+  padding: 4px 8px 4px 8px;
   text-align: center;
   text-transform: capitalize;
   transition: all .15s ease-in-out;
 }
-
-/* .setting-options-switch-size label:hover {
-  color: #202123
-} */
 
 .setting-options-switch-size input:checked+label {
   background-color: var(--background);

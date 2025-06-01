@@ -85,9 +85,12 @@ export function SearchTabs() {
               </div>
             }
           </div>
-          <div className="flex">  
+          <div className="flex">
             <Settings02Icon
-              onClick={() => (settings ? setSettings(false) : setSettings(true))}
+              onClick={() => {
+                setSettings(false)
+                window.system.openWindow("settings")
+              }}
               className="hover:bg-secondary  p-1" />
             <SolidLine01Icon
               onClick={() => { window.system.minimizeWindow("home") }}
@@ -100,9 +103,9 @@ export function SearchTabs() {
         </div>
         {settings && <SearchSettings setSettings={setSettings} />}
         <div className="">
-           <KeepAlive transition={true} activeCacheKey={activeTab}>
-                {page && page.children}
-            </KeepAlive>
+          <KeepAlive transition={true} activeCacheKey={activeTab}>
+            {page && page.children}
+          </KeepAlive>
         </div>
       </div>
     </>

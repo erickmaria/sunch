@@ -25,9 +25,11 @@ export default function Settings() {
   const lineSelectContextStyle: CSSProperties = {
     maxHeight: '300px'
   }
+  const { setConfigValue, getConfigValue, syncConfig } = useUserSettings()
 
   const { setTheme, theme } = useTheme();
-  const { setConfigValue, getConfigValue, syncConfig } = useUserSettings()
+  const [genAI, setGenAI] = useState<string>(getConfigValue('models.current'));
+
   const [notification, setNotification] = useState<boolean>(false);
   const [version, setVersion] = useState<string>("");
   const [gptModels, setGptModels] = useState<Array<string>>([]);
@@ -64,6 +66,11 @@ export default function Settings() {
 
   }
 
+  function setDefaulGenAI(value: string) {
+    setConfigValue('models.current', value)
+    syncConfig('models.current', value as string)
+    setGenAI(value)
+  }
 
   return (
     <>
@@ -130,17 +137,15 @@ export default function Settings() {
           </Tab>
           <Tab label="Models">
             <div className="flex justify-between mt-5 mb-5">
-              <h1 className="text-lg">Select Model</h1>
-              <Select value={getConfigValue('models.current')}
+              <h1 className="text-lg">Default Model</h1>
+              <Select value={genAI}
                 onValueChange={(value) => {
-                  setConfigValue('models.current', value)
-                  syncConfig('models.current', value as string)
+                  setDefaulGenAI(value)
                 }}>
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Model" />
                 </SelectTrigger>
                 <SelectContent style={lineSelectContextStyle}>
-                  <SelectItem value="both">All</SelectItem>
                   <SelectItem value="gemini">Gemini</SelectItem>
                   <SelectItem value="gpt">GPT</SelectItem>
                 </SelectContent>

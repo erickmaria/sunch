@@ -1,21 +1,17 @@
 import { useMemo, useState } from "react";
 import GeminiService from "../services/GeminiService";
 import GPTService from "../services/GPTService";
-import { useUserSettings } from "./useUserSettings";
 import { Service } from "../services/service";
 
 interface OptionGetAnswer {
     id: string
     chatMode?: boolean
+    genAI: string
 }
 
-export function useGetAnswer({ chatMode }: OptionGetAnswer) {
+export function useGetAnswer({ chatMode, genAI }: OptionGetAnswer) {
 
     const [awaiting, setAwaiting] = useState<boolean>(false);
-
-    const { getConfigValue } = useUserSettings()
-
-    const genAI = (getConfigValue('models.current') as string).toLowerCase()
 
     const services = useMemo(() => {
 
