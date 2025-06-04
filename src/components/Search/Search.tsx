@@ -16,6 +16,7 @@ import { SettingsSwitcher, SettingsSwitcherItem } from '../SearchSettings/Settin
 import { SettingsOptions } from '../SearchSettings/SettingsOptions';
 import { SettingsTittle } from '../SearchSettings/SettingsTittle';
 import { useUserSettings } from '@/hooks/useUserSettings';
+import { RiClaudeFill } from 'react-icons/ri';
 
 interface SearchProps {
   id: string
@@ -126,9 +127,10 @@ export default function Search({ id }: SearchProps) {
                   <div className='pt-1.5 pr-2 pl-1'>
                     <SettingsTittle name='AI' />
                   </div>
-                  <SettingsSwitcher name="AI" defaultValue={getConfigValue('models.current')}>
+                  <SettingsSwitcher name="AI" defaultValue={genAI}>
                     <SettingsSwitcherItem onClick={() => setGenAI('gemini')} value='gemini' icon={<GoogleGeminiIcon size={15} />} />
                     <SettingsSwitcherItem onClick={() => setGenAI('gpt')} value='gpt' icon={<ChatGptIcon size={15} />} />
+                    <SettingsSwitcherItem onClick={() => setGenAI('claude')} value='claude' icon={<RiClaudeFill size={15} />} />
                   </SettingsSwitcher>
                 </SettingsOptions>
               </div>

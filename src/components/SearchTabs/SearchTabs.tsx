@@ -5,7 +5,6 @@ import { ChatGptIcon, GoogleGeminiIcon, Settings02Icon, SolidLine01Icon } from "
 import { SearchSettings } from "../SearchSettings";
 import { KeepAlive } from "keepalive-for-react";
 import { useUserSettings } from "@/hooks/useUserSettings";
-import { get } from "http";
 
 interface Tab {
   id: string;
@@ -103,7 +102,10 @@ export function SearchTabs() {
               className="hover:bg-secondary  p-1" />
             <X
               size={22}
-              onClick={() => { window.system.closeWindow("home") }}
+              onClick={() => { 
+                window.system.closeWindow("home")
+                window.system.closeWindow("settings")
+               }}
               className="hover:bg-red-500 hover:text-white p-0.5" />
           </div>
         </div>

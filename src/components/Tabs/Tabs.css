@@ -25,6 +25,7 @@ li:not(.active) {
 .tab-content {
   border: 1px solid transparent;
   padding: 20px;
-  height: 100dvh;
-  margin-top: -1px;
+  height: 91dvh;
+  overflow: scroll;
+  padding-bottom: 30px;
 }

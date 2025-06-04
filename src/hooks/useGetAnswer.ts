@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import GeminiService from "../services/GeminiService";
 import GPTService from "../services/GPTService";
 import { Service } from "../services/service";
+import ClaudeService from "@/services/ClaudeService";
 
 interface OptionGetAnswer {
     id: string
@@ -21,6 +22,8 @@ export function useGetAnswer({ chatMode, genAI }: OptionGetAnswer) {
             svc.push(GeminiService.getInstance())
         } else if (genAI == 'gpt') {
             svc.push(GPTService.getInstance(chatMode))
+        } else if (genAI == 'claude') {
+            svc.push(ClaudeService.getInstance(chatMode))
         } else if (genAI == 'both') {
             svc.push(GeminiService.getInstance(chatMode), GPTService.getInstance(chatMode))
         } else {
