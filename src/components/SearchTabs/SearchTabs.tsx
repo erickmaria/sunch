@@ -1,13 +1,15 @@
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { Plus, X } from "lucide-react";
 import Search from "../Search/Search";
-import { Settings02Icon, SolidLine01Icon } from "hugeicons-react";
+import { ChatGptIcon, GoogleGeminiIcon, Settings02Icon, SolidLine01Icon } from "hugeicons-react";
 import { SearchSettings } from "../SearchSettings";
 import { KeepAlive } from "keepalive-for-react";
+import { useUserSettings } from "@/hooks/useUserSettings";
+import { get } from "http";
 
 interface Tab {
   id: string;
-  title: string;
+  title: ReactNode;
   children: ReactNode;
 }
 
@@ -21,14 +23,14 @@ interface TabItemProps {
 
 export function SearchTabs() {
 
+
   const [tabs, setTabs] = useState<Tab[]>([
     {
       id: "1",
-      title: "New Tab",
+      title: <SearchTabTitle />,
       children: <Search key={"1"} id="1" />,
     },
   ]);
-
   const [activeTab, setActiveTab] = useState<string>("1");
 
   const [settings, setSettings] = useState<boolean>(false)
@@ -50,7 +52,11 @@ export function SearchTabs() {
 
   const handleAddTab = () => {
     const newId = Date.now().toString();
-    const newTab = { id: newId, title: `New Tab`, children: <Search key={newId} id={newId} /> };
+    const newTab = {
+      id: newId,
+      title: <SearchTabTitle />,
+      children: <Search key={newId} id={newId} />
+    };
     setTabs((prev) => [...prev, newTab]);
     setActiveTab(newId);
   };
@@ -121,7 +127,7 @@ function SearchTabsItem({ tab, tabsLength, active, onClick, onClose }: TabItemPr
           className={`flex min-w-36 items-center justify-between p-0.5 cursor-pointer ${active ? "bg-background" : "bg-secondary"}`}
           onClick={onClick}
         >
-          <span>{tab.title}</span>
+          <span className="flex">{tab.title}</span>
           <div className={`p-0.5 hover:rounded-4xl space-x-1 ${active ? "hover:bg-background" : "hover:bg-secondary"}`}>
             {tabsLength > 1 &&
               <X
@@ -134,6 +140,37 @@ function SearchTabsItem({ tab, tabsLength, active, onClick, onClose }: TabItemPr
             }
           </div>
         </div>
+      </div>
+    </>
+  );
+}
+
+function SearchTabTitle() {
+
+  const { getConfigValue } = useUserSettings();
+
+  const [tabIcon, setTabIcon] = useState<ReactNode>(<></>);
+
+  useEffect(() => {
+    const genAI = getConfigValue('models.current')
+    
+
+    switch (genAI) {
+      case 'gemini':
+        setTabIcon(<GoogleGeminiIcon size={15} />)
+        break;
+      case 'gpt':
+        setTabIcon(<ChatGptIcon size={15} />)
+        break;
+      default:
+        setTabIcon(<></>)
+    }
+  }, [])
+  return (
+    <>
+      <div className="flex space-x-2">
+        <p>{tabIcon}</p> 
+        <p>New Tab</p>
       </div>
     </>
   );

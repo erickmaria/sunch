@@ -13,9 +13,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { SettingsSwitcher, SettingsSwitcherItem } from '../SearchSettings/SettingsSwitcher';
-import { useUserSettings } from '@/hooks/useUserSettings';
 import { SettingsOptions } from '../SearchSettings/SettingsOptions';
 import { SettingsTittle } from '../SearchSettings/SettingsTittle';
+import { useUserSettings } from '@/hooks/useUserSettings';
 
 interface SearchProps {
   id: string
@@ -32,7 +32,7 @@ export default function Search({ id }: SearchProps) {
   const [openOptions, setOpenOptions] = useState(false);
   const [genAI, setGenAI] = useState(getConfigValue('models.current'));
 
-  const { awaiting, makeQuestion } = useGetAnswer({ id, genAI })
+  const { awaiting, makeQuestion } = useGetAnswer({ id, genAI });
 
   SlashCommands.add('/clear', function (setValue: React.Dispatch<React.SetStateAction<Array<string>>>, setInput: React.Dispatch<React.SetStateAction<string>>) {
     setValue([])
@@ -40,7 +40,6 @@ export default function Search({ id }: SearchProps) {
   })
 
   const resizeTextarea = () => {
-
     if (textareaRef.current) {
       const textarea = textareaRef.current;
       textarea.style.height = 'auto';
@@ -122,7 +121,7 @@ export default function Search({ id }: SearchProps) {
         {openOptions &&
           <div className='flex justify-between align-middle w-full border-2 pr-1 pl-1 pb-0.5 border-transparent'>
             <div className='flex'>
-               <div className='flex'>
+              <div className='flex'>
                 <SettingsOptions>
                   <div className='pt-1.5 pr-2 pl-1'>
                     <SettingsTittle name='AI' />
