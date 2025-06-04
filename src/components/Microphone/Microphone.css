@@ -1,4 +1,5 @@
 .mic {
+    position: relative;
 }
 
 .mic::before,
@@ -13,15 +14,15 @@
 }
 
 .mic::before {
-    width: 25px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
     background-color: var(--secondary);
     
 }
 
 .mic::after {
-    width: 25px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
     background-color: var(--secondary);
     animation: circle-size 0.3s linear infinite alternate;
     
@@ -34,12 +35,12 @@
 
 @keyframes circle-size {
     from {
-        width: 25px;
-        height: 25px;
+        width: 30px;
+        height: 30px;
     }
 
     to {
-        width: 29px;
-        height: 29px;
+        width: 35px;
+        height: 35px;
     }
 }

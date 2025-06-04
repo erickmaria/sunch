@@ -1,20 +1,18 @@
 import { useMemo, useState } from "react";
 import GeminiService from "../services/GeminiService";
 import GPTService from "../services/GPTService";
-import { useUserSettings } from "./useUserSettings";
 import { Service } from "../services/service";
+import ClaudeService from "@/services/ClaudeService";
 
 interface OptionGetAnswer {
+    id: string
     chatMode?: boolean
+    genAI: string
 }
 
-export function useGetAnswer({ chatMode }: OptionGetAnswer) {
+export function useGetAnswer({ chatMode, genAI }: OptionGetAnswer) {
 
-    const [awaiting, setAwaiting] = useState(false);
-
-    const { getConfigValue } = useUserSettings()
-
-    const genAI = (getConfigValue('models.current') as string).toLowerCase()
+    const [awaiting, setAwaiting] = useState<boolean>(false);
 
     const services = useMemo(() => {
 
@@ -24,6 +22,8 @@ export function useGetAnswer({ chatMode }: OptionGetAnswer) {
             svc.push(GeminiService.getInstance())
         } else if (genAI == 'gpt') {
             svc.push(GPTService.getInstance(chatMode))
+        } else if (genAI == 'claude') {
+            svc.push(ClaudeService.getInstance(chatMode))
         } else if (genAI == 'both') {
             svc.push(GeminiService.getInstance(chatMode), GPTService.getInstance(chatMode))
         } else {
@@ -57,9 +57,12 @@ export function useGetAnswer({ chatMode }: OptionGetAnswer) {
             if (error instanceof Error) {
                 throw error
             }
-        } finally {
+        } 
+        finally {
             setAwaiting(false)
         }
+
+        setAwaiting(false)
 
     }
 

@@ -21,6 +21,9 @@ contextBridge.exposeInMainWorld('system', {
     openWindow(windowName: string) {
         return ipcRenderer.send('open-window', windowName);
     },
+     minimizeWindow(windowName: string) {
+        return ipcRenderer.send('minimize-window', windowName);
+    },
     closeWindow(windowName: string) {
         return ipcRenderer.send('close-window', windowName);
     },
