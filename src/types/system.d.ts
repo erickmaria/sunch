@@ -20,6 +20,8 @@ declare global {
       syncConfig: (callback: (data: { key: string, value: unknown }) => void) => void;
       dispatchSyncConfig: (key: string, value: unknown) => void;
       getAppVersion: () => Promise<string>;
+      saveAudioBlob: (data: { base64: string; filename: string }) => void;
+      transcript: () => string;
     };
     env: {
       readonly SUNCH_GEMINI_API_KEY: string;

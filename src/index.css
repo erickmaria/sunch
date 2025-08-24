@@ -128,8 +128,8 @@
     padding: 0;
     font-family: 'Inter', sans-serif;
     outline: none;
-    user-select: none;
-    -webkit-user-select: none;
+    /* user-select: none;
+    -webkit-user-select: none; */
   }
   
   *:focus {

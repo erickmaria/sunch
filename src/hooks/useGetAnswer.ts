@@ -33,7 +33,7 @@ export function useGetAnswer({ chatMode, genAI }: OptionGetAnswer) {
         return svc
     }, [chatMode, genAI])
 
-    const makeQuestion = async (prompt: string): Promise<string[] | undefined> => {
+    const askSomething = async (prompt: string): Promise<string[] | undefined> => {
 
         setAwaiting(true);
 
@@ -68,7 +68,7 @@ export function useGetAnswer({ chatMode, genAI }: OptionGetAnswer) {
 
     return {
         awaiting,
-        makeQuestion
+        askSomething
     }
 
 }

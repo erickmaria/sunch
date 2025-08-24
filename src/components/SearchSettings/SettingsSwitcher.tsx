@@ -40,7 +40,7 @@ interface SettingsItemSwitcherItem {
 
 export function SettingsSwitcherItem({ name, defaultValue, icon, value, onClick }: SettingsItemSwitcherItem) {
 
-    console.log(name, defaultValue, value)
+    // console.log(name, defaultValue, value)
 
     return (
         <>

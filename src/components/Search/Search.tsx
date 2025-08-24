@@ -31,9 +31,11 @@ export default function Search({ id }: SearchProps) {
   const [input, setInput] = useState<string>("");
   const [values, setValues] = useState<Array<string>>(Array<string>);
   const [openOptions, setOpenOptions] = useState(false);
-  const [genAI, setGenAI] = useState(getConfigValue('models.current'));
 
-  const { awaiting, makeQuestion } = useGetAnswer({ id, genAI });
+  const [genAI, setGenAI] = useState(getConfigValue('models.current'));
+  const { awaiting, askSomething } = useGetAnswer({ id, genAI });
+  const [audio, setAudio] = useState("");
+
 
   SlashCommands.add('/clear', function (setValue: React.Dispatch<React.SetStateAction<Array<string>>>, setInput: React.Dispatch<React.SetStateAction<string>>) {
     setValue([])
@@ -52,6 +54,12 @@ export default function Search({ id }: SearchProps) {
     resizeTextarea()
   }, [input])
 
+  useEffect(() => {
+    if (audio != '') {
+      sendAsk(audio)
+    }
+  }, [audio])
+
   async function keyDownHandler(e: React.KeyboardEvent<HTMLTextAreaElement>) {
 
     if (e.key == "Enter" && e.shiftKey) {
@@ -67,28 +75,29 @@ export default function Search({ id }: SearchProps) {
       if (callback !== undefined) {
         callback(setValues, setInput)
         return
+
       }
 
-      try {
-        const result = await makeQuestion(input);
-        console.log(result)
-
-
-        if (result !== undefined) {
-          setValues(result)
-          setInput('')
-        }
-      } catch (err) {
-        if (err instanceof Error) {
-          setValues([err.message])
-        }
-      }
-
-      window.system.searchReady({
-        ready: true
-      })
+      sendAsk(input)
     }
 
+  }
+
+  function sendAsk(input: string) {
+    askSomething(input).then((result) => {
+      if (result !== undefined) {
+        setValues(result)
+        setInput('')
+      }
+    }).catch(err => {
+      if (err instanceof Error) {
+        setValues([err.message])
+      }
+    })
+
+    window.system.searchReady({
+      ready: true
+    })
   }
 
   return (
@@ -173,8 +182,8 @@ export default function Search({ id }: SearchProps) {
                       <Microphone
                         className=''
                         lang='pt-BR'
-                        onErrorMessage={setValues}
-                        onTranscriptData={setInput}
+                        onError={setValues}
+                        audioData={setAudio}
                       />
                     </div>
                   </TooltipTrigger>

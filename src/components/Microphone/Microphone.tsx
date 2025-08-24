@@ -1,37 +1,41 @@
 import { Mic } from "lucide-react";
 import './Microphone.css'
-import { useSpeechRecognition } from "../../hooks/useSpeechRecognition";
 import { Dispatch, SetStateAction, useEffect } from "react";
+import { useVoiceRecorder } from "@/hooks/useVoiceRecorder";
 
 interface MicrophoneProps {
     lang: string
-    onErrorMessage: Dispatch<SetStateAction<string[]>>
-    onTranscriptData: Dispatch<SetStateAction<string>>
-    className: string | undefined 
+    onError: Dispatch<SetStateAction<string[]>>
+    audioData: Dispatch<SetStateAction<string>>
+    className: string | undefined
 }
 
-export function Microphone({onErrorMessage, onTranscriptData, lang, className }: MicrophoneProps ) {
-    const { isListening, startRecording, stopRecording, transcript, hasError } = useSpeechRecognition({lang: lang})
+export function Microphone({audioData, onError, className }: MicrophoneProps) {
+    const { isRecording, startRecording, stopRecording, status, audioBase64, error } = useVoiceRecorder()
+    
+    useEffect(() => {
 
-    useEffect(()=>{
-        if(hasError){
-            onErrorMessage([hasError])
+        switch(status){
+            case "START":
+                break;
+            case "STOP":
+                audioData(audioBase64 || "")
+                break;
+            case "ERROR":
+                onError([error as unknown as string])
+                break;
         }
-
-        if (transcript){
-            onTranscriptData(transcript)
-        }
-    },[hasError, transcript])
+    }, [status])
 
     async function toogleRecording() {
 
-        !isListening ? startRecording() : stopRecording()
+        !isRecording ? startRecording() : stopRecording()
     }
 
     return (
         <>
             <div onClick={toogleRecording} className={className}>
-                {isListening ? (
+                {isRecording ? (
                     <div className='mic'>
                         <Mic size={20} className='mic-icon' />
                     </div>
