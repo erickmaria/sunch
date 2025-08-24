@@ -1,10 +1,16 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { Service } from "./service";
+import { Service, AIFeatures } from "./service";
 
 export default class ClaudeService implements Service {
 
   private genAI: Anthropic
   chatMode: boolean;
+  features: AIFeatures = {
+    text: true,
+    audio: false,
+    image: false,
+    files: false,
+  };
 
   private constructor(chatMode = false) {
 
@@ -42,7 +48,7 @@ export default class ClaudeService implements Service {
       max_tokens: 1024,
       messages: [
         { role: 'user', content: prompt },
-        { role:'assistant', content: '' }
+        { role: 'assistant', content: '' }
       ],
       model: this.getModel(),
     });
@@ -59,7 +65,7 @@ export default class ClaudeService implements Service {
     return await this.genAI.models.list()
       .then((response) => {
         return response.data
-          .map((model) => model.id  );
+          .map((model) => model.id);
 
       })
       .catch((error) => {

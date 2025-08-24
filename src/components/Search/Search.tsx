@@ -33,7 +33,7 @@ export default function Search({ id }: SearchProps) {
   const [openOptions, setOpenOptions] = useState(false);
 
   const [genAI, setGenAI] = useState(getConfigValue('models.current'));
-  const { awaiting, askSomething } = useGetAnswer({ id, genAI });
+  const { awaiting, askSomething, features } = useGetAnswer({ id, genAI });
   const [audio, setAudio] = useState("");
 
 
@@ -147,35 +147,39 @@ export default function Search({ id }: SearchProps) {
               <div className='flex space-x-1'>
                 <div className='flex items-center w-fit h-fit hover:bg-secondary rounded-md'>
                   <div className='flex p-1'>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Attachment02Icon size={20} />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Upload file</p>
-                      </TooltipContent>
-                    </Tooltip>
+                    <div className={`${!features.files && 'pointer-events-none opacity-10'}`}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Attachment02Icon size={20} />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Upload file</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
                   </div>
                 </div>
                 <div className='flex items-center w-fit h-fit hover:bg-secondary rounded-md'>
                   <input type='checkbox' className='peer/web-search hidden' id="web-search" />
-                  <label htmlFor="web-search" className='peer-checked/web-search:bg-blue-800 rounded-md p-1'>
+                  <label htmlFor="web-search" className={`${!features.image && 'pointer-events-none'} peer-checked/web-search:bg-blue-800 rounded-md p-1`}>
                     <div className='flex'>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <CenterFocusIcon size={20} />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Take a screenshot</p>
-                        </TooltipContent>
-                      </Tooltip>
+                      <div className={`${!features.image && 'pointer-events-none opacity-10'}`}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <CenterFocusIcon size={20} />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Take a screenshot</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
                     </div>
                   </label>
                 </div>
               </div>
             </div>
             <div className='flex'>
-              <div className='p-1'>
+              <div className={`${!features.audio && 'pointer-events-none opacity-10'} p-1`}>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div>

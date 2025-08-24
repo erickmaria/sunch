@@ -1,10 +1,15 @@
 import { ContentListUnion, GoogleGenAI, HarmBlockThreshold, HarmCategory } from '@google/genai';
-import { Service } from "./service";
-import { Buffer } from 'buffer';
+import { AIFeatures, Service } from "./service";
 
 export default class GeminiService implements Service {
 
     private genAI: GoogleGenAI;
+    features: AIFeatures = {
+        text: true,
+        audio: true,
+        image: false,
+        files: false,
+    };
     chatMode: boolean;
     private safetySettings = [
         {
@@ -88,8 +93,8 @@ You are a highly **Solicitous and Proactive** Customer Service Agent.
             }];
 
 
-        }else{
-           contents = prompt; 
+        } else {
+            contents = prompt;
         }
 
 

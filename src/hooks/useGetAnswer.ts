@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import GeminiService from "../services/GeminiService";
 import GPTService from "../services/GPTService";
-import { Service } from "../services/service";
+import { AIFeatures, Service } from "../services/service";
 import ClaudeService from "@/services/ClaudeService";
 
 interface OptionGetAnswer {
@@ -13,6 +13,8 @@ interface OptionGetAnswer {
 export function useGetAnswer({ chatMode, genAI }: OptionGetAnswer) {
 
     const [awaiting, setAwaiting] = useState<boolean>(false);
+    const [features, setFeatures] = useState<AIFeatures>({} as AIFeatures);
+
 
     const services = useMemo(() => {
 
@@ -29,6 +31,7 @@ export function useGetAnswer({ chatMode, genAI }: OptionGetAnswer) {
         } else {
             throw new Error('cant instace Generative AI service, invalid value.')
         }
+        setFeatures(svc[0].features)
 
         return svc
     }, [chatMode, genAI])
@@ -68,7 +71,8 @@ export function useGetAnswer({ chatMode, genAI }: OptionGetAnswer) {
 
     return {
         awaiting,
-        askSomething
+        askSomething,
+        features
     }
 
 }

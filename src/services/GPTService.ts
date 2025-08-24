@@ -1,10 +1,16 @@
 import { OpenAI } from "openai";
-import { Service } from "./service";
+import { AIFeatures, Service } from "./service";
 
 export default class GPTService implements Service {
 
   private genAI: OpenAI
   chatMode: boolean;
+  features: AIFeatures = {
+    text: true,
+    audio: false,
+    image: false,
+    files: false,
+  };
 
   private constructor(chatMode = false) {
 
