@@ -1,39 +1,44 @@
 import { useMemo, useState } from "react";
 import GeminiService from "../services/GeminiService";
 import GPTService from "../services/GPTService";
-import { useUserSettings } from "./useUserSettings";
-import { Service } from "../services/service";
+import { AIFeatures, Service } from "../services/service";
+import ClaudeService from "@/services/ClaudeService";
 
 interface OptionGetAnswer {
-    chatMode?: boolean
+    id: string
+    chatMode: boolean
+    genAI: string
 }
 
-export function useGetAnswer({ chatMode }: OptionGetAnswer) {
+export function useGetAnswer({ id, chatMode, genAI }: OptionGetAnswer) {
 
-    const [awaiting, setAwaiting] = useState(false);
-
-    const { getConfigValue } = useUserSettings()
-
-    const genAI = (getConfigValue('models.current') as string).toLowerCase()
+    const [awaiting, setAwaiting] = useState<boolean>(false);
+    const [features, setFeatures] = useState<AIFeatures>({} as AIFeatures);
 
     const services = useMemo(() => {
 
         const svc = Array<Service>()
 
         if (genAI == 'gemini') {
-            svc.push(GeminiService.getInstance())
+            svc.push(GeminiService.getInstance(chatMode))
         } else if (genAI == 'gpt') {
             svc.push(GPTService.getInstance(chatMode))
+        } else if (genAI == 'claude') {
+            svc.push(ClaudeService.getInstance(chatMode))
         } else if (genAI == 'both') {
-            svc.push(GeminiService.getInstance(chatMode), GPTService.getInstance(chatMode))
+            svc.push(GeminiService.getInstance(chatMode), GPTService.getInstance())
         } else {
             throw new Error('cant instace Generative AI service, invalid value.')
         }
+        setFeatures(svc[0].features)
 
         return svc
     }, [chatMode, genAI])
 
-    const makeQuestion = async (prompt: string): Promise<string[] | undefined> => {
+    const askSomething = async (prompt: string): Promise<string[] | undefined> => {
+
+        console.log(chatMode)
+
 
         setAwaiting(true);
 
@@ -42,7 +47,7 @@ export function useGetAnswer({ chatMode }: OptionGetAnswer) {
             const answer = Array<string>();
 
             for (const svc of services) {
-                await svc.execute(prompt)
+                await svc.execute(id, prompt)
                     .then(data => answer.push(data))
                     .catch(err => {
                         if (err instanceof Error) {
@@ -57,15 +62,19 @@ export function useGetAnswer({ chatMode }: OptionGetAnswer) {
             if (error instanceof Error) {
                 throw error
             }
-        } finally {
+        } 
+        finally {
             setAwaiting(false)
         }
+
+        setAwaiting(false)
 
     }
 
     return {
         awaiting,
-        makeQuestion
+        askSomething,
+        features
     }
 
 }
