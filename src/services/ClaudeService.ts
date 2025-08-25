@@ -41,7 +41,8 @@ export default class ClaudeService implements Service {
   }
 
   async execute(sessionId: string, prompt: string): Promise<string> {
-
+    
+    // eslint-disable-next-line no-empty
     if (sessionId) {} 
 
     if (this.genAI.apiKey != this.getApiKey()) {
@@ -57,7 +58,6 @@ export default class ClaudeService implements Service {
       model: this.getModel(),
     });
 
-    //@ts-nocheck
     const text = message.content
       .filter(block => block.type === 'text')
       .map(block => (block as TextBlock).text)

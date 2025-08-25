@@ -41,6 +41,7 @@ export default class GPTService implements Service {
 
   async execute(sessionId: string, prompt: string): Promise<string> {
 
+    // eslint-disable-next-line no-empty
     if (sessionId) {} 
 
     if (this.genAI.apiKey != this.getApiKey()) {
