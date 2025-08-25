@@ -5,7 +5,7 @@ import { Tray } from './ui/tray';
 import { Shortcuts } from './helpers/shortcuts';
 import { store } from './store/config';
 import { SettingsWindow } from './ui/windows/settings';
-import { autoUpdater } from "electron-updater"
+// import { autoUpdater } from "electron-updater"
 import path from 'path';
 import fs from 'fs';
 import fsp from 'fs/promises';
@@ -160,9 +160,9 @@ if (!gotTheLock) {
     .then(() => runningNotification())
     .then(() => Shortcuts.register())
     .then(() => console.log("[INFO][GENERAL] app running!"))
-    .then(() => 
-      autoUpdater.checkForUpdatesAndNotify().catch((err) => console.log("Auto Updater error:", err))
-    )
+    // .then(() => 
+    //   autoUpdater.checkForUpdatesAndNotify().catch((err) => console.log("Auto Updater error:", err))
+    // )
   // app.on('window-all-closed', (e: Event) => {
   //   e.preventDefault()
   // })
