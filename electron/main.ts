@@ -160,7 +160,9 @@ if (!gotTheLock) {
     .then(() => runningNotification())
     .then(() => Shortcuts.register())
     .then(() => console.log("[INFO][GENERAL] app running!"))
-    .then(() => autoUpdater.checkForUpdatesAndNotify())
+    .then(() => 
+      autoUpdater.checkForUpdatesAndNotify().catch((err) => console.log("Auto Updater error:", err))
+    )
   // app.on('window-all-closed', (e: Event) => {
   //   e.preventDefault()
   // })
