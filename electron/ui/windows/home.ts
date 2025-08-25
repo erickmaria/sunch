@@ -47,6 +47,7 @@ class Window {
         win.webContents.openDevTools({ mode: 'detach' })
       }
     } else {
+      console.log("DevTools: enabled")
       win.webContents.openDevTools({ mode: 'detach' })
       win.loadFile('dist/index.html')
     }
