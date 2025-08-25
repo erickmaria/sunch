@@ -41,6 +41,8 @@ export default class GPTService implements Service {
 
   async execute(sessionId: string, prompt: string): Promise<string> {
 
+    if (sessionId) {} 
+
     if (this.genAI.apiKey != this.getApiKey()) {
       this.genAI.apiKey = this.getApiKey()
     }

@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { Service, AIFeatures } from "./service";
+import { TextBlock } from '@anthropic-ai/sdk/resources/messages.mjs';
 
 export default class ClaudeService implements Service {
 
@@ -41,6 +42,8 @@ export default class ClaudeService implements Service {
 
   async execute(sessionId: string, prompt: string): Promise<string> {
 
+    if (sessionId) {} 
+
     if (this.genAI.apiKey != this.getApiKey()) {
       this.genAI.apiKey = this.getApiKey()
     }
@@ -54,9 +57,10 @@ export default class ClaudeService implements Service {
       model: this.getModel(),
     });
 
+    //@ts-nocheck
     const text = message.content
       .filter(block => block.type === 'text')
-      .map(block => block.text)
+      .map(block => (block as TextBlock).text)
       .join('');
 
     return text || "";

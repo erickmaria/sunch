@@ -1,4 +1,4 @@
-import { Chat, Content, ContentListUnion, GenerateContentResponse, GoogleGenAI, HarmBlockThreshold, HarmCategory } from '@google/genai';
+import { Chat, ContentListUnion, GenerateContentResponse, GoogleGenAI, HarmBlockThreshold, HarmCategory } from '@google/genai';
 import { AIFeatures, Service, SYSTEM_INSTRUCTION_CONTENT } from "./service";
 
 export default class GeminiService implements Service {
