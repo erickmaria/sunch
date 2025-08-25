@@ -27,6 +27,7 @@ export default class ClaudeService implements Service {
     if (!ClaudeService.instance) {
       ClaudeService.instance = new ClaudeService(chatMode);
     }
+    ClaudeService.instance.chatMode = chatMode
     return ClaudeService.instance;
   }
 
@@ -38,7 +39,7 @@ export default class ClaudeService implements Service {
     return window.system.store.get('models.claude.version')
   }
 
-  async execute(prompt: string): Promise<string> {
+  async execute(sessionId: string, prompt: string): Promise<string> {
 
     if (this.genAI.apiKey != this.getApiKey()) {
       this.genAI.apiKey = this.getApiKey()

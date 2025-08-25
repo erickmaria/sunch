@@ -6,28 +6,27 @@ import ClaudeService from "@/services/ClaudeService";
 
 interface OptionGetAnswer {
     id: string
-    chatMode?: boolean
+    chatMode: boolean
     genAI: string
 }
 
-export function useGetAnswer({ chatMode, genAI }: OptionGetAnswer) {
+export function useGetAnswer({ id, chatMode, genAI }: OptionGetAnswer) {
 
     const [awaiting, setAwaiting] = useState<boolean>(false);
     const [features, setFeatures] = useState<AIFeatures>({} as AIFeatures);
-
 
     const services = useMemo(() => {
 
         const svc = Array<Service>()
 
         if (genAI == 'gemini') {
-            svc.push(GeminiService.getInstance())
+            svc.push(GeminiService.getInstance(chatMode))
         } else if (genAI == 'gpt') {
             svc.push(GPTService.getInstance(chatMode))
         } else if (genAI == 'claude') {
             svc.push(ClaudeService.getInstance(chatMode))
         } else if (genAI == 'both') {
-            svc.push(GeminiService.getInstance(chatMode), GPTService.getInstance(chatMode))
+            svc.push(GeminiService.getInstance(chatMode), GPTService.getInstance())
         } else {
             throw new Error('cant instace Generative AI service, invalid value.')
         }
@@ -38,6 +37,9 @@ export function useGetAnswer({ chatMode, genAI }: OptionGetAnswer) {
 
     const askSomething = async (prompt: string): Promise<string[] | undefined> => {
 
+        console.log(chatMode)
+
+
         setAwaiting(true);
 
         try {
@@ -45,7 +47,7 @@ export function useGetAnswer({ chatMode, genAI }: OptionGetAnswer) {
             const answer = Array<string>();
 
             for (const svc of services) {
-                await svc.execute(prompt)
+                await svc.execute(id, prompt)
                     .then(data => answer.push(data))
                     .catch(err => {
                         if (err instanceof Error) {

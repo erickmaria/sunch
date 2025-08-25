@@ -27,6 +27,7 @@ export default class GPTService implements Service {
     if (!GPTService.instance) {
       GPTService.instance = new GPTService(chatMode);
     }
+    GPTService.instance.chatMode = chatMode
     return GPTService.instance;
   }
 
@@ -38,7 +39,7 @@ export default class GPTService implements Service {
     return window.system.store.get('models.gpt.version')
   }
 
-  async execute(prompt: string): Promise<string> {
+  async execute(sessionId: string, prompt: string): Promise<string> {
 
     if (this.genAI.apiKey != this.getApiKey()) {
       this.genAI.apiKey = this.getApiKey()

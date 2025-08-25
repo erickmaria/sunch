@@ -39,7 +39,7 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-.dark { 
+.dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.145 0 0);
@@ -117,6 +117,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -128,10 +129,8 @@
     padding: 0;
     font-family: 'Inter', sans-serif;
     outline: none;
-    /* user-select: none;
-    -webkit-user-select: none; */
   }
-  
+
   *:focus {
     outline: none;
   }
@@ -147,12 +146,17 @@
     background-clip: content-box;
   }
 
-  ::-webkit-scrollbar-corner  {
+  ::-webkit-scrollbar-corner {
     display: none;
   }
 
   .draggable {
     -webkit-app-region: drag;
+  }
+
+  body {
+    user-select: none;
+    -webkit-user-select: none;
   }
 
 }

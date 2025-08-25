@@ -1,7 +1,9 @@
-import { ContentListUnion, GoogleGenAI, HarmBlockThreshold, HarmCategory } from '@google/genai';
-import { AIFeatures, Service } from "./service";
+import { Chat, Content, ContentListUnion, GenerateContentResponse, GoogleGenAI, HarmBlockThreshold, HarmCategory } from '@google/genai';
+import { AIFeatures, Service, SYSTEM_INSTRUCTION_CONTENT } from "./service";
 
 export default class GeminiService implements Service {
+
+    private chatSessions: Map<string, Chat> = new Map();
 
     private genAI: GoogleGenAI;
     features: AIFeatures = {
@@ -39,6 +41,7 @@ export default class GeminiService implements Service {
         if (!GeminiService.instance) {
             GeminiService.instance = new GeminiService(chatMode);
         }
+        GeminiService.instance.chatMode = chatMode
         return GeminiService.instance;
     }
 
@@ -50,29 +53,20 @@ export default class GeminiService implements Service {
         return window.system.store.get('models.gemini.version')
     }
 
-    async execute(prompt: string): Promise<string> {
+    async execute(sessionId: string, prompt: string): Promise<string> {
 
-        console.log(prompt);
-
-        const systemPromptDefault = `
-You are a highly **Solicitous and Proactive** Customer Service Agent.
-
-**Your Personality and Tone:**
-1. **Solicitous and Helpful:** Your tone is warm, friendly, polite, and empathetic. Always start with a greeting and validate the user's request before responding.
-2. **Clear and Objective:** Provide direct, complete, and easy-to-understand solutions.
-
-**Your Proactive Behavior:**
-1. **Anticipation:** After resolving the main query, always anticipate the user's next question or need.
-2. **Offer More:** Offer 1 or 2 suggestions for related resources or actions that may be useful.
-3. **Open Closing:** End your response by leaving the door open for further assistance. E.g.: "Is there anything else I can do for you today?"
-
-**Your Main Directives:**
-1. **Language Rule:** Always respond in the exact language used by the user in their current message.
-2. Do not just answer the question; ensure the user feels completely supported.
-`;
+        // CONTEXT CHACHING
+        // let cache: CachedContent;
+        // if (this.cacheMode) {
+        //     try {
+        //         cache = await this.getOrCreateCache();
+        //     } catch (err) {
+        //         // console.error(":", err);
+        //         return Promise.resolve('fatal error creating/retrieving cache:' + err);;
+        //     }
+        // }
 
         let contents: ContentListUnion;
-
         if (prompt.includes("data:audio/webm;base64")) {
 
             const base64 = prompt.split(",")[1]
@@ -97,18 +91,90 @@ You are a highly **Solicitous and Proactive** Customer Service Agent.
             contents = prompt;
         }
 
+        let response: GenerateContentResponse
+        if (this.chatMode) {
+            let chat: Chat;
+            if (this.chatSessions.has(sessionId)) {
+                chat = this.chatSessions.get(sessionId)!;
 
-        const response = await this.genAI.models.generateContent({
-            model: this.getModel(),
-            contents: contents,
-            config: {
-                safetySettings: this.safetySettings,
-                systemInstruction: systemPromptDefault,
+                // const chat = this.chatSessions.get(sessionId);
+                // const history = await chat!.getHistory();
+                // const formattedHistory = history.map((content: Content) => ({
+                //     role: content.role,
+                //     text: content.parts ? content.parts.map(p => p.text).join('') : '',
+                // }));
+            } else {
+                chat = this.genAI.chats.create({
+                    model: this.getModel(),
+                    config: {
+                        safetySettings: this.safetySettings,
+                        systemInstruction: SYSTEM_INSTRUCTION_CONTENT,
+                    }
+                });
+                this.chatSessions.set(sessionId, chat);
             }
-        });
-        console.log(response.text)
-        return Promise.resolve(response.text || '');
+
+            response = await chat.sendMessage({
+                message: prompt
+            });
+        } else {
+            response = await this.genAI.models.generateContent({
+                model: this.getModel(),
+                contents: contents,
+                config: {
+                    safetySettings: this.safetySettings,
+                    systemInstruction: SYSTEM_INSTRUCTION_CONTENT,
+                    // CONTEXT CHACHING
+                    // cachedContent: cache!.name,
+                }
+            });
+        }
+
+        console.log(response!.text)
+        return Promise.resolve(response!.text || '');
     }
+
+    async getOrCreateChat(): Promise<Chat> {
+        return this.genAI.chats.create({
+            model: this.getModel(),
+        });
+    }
+
+    // CONTEXT CHACHING
+    // async getOrCreateCache(): Promise<CachedContent> {
+    //     const cacheName = "cachebot-system-instruction-v1";
+
+    //     try {
+    //         // Tenta recuperar um cache existente pelo nome (ID)
+    //         console.log(`Buscando cache existente: ${cacheName}...`);
+    //         const existingCache = await this.genAI.caches.get({ name: cacheName });
+
+    //         console.log(`✅ Cache encontrado! Usando o cache ID: ${existingCache.name}`);
+    //         return existingCache;
+
+    //     } catch (error) {
+    //         // Se a recuperação falhar (cache não encontrado ou expirado), cria um novo
+    //         console.log("Cache não encontrado ou erro. Criando um novo cache...");
+
+    //         // ATENÇÃO: O conteúdo a ser armazenado em cache deve ter um mínimo de tokens
+    //         // (atualmente 1024 para modelos 2.5 Flash) para que o caching explícito seja efetivo e funcione.
+    //         const newCache = await this.genAI.caches.create({
+    //             model: this.getModel(),
+    //             config: {
+    //                 displayName: cacheName,
+    //                 systemInstruction: SYSTEM_INSTRUCTION_CONTENT,
+    //                 // contents: [{
+    //                 //     role: "user",
+    //                 //     // parts: [{ text: "" }],
+    //                 // }],
+    //                 ttl: "86400s",
+    //             }
+    //         });
+
+    //         console.log(`✨ Cache criado com sucesso! Cache ID: ${newCache.name}`);
+    //         return newCache;
+    //     }
+    // }
 
     async sendAudioFile(filepath: string): Promise<string> {
         const myfile = await this.genAI.files.upload({

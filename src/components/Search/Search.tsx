@@ -17,6 +17,7 @@ import { SettingsOptions } from '../SearchSettings/SettingsOptions';
 import { SettingsTittle } from '../SearchSettings/SettingsTittle';
 import { useUserSettings } from '@/hooks/useUserSettings';
 import { RiClaudeFill } from 'react-icons/ri';
+import { Switch } from '../ui/switch';
 
 interface SearchProps {
   id: string
@@ -31,9 +32,10 @@ export default function Search({ id }: SearchProps) {
   const [input, setInput] = useState<string>("");
   const [values, setValues] = useState<Array<string>>(Array<string>);
   const [openOptions, setOpenOptions] = useState(false);
+  const [chatMode, setChatMode] = useState<boolean>(false);
 
   const [genAI, setGenAI] = useState(getConfigValue('models.current'));
-  const { awaiting, askSomething, features } = useGetAnswer({ id, genAI });
+  const { awaiting, askSomething, features } = useGetAnswer({ id, genAI, chatMode });
   const [audio, setAudio] = useState("");
 
 
@@ -144,6 +146,18 @@ export default function Search({ id }: SearchProps) {
                 </SettingsOptions>
               </div>
               <span className='pl-2 p-0.5 opacity-40'>|</span>
+              <div className='flex items-center'>
+                <div className='flex items-center space-x-1 rounded-md'>
+                    <div className='pl-2 p-1'>
+                      <SettingsTittle name='chat' />
+                    </div>
+                    <Switch className='' onCheckedChange={(checked) => { setChatMode(checked) }} />
+                    <div>
+                    </div>
+                </div>
+              </div>
+              <span className='pl-2 p-0.5 opacity-40'>|</span>
+
               <div className='flex space-x-1'>
                 <div className='flex items-center w-fit h-fit hover:bg-secondary rounded-md'>
                   <div className='flex p-1'>
@@ -177,6 +191,7 @@ export default function Search({ id }: SearchProps) {
                   </label>
                 </div>
               </div>
+
             </div>
             <div className='flex'>
               <div className={`${!features.audio && 'pointer-events-none opacity-10'} p-1`}>
