@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router';
+import { HashRouter, Route, Routes } from 'react-router';
 import './App.css'
 import Home from './pages/Home';
 import Settings from './pages/Settings';
@@ -19,12 +19,12 @@ export default function App() {
   return (
     <>
       <div>
-        <BrowserRouter>
+        <HashRouter>
           <Routes>
             <Route index path="/" element={<Home />} />
             <Route path="/settings" element={<Settings />} />
           </Routes>
-        </BrowserRouter>
+        </HashRouter>
       </div>
     </>
   )

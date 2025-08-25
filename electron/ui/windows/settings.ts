@@ -46,14 +46,14 @@ class Window {
     });
 
     if (process.env.VITE_DEV_SERVER_URL) {
-      win.loadURL(process.env.VITE_DEV_SERVER_URL + "settings", {
+      win.loadURL(process.env.VITE_DEV_SERVER_URL + "#/settings", {
 
       })
       if (process.env.SUNCH_PAGE_SETTINGS_DEVTOOLS_ENABLED === 'true') {
         win.webContents.openDevTools({ mode: 'detach' })
       }
     } else {
-      win.loadFile('dist/index.html')
+       win.loadFile('dist/index.html', { hash: "/settings" })
     }
 
     ipcMain.on('dispatch-sync-config', async (e: Electron.IpcMainEvent, key: string, value: unknown) => {
