@@ -40,11 +40,9 @@ interface SettingsItemSwitcherItem {
 
 export function SettingsSwitcherItem({ name, defaultValue, icon, value, onClick }: SettingsItemSwitcherItem) {
 
-    // console.log(name, defaultValue, value)
-
     return (
         <>
-            <input type="radio" id={`theme-switcher-${value}`} name={name} value={value} defaultChecked={defaultValue === value} />
+            <input type="radio" id={`theme-switcher-${value}`} name={name} value={value} checked={defaultValue === value} defaultChecked={defaultValue === value} />
             <label onClick={onClick} htmlFor={`theme-switcher-${value}`} aria-label={value} >
                 {icon}
             </label>

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { MdOutlineNotificationsActive, MdOutlineNotificationsOff } from "react-icons/md";
-import { ChatGptIcon } from 'hugeicons-react';
+import { ChatBotIcon, ChatGptIcon, Chatting01Icon } from 'hugeicons-react';
 import { RiClaudeFill, RiGeminiFill } from "react-icons/ri";
 import Separator from "@/components/Separator/Separator";
 import { Input } from "@/components/ui/input";
@@ -32,6 +32,8 @@ export default function Settings() {
   const [genAI, setGenAI] = useState<string>(getConfigValue('models.current'));
 
   const [notification, setNotification] = useState<boolean>(false);
+  const [chatMode, setChatMode] = useState<boolean>(false);
+
   const [version, setVersion] = useState<string>("");
   const [gptModels, setGptModels] = useState<Array<string>>([]);
   const [geminiModels, setGeminiModels] = useState<Array<string>>([]);
@@ -40,6 +42,11 @@ export default function Settings() {
   useEffect(() => {
     setConfigValue('general.notification.enable', notification)
   }, [notification])
+
+  useEffect(() => {
+    setConfigValue('general.chatMode.enable', chatMode)
+    syncConfig('general.chatMode.enable', chatMode)
+  }, [chatMode])
 
   useEffect(() => {
     window.system.getAppVersion().then((v) => {
@@ -63,7 +70,7 @@ export default function Settings() {
         })
     }
 
-    
+
     if (geminiModels.length == 0) {
       console.log(geminiModels.length == 0)
       console.log('loading gemini models')
@@ -103,42 +110,60 @@ export default function Settings() {
               onClick={() => { window.system.closeWindow("settings") }}
               className="hover:bg-red-500" />
           </div>
-          <div className="bg-secondary draggable absolute right-8 w-[170px] h-[33px]"></div>
+          <div className="bg-secondary draggable absolute right-8 w-[213px] h-[30px]"></div>
           <Tabs initialTabIndex={0}>
             <Tab label="General">
-              <div className="flex justify-between  mt-5 mb-5">
-                <h1 className="text-lg">Themes</h1>
-                <Select value={theme}
-                  onValueChange={(value: Theme) => {
-                    setTheme(value)
-                    syncConfig('general.theme', value)
-                  }} >
-                  <SelectTrigger className="w-[200px]">
-                    <SelectValue placeholder="Theme" />
-                  </SelectTrigger>
-                  <SelectContent style={lineSelectContextStyle}>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="system">System</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex justify-between mt-5 mb-5">
-                <h1 className="text-lg">Lenguague</h1>
-                <Select defaultValue={getConfigValue('general.language')}
-                  onValueChange={(value) => {
-                    setConfigValue('general.language', value)
-                  }}>
-                  <SelectTrigger className="w-[200px]">
-                    <SelectValue placeholder="Lenguague" />
-                  </SelectTrigger>
-                  <SelectContent style={lineSelectContextStyle}>
-                    <SelectItem className="hover:" value="es-us">English</SelectItem>
-                    <SelectItem value="pt-br">Portuguese</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="flex flex-col justify-between space-y-6 mb-5">
+                <div className="flex justify-between">
+                  <h1 className="text-sm font-medium leading-none pt-3">Themes</h1>
+                  <Select value={theme}
+                    onValueChange={(value: Theme) => {
+                      setTheme(value)
+                      syncConfig('general.theme', value)
+                    }} >
+                    <SelectTrigger className="w-[230px]">
+                      <SelectValue placeholder="Theme" />
+                    </SelectTrigger>
+                    <SelectContent style={lineSelectContextStyle}>
+                      <SelectItem value="light">Light</SelectItem>
+                      <SelectItem value="dark">Dark</SelectItem>
+                      <SelectItem value="system">System</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex justify-between">
+                  <h1 className="text-sm font-medium leading-none pt-3">Lenguague</h1>
+                  <Select defaultValue={getConfigValue('general.language')}
+                    onValueChange={(value) => {
+                      setConfigValue('general.language', value)
+                    }}>
+                    <SelectTrigger className="w-[230px]">
+                      <SelectValue placeholder="Lenguague" />
+                    </SelectTrigger>
+                    <SelectContent style={lineSelectContextStyle}>
+                      <SelectItem className="hover:" value="es-us">English</SelectItem>
+                      <SelectItem value="pt-br">Portuguese</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <Separator color={'var(--secondary)'} />
+
+              <div className=" flex items-center space-x-4 rounded-md border p-4 mt-5">
+                {chatMode ? <Chatting01Icon size={30} /> : <ChatBotIcon size={30} />}
+                <div className="flex-1 space-y-1">
+                  <p className="text-sm font-medium leading-none">
+                    Chat Mode
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {chatMode ? "when enabled your previous messages are saved in the LLM context window" : "each message you send is treated as a simple message to LLM, not saving the context"}
+                  </p>
+                </div>
+                <Switch
+                  onCheckedChange={(checked) => { setChatMode(checked) }}
+                />
+              </div>
+
               <div className=" flex items-center space-x-4 rounded-md border p-4 mt-5">
                 {notification ? <MdOutlineNotificationsActive size={30} /> : <MdOutlineNotificationsOff size={30} />}
                 <div className="flex-1 space-y-1">
@@ -156,8 +181,8 @@ export default function Settings() {
 
             </Tab>
             <Tab label="Models">
-              <div className="flex justify-between mt-5 mb-5">
-                <h1 className="text-lg">Default Model</h1>
+              <div className="flex justify-between mb-5">
+                <h1 className="text-sm font-medium leading-none pt-3">Default Model</h1>
                 <Select value={genAI}
                   onValueChange={(value) => {
                     setDefaulGenAI(value)
@@ -275,7 +300,7 @@ export default function Settings() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="flex items-center space-x-4 justify-between  mt-5">
+                <div className="flex items-center space-x-4 justify-between">
                   <p className="pl-2 text-sm text-muted-foreground">
                     Api Key
                   </p>
@@ -292,8 +317,8 @@ export default function Settings() {
             </Tab>
           </Tabs>
         </div>
-        <div className="flex justify-end pr-0.5">
-          <p className="text-[14px]">version: {version} </p>
+        <div className="bg-transparent flex justify-end pr-0.5 m-1">
+          <p  className="text-[14px]">version: {version} </p>
         </div>
       </div>
     </>

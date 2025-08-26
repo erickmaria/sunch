@@ -34,9 +34,11 @@ export default function Search({ id }: SearchProps) {
   const [openOptions, setOpenOptions] = useState(false);
   const [chatMode, setChatMode] = useState<boolean>(false);
 
-  const [genAI, setGenAI] = useState(getConfigValue('models.current'));
+  const [genAI, setGenAI] = useState<string>(getConfigValue('models.current'));
   const { awaiting, askSomething, features } = useGetAnswer({ id, genAI, chatMode });
   const [audio, setAudio] = useState("");
+
+  const { syncConfig, setConfigValue } = useUserSettings()
 
 
   SlashCommands.add('/clear', function (setValue: React.Dispatch<React.SetStateAction<Array<string>>>, setInput: React.Dispatch<React.SetStateAction<string>>) {
@@ -51,6 +53,19 @@ export default function Search({ id }: SearchProps) {
       textarea.style.height = `${textarea.scrollHeight}px`;
     }
   };
+
+  // sync configs
+  // useEffect(() => {
+  //   window.system.syncConfig((data) => {
+  //     if (data.key == "general.chatMode.enable") setChatMode(data.value as unknown as boolean)
+  //     if (data.key == "models.current") setGenAI(data.value as unknown as string)
+  //   });
+  // });
+
+  useEffect(() => {
+    setConfigValue(`tabs.${id}.models.current`, genAI)
+    syncConfig(`tabs.${id}.models.current`, genAI)
+  }, [genAI])
 
   useEffect(() => {
     resizeTextarea()
@@ -148,12 +163,12 @@ export default function Search({ id }: SearchProps) {
               <span className='pl-2 p-0.5 opacity-40'>|</span>
               <div className='flex items-center'>
                 <div className='flex items-center space-x-1 rounded-md'>
-                    <div className='pl-2 p-1'>
-                      <SettingsTittle name='chat' />
-                    </div>
-                    <Switch className='' onCheckedChange={(checked) => { setChatMode(checked) }} />
-                    <div>
-                    </div>
+                  <div className='pl-2 p-1'>
+                    <SettingsTittle name='chat' />
+                  </div>
+                  <Switch className='' checked={chatMode} onCheckedChange={(checked) => { setChatMode(checked) }} />
+                  <div>
+                  </div>
                 </div>
               </div>
               <span className='pl-2 p-0.5 opacity-40'>|</span>

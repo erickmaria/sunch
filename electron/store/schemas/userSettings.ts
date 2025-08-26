@@ -6,6 +6,12 @@ export const userSettingsSchema = {
 		properties: {
 			theme: { type: JSONSchemaType.String, },
 			language: { type: JSONSchemaType.String },
+			chatMode: {
+				type: JSONSchemaType.Object,
+				default: {
+					enable: true,
+				}
+			},
 			media: {
 				type: JSONSchemaType.Object,
 				default: {
@@ -22,13 +28,14 @@ export const userSettingsSchema = {
 		},
 		default: {
 			theme: 'system',
-			language: 'es-us'
+			language: 'es-us',
+			chatMode: false
 		},
 	},
 	models: {
 		type: JSONSchemaType.Object,
 		properties: {
-			current: { type: JSONSchemaType.String},
+			current: { type: JSONSchemaType.String },
 			gemini: {
 				type: JSONSchemaType.Object,
 				default: {
@@ -54,5 +61,8 @@ export const userSettingsSchema = {
 		default: {
 			current: 'gemini',
 		}
+	},
+	tabs: {
+		type: JSONSchemaType.Object,
 	}
 }

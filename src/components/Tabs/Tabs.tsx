@@ -19,9 +19,9 @@ const Tabs: React.FC<TabsProps> = ({ children, initialTabIndex = 0 }) => {
       <ul className="tabs">
         {children.map((child, index) => (
           <li
-            key={index}
-            className={index === activeTabIndex ? "active" : ""}
-            onClick={() => setActiveTabIndex(index)}
+          key={index}
+          className={index === activeTabIndex ? "active" : ""}
+          onClick={() => setActiveTabIndex(index)}
           >
             {child.props.label}
           </li>

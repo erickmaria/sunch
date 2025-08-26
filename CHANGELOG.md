@@ -5,7 +5,11 @@
 - [#23](https://github.com/erickmaria/sunch/pull/13) chore: update dependencies
 - [#25](https://github.com/erickmaria/sunch/pull/25) feat(ai/gemini): implement speech to text
 - [#25](https://github.com/erickmaria/sunch/pull/25) feat(ai/gemini): implement chat mode
+- [#25](https://github.com/erickmaria/sunch/pull/25) feat(ui): implement tabs
+- [#25](https://github.com/erickmaria/sunch/pull/25) feat(ui): implement chat mode option in settings page
+- [#25](https://github.com/erickmaria/sunch/pull/25) fix(ui): tab not replacing icon when generative ai
 - [#25](https://github.com/erickmaria/sunch/pull/25) fix(ui): use selection
+
 
 ## v1.3.0 - 2025-04-27
 

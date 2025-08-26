@@ -35,6 +35,7 @@ if (!gotTheLock) {
 
   app.on('will-quit', () => {
     Shortcuts.unregister()
+    store.delete("tabs")
   })
 
   app.disableHardwareAcceleration()

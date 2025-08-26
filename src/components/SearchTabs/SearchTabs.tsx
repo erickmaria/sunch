@@ -5,6 +5,7 @@ import { ChatGptIcon, GoogleGeminiIcon, Settings02Icon, SolidLine01Icon } from "
 import { SearchSettings } from "../SearchSettings";
 import { KeepAlive } from "keepalive-for-react";
 import { useUserSettings } from "@/hooks/useUserSettings";
+import { RiClaudeFill } from "react-icons/ri";
 
 interface Tab {
   id: string;
@@ -22,14 +23,17 @@ interface TabItemProps {
 
 export function SearchTabs() {
 
+  const { getConfigValue, setConfigValue } = useUserSettings();
+
 
   const [tabs, setTabs] = useState<Tab[]>([
     {
       id: "1",
-      title: <SearchTabTitle />,
+      title: <SearchTabTitle id="1" />,
       children: <Search key={"1"} id="1" />,
     },
   ]);
+
   const [activeTab, setActiveTab] = useState<string>("1");
 
   const [settings, setSettings] = useState<boolean>(false)
@@ -50,10 +54,13 @@ export function SearchTabs() {
   };
 
   const handleAddTab = () => {
-    const newId = Date.now().toString();
+    const newId = crypto.randomUUID();
+
+    setConfigValue(`tabs.${newId}.models.current`, getConfigValue("models.current"))
+
     const newTab = {
       id: newId,
-      title: <SearchTabTitle />,
+      title: <SearchTabTitle id={newId} />,
       children: <Search key={newId} id={newId} />
     };
     setTabs((prev) => [...prev, newTab]);
@@ -96,16 +103,16 @@ export function SearchTabs() {
                 setSettings(false)
                 window.system.openWindow("settings")
               }}
-              className="hover:bg-secondary  p-1" />
+              className="hover:bg-secondary p-1" />
             <SolidLine01Icon
               onClick={() => { window.system.minimizeWindow("home") }}
-              className="hover:bg-secondary  p-1" />
+              className="hover:bg-secondary p-1" />
             <X
               size={22}
-              onClick={() => { 
+              onClick={() => {
                 window.system.closeWindow("home")
                 window.system.closeWindow("settings")
-               }}
+              }}
               className="hover:bg-red-500 hover:text-white p-0.5" />
           </div>
         </div>
@@ -147,15 +154,24 @@ function SearchTabsItem({ tab, tabsLength, active, onClick, onClose }: TabItemPr
   );
 }
 
-function SearchTabTitle() {
+
+interface SearchTabTitleProps {
+  id: string
+}
+function SearchTabTitle({ id }: SearchTabTitleProps) {
 
   const { getConfigValue } = useUserSettings();
-
+  const [genAI, setGenAI] = useState<string>(getConfigValue('models.current'));
   const [tabIcon, setTabIcon] = useState<ReactNode>(<></>);
 
+  // sync configs
   useEffect(() => {
-    const genAI = getConfigValue('models.current')
-    
+    window.system.syncConfig((data) => {
+      if (data.key == `tabs.${id}.models.current`) setGenAI(data.value as unknown as string)
+    });
+  });
+
+  useEffect(() => {
 
     switch (genAI) {
       case 'gemini':
@@ -164,14 +180,17 @@ function SearchTabTitle() {
       case 'gpt':
         setTabIcon(<ChatGptIcon size={15} />)
         break;
+      case 'claude':
+        setTabIcon(<RiClaudeFill size={15} />)
+        break;
       default:
         setTabIcon(<></>)
     }
-  }, [])
+  }, [genAI])
   return (
     <>
       <div className="flex space-x-2">
-        <p>{tabIcon}</p> 
+        <p>{tabIcon}</p>
         <p>New Tab</p>
       </div>
     </>
