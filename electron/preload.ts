@@ -21,6 +21,9 @@ contextBridge.exposeInMainWorld('system', {
     openWindow(windowName: string) {
         return ipcRenderer.send('open-window', windowName);
     },
+    minimizeWindow(windowName: string) {
+        return ipcRenderer.send('minimize-window', windowName);
+    },
     closeWindow(windowName: string) {
         return ipcRenderer.send('close-window', windowName);
     },
@@ -30,7 +33,10 @@ contextBridge.exposeInMainWorld('system', {
     syncConfig: (callback: (data: any) => void) => ipcRenderer.on('sync-config', (_event, data) => {
         callback(data);
     }),
-    getAppVersion: () => ipcRenderer.invoke('get-app-version')
+    getAppVersion: () => ipcRenderer.invoke('get-app-version'),
+    saveAudioBlob: (data: { base64: string; filename: string }) => ipcRenderer.send('save-audio-blob', data),
+    transcript: () => ipcRenderer.send('transcript'),
+
 })
 
 contextBridge.exposeInMainWorld('env', {

@@ -1,23 +1,8 @@
-.loading {
-    padding: 6px;
-    margin: 1px auto;
-    border-radius: 10px;
-    width: 100%;
-    height: auto;
-    text-align: start;
-    font-size: 0.875em;
-
-    border: 1px solid rgb(49, 49, 49);
-    box-sizing: border-box;
-}
-
 .loading span {
     animation-name: blink;
     animation-duration: 1.4s;
     animation-iteration-count: infinite;
     animation-fill-mode: both;
-
-   
 }
 
 .loading span:nth-child(2) {

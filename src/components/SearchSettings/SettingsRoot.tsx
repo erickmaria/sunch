@@ -8,7 +8,7 @@ interface SettingsRootProps {
 export function SettingsRoot({ children }: SettingsRootProps) {
     return (
         <>
-           <div className='settings bg-background rounded-lg relative font-medium'>
+           <div className='border-b pb-1.5 rounded-b-[6px] relative font-medium'>
                 { children }
            </div>
         </>

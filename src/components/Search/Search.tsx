@@ -1,24 +1,52 @@
-import './Search.css'
+
 import { useEffect, useRef, useState } from 'react'
+import sunchIcon from '@/assets/icon.svg'
+import { Microphone } from '@/components/Microphone/Microphone';
+import { useGetAnswer } from '@/hooks/useGetAnswer';
+import { SlashCommands } from '@/slash_comands/slash';
 import Result from '../Result/Result';
 import Loading from '../Loading/Loading';
-import sunchIcon from '../../assets/icon.svg'
-import { Microphone } from '../Microphone/Microphone';
-import { MoreVertical } from 'lucide-react';
-import { SearchSettings } from '../SearchSettings/index';
-import { useGetAnswer } from '../../hooks/useGetAnswer';
-import { SlashCommands } from '../../slash_comands/slash';
+import { ArrowDown01Icon, Attachment02Icon, CenterFocusIcon, ChatGptIcon, GoogleGeminiIcon } from 'hugeicons-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { SettingsSwitcher, SettingsSwitcherItem } from '../SearchSettings/SettingsSwitcher';
+import { SettingsOptions } from '../SearchSettings/SettingsOptions';
+import { SettingsTittle } from '../SearchSettings/SettingsTittle';
+import { useUserSettings } from '@/hooks/useUserSettings';
+import { RiClaudeFill } from 'react-icons/ri';
+import { Switch } from '../ui/switch';
 
-export default function Search() {
+interface SearchProps {
+  id: string
+}
+
+export default function Search({ id }: SearchProps) {
+
+  const { getConfigValue } = useUserSettings();
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [input, setInput] = useState('');
-  const [values, setValues] = useState(Array<string>);
-  const [settings, setSettings] = useState(false)
-  const {awaiting, makeQuestion } = useGetAnswer({})
+
+  const [input, setInput] = useState<string>("");
+  const [values, setValues] = useState<Array<string>>(Array<string>);
+  const [openOptions, setOpenOptions] = useState(false);
+  const [chatMode, setChatMode] = useState<boolean>(false);
+
+  const [genAI, setGenAI] = useState<string>(getConfigValue('models.current'));
+  const { awaiting, askSomething, features } = useGetAnswer({ id, genAI, chatMode });
+  const [audio, setAudio] = useState("");
+
+  const { syncConfig, setConfigValue } = useUserSettings()
+
+
+  SlashCommands.add('/clear', function (setValue: React.Dispatch<React.SetStateAction<Array<string>>>, setInput: React.Dispatch<React.SetStateAction<string>>) {
+    setValue([])
+    setInput('')
+  })
 
   const resizeTextarea = () => {
-
     if (textareaRef.current) {
       const textarea = textareaRef.current;
       textarea.style.height = 'auto';
@@ -26,9 +54,28 @@ export default function Search() {
     }
   };
 
+  // sync configs
+  // useEffect(() => {
+  //   window.system.syncConfig((data) => {
+  //     if (data.key == "general.chatMode.enable") setChatMode(data.value as unknown as boolean)
+  //     if (data.key == "models.current") setGenAI(data.value as unknown as string)
+  //   });
+  // });
+
+  useEffect(() => {
+    setConfigValue(`tabs.${id}.models.current`, genAI)
+    syncConfig(`tabs.${id}.models.current`, genAI)
+  }, [genAI])
+
   useEffect(() => {
     resizeTextarea()
   }, [input])
+
+  useEffect(() => {
+    if (audio != '') {
+      sendAsk(audio)
+    }
+  }, [audio])
 
   async function keyDownHandler(e: React.KeyboardEvent<HTMLTextAreaElement>) {
 
@@ -38,69 +85,152 @@ export default function Search() {
 
     if (e.key == "Enter") {
       e.preventDefault()
-      
+
       if (input.length == 0) return
 
-      if (SlashCommands.validate('/clear', input)){
-        setValues([])
-        setInput('')
+      const callback = SlashCommands.execute(input)
+      if (callback !== undefined) {
+        callback(setValues, setInput)
         return
+
       }
 
-      try{
-        const result = await makeQuestion(input);
-
-        if (result !== undefined){
-          setValues(result)
-          setInput('')
-        }
-      }catch(err){
-        if(err instanceof Error){
-          setValues([err.message])
-        }
-      }
-
-
-      window.system.searchReady({
-        ready: true
-      })
+      sendAsk(input)
     }
 
   }
 
+  function sendAsk(input: string) {
+    askSomething(input).then((result) => {
+      if (result !== undefined) {
+        setValues(result)
+        setInput('')
+      }
+    }).catch(err => {
+      if (err instanceof Error) {
+        setValues([err.message])
+      }
+    })
+
+    window.system.searchReady({
+      ready: true
+    })
+  }
+
   return (
     <>
-      <div className='flex flex-row'>
-        <img
-          className='draggable fixed left-2 top-2'
-          style={{ width: 18, height: 18 }} src={sunchIcon} alt="sunch icon"
-        />
-        <textarea
-          className='search bg-background rounded-xl resize-none overflow-y-hidden min-h-9 border box-border flex-1 outline-hidden p-1 pl-9 pr-14 placeholder:opacity-50 placeholder:text-foreground'
-          ref={textareaRef}
-          autoFocus
-          onFocus={()=> setSettings(false)}
-          name='search'
-          id='search'
-          rows={1}
-          placeholder='Ask your question'
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => keyDownHandler(e)}
-        ></textarea>
-        <Microphone
-        className='fixed right-8 top-2 cursor-pointer'
-          lang='pt-BR'
-          onErrorMessage={setValues} 
-          onTranscriptData={setInput}
-        />
-        <MoreVertical size={20}
-          className='fixed right-2  top-2 cursor-pointer'
-          onClick={() =>(settings ? setSettings(false) : setSettings(true))}
-        />
+      <div className='border-b rounded-xl flex flex-col justify-center pt-2'>
+        <div className='flex flex-row justify-center align-middle'>
+          <div className='draggable p-1.5 hover:cursor-move'>
+            <img
+              style={{ width: 22, height: 22 }} src={sunchIcon} alt="sunch icon"
+            />
+          </div>
+          <div className='w-[99%]'>
+            <textarea
+              className='min-w-full min-h-[33px] p-1 rounded-xl resize-none bg-input/10 placeholder:opacity-40'
+              ref={textareaRef}
+              autoFocus
+              // onFocus={() => setSettings(false)}
+              name='search'
+              id='search'
+              rows={1}
+              placeholder='Ask something'
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => keyDownHandler(e)}
+            />
+          </div>
+          <div className='p-1.5'>
+            <ArrowDown01Icon strokeWidth={1.5} onClick={() => (openOptions ? setOpenOptions(false) : setOpenOptions(true))} />
+          </div>
+        </div>
+        {openOptions &&
+          <div className='flex justify-between align-middle w-full border-2 pr-1 pl-1 pb-0.5 border-transparent'>
+            <div className='flex'>
+              <div className='flex'>
+                <SettingsOptions>
+                  <div className='pt-1.5 pr-2 pl-1'>
+                    <SettingsTittle name='AI' />
+                  </div>
+                  <SettingsSwitcher name="AI" defaultValue={genAI}>
+                    <SettingsSwitcherItem onClick={() => setGenAI('gemini')} value='gemini' icon={<GoogleGeminiIcon size={15} />} />
+                    <SettingsSwitcherItem onClick={() => setGenAI('gpt')} value='gpt' icon={<ChatGptIcon size={15} />} />
+                    <SettingsSwitcherItem onClick={() => setGenAI('claude')} value='claude' icon={<RiClaudeFill size={15} />} />
+                  </SettingsSwitcher>
+                </SettingsOptions>
+              </div>
+              <span className='pl-2 p-0.5 opacity-40'>|</span>
+              <div className='flex items-center'>
+                <div className='flex items-center space-x-1 rounded-md'>
+                  <div className='pl-2 p-1'>
+                    <SettingsTittle name='chat' />
+                  </div>
+                  <Switch className='' checked={chatMode} onCheckedChange={(checked) => { setChatMode(checked) }} />
+                  <div>
+                  </div>
+                </div>
+              </div>
+              <span className='pl-2 p-0.5 opacity-40'>|</span>
+
+              <div className='flex space-x-1'>
+                <div className='flex items-center w-fit h-fit hover:bg-secondary rounded-md'>
+                  <div className='flex p-1'>
+                    <div className={`${!features.files && 'pointer-events-none opacity-10'}`}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Attachment02Icon size={20} />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Upload file</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </div>
+                </div>
+                <div className='flex items-center w-fit h-fit hover:bg-secondary rounded-md'>
+                  <input type='checkbox' className='peer/web-search hidden' id="web-search" />
+                  <label htmlFor="web-search" className={`${!features.image && 'pointer-events-none'} peer-checked/web-search:bg-blue-800 rounded-md p-1`}>
+                    <div className='flex'>
+                      <div className={`${!features.image && 'pointer-events-none opacity-10'}`}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <CenterFocusIcon size={20} />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Take a screenshot</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+            </div>
+            <div className='flex'>
+              <div className={`${!features.audio && 'pointer-events-none opacity-10'} p-1`}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div>
+                      <Microphone
+                        className=''
+                        lang='pt-BR'
+                        onError={setValues}
+                        audioData={setAudio}
+                      />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Use Voice</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+            </div>
+          </div>
+        }
       </div>
-      {settings && <SearchSettings setSettings={setSettings} /> }
-      {awaiting ? !settings &&  <Loading /> : !settings && <Result contents={values} />}
+      {awaiting ? <Loading /> : <Result contents={values} />}
     </>
   )
 }

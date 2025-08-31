@@ -1,10 +1,16 @@
 import { OpenAI } from "openai";
-import { Service } from "./service";
+import { AIFeatures, Service } from "./service";
 
 export default class GPTService implements Service {
 
   private genAI: OpenAI
   chatMode: boolean;
+  features: AIFeatures = {
+    text: true,
+    audio: false,
+    image: false,
+    files: false,
+  };
 
   private constructor(chatMode = false) {
 
@@ -21,6 +27,7 @@ export default class GPTService implements Service {
     if (!GPTService.instance) {
       GPTService.instance = new GPTService(chatMode);
     }
+    GPTService.instance.chatMode = chatMode
     return GPTService.instance;
   }
 
@@ -32,7 +39,10 @@ export default class GPTService implements Service {
     return window.system.store.get('models.gpt.version')
   }
 
-  async execute(prompt: string): Promise<string> {
+  async execute(sessionId: string, prompt: string): Promise<string> {
+
+    // eslint-disable-next-line no-empty
+    if (sessionId) {} 
 
     if (this.genAI.apiKey != this.getApiKey()) {
       this.genAI.apiKey = this.getApiKey()

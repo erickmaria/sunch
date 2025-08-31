@@ -1,5 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
-import { searchReadyNotification, stillRunningNotification } from "../../notifications/notifcation";
+import { BrowserWindow, ipcMain } from "electron";
 import { join } from 'path';
 
 class Window {
@@ -47,14 +46,14 @@ class Window {
     });
 
     if (process.env.VITE_DEV_SERVER_URL) {
-      win.loadURL(process.env.VITE_DEV_SERVER_URL + "settings", {
+      win.loadURL(process.env.VITE_DEV_SERVER_URL + "#/settings", {
 
       })
-      if (process.env.SUNCH_DEVTOOLS_ENABLED === 'true') {
+      if (process.env.SUNCH_PAGE_SETTINGS_DEVTOOLS_ENABLED === 'true') {
         win.webContents.openDevTools({ mode: 'detach' })
       }
     } else {
-      win.loadFile('dist/index.html')
+       win.loadFile('dist/index.html', { hash: "/settings" })
     }
 
     ipcMain.on('dispatch-sync-config', async (e: Electron.IpcMainEvent, key: string, value: unknown) => {

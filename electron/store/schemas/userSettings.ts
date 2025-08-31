@@ -6,6 +6,12 @@ export const userSettingsSchema = {
 		properties: {
 			theme: { type: JSONSchemaType.String, },
 			language: { type: JSONSchemaType.String },
+			chatMode: {
+				type: JSONSchemaType.Object,
+				default: {
+					enable: true,
+				}
+			},
 			media: {
 				type: JSONSchemaType.Object,
 				default: {
@@ -22,24 +28,32 @@ export const userSettingsSchema = {
 		},
 		default: {
 			theme: 'system',
-			language: 'es-us'	
+			language: 'es-us',
+			chatMode: false
 		},
 	},
 	models: {
 		type: JSONSchemaType.Object,
 		properties: {
-			current: { type: JSONSchemaType.String},
+			current: { type: JSONSchemaType.String },
 			gemini: {
 				type: JSONSchemaType.Object,
 				default: {
-					version: 'gemini-pro',
+					version: 'gemini-2.0-flash',
 					apikey: ''
 				}
 			},
 			gpt: {
 				type: JSONSchemaType.Object,
 				default: {
-					version: 'gpt-3.5-turbo',
+					version: 'gpt-4o-mini',
+					apikey: ''
+				}
+			},
+			claude: {
+				type: JSONSchemaType.Object,
+				default: {
+					version: 'claude-3-5-sonnet-latest',
 					apikey: ''
 				}
 			},
@@ -47,5 +61,8 @@ export const userSettingsSchema = {
 		default: {
 			current: 'gemini',
 		}
+	},
+	tabs: {
+		type: JSONSchemaType.Object,
 	}
 }
