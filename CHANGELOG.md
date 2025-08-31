@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v1.4.0 - 2025-08-31
+
 ## v1.3.1 - 2025-05-08
 
 - [#23](https://github.com/erickmaria/sunch/pull/13) chore: update dependencies
