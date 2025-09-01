@@ -35,7 +35,7 @@ jobs:
         run: |
           current_date=$(date +'%Y-%m-%d') 
           sed -i "s/Unreleased/${{ steps.update_version.outputs.version }} - ${current_date}/g" CHANGELOG.md
-          sed -i '1s/$/\n\n## Unreleased/' CHANGELOG.md 
+          sed -i '1s/$/\n\n## Unreleased/' CHANGELOG.md
 
       - name: Create pull request
         id: create_pr
