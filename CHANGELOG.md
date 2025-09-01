@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v1.4.1 - 2025-09-01
+
 ## v1.4.0 - 2025-08-31
 
 - [#25](https://github.com/erickmaria/sunch/pull/25) feat(ai/gemini): implement speech to text
