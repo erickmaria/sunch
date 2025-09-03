@@ -8,8 +8,7 @@
 }
 
 .tabs li {
-  padding: 3px 9px 3px 9px;
-  font-size: medium;
+  padding: 5px 11px 5px 11px;
   cursor: pointer;
   /* border: 1px solid transparent; */
   /* border-radius: 5px 5px 0 0; */
@@ -26,7 +25,7 @@ li:not(.active) {
 .tab-content {
   border: 1px solid transparent;
   padding: 20px;
-  height: 91dvh;
+  height: 95dvh;
   overflow: scroll;
   padding-bottom: 30px;
 }

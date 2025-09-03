@@ -26,20 +26,20 @@ export default function Settings() {
   const lineSelectContextStyle: CSSProperties = {
     maxHeight: '300px'
   }
+  
   const { setConfigValue, getConfigValue, dispatchSyncConfig } = useUserSettings()
-
   const { setTheme, theme } = useTheme();
-  const [genAI, setGenAI] = useState<string>(getConfigValue('models.current'));
-
+  
   const [notification, setNotification] = useState<boolean>(false);
+  const [genAI, setGenAI] = useState<string>(getConfigValue('models.current'));
   const [layoutMode, setLayoutMode] = useState<boolean>((getConfigValue("general.layout.mode") as string) == "full" ? true : false);
-
   const [chatMode, setChatMode] = useState<boolean>(getConfigValue("general.chatMode.enable") as boolean);
-
+  
   const [version, setVersion] = useState<string>("");
   const [gptModels, setGptModels] = useState<Array<string>>([]);
   const [geminiModels, setGeminiModels] = useState<Array<string>>([]);
   const [claudeModels, setClaudeModels] = useState<Array<string>>([]);
+  
 
   // sync configs
   useEffect(() => {
@@ -119,19 +119,19 @@ export default function Settings() {
 
   return (
     <>
-      <div data-theme={theme} className="bg-background">
+      <div data-theme={theme} className="bg-background border-b rounded-tl-none rounded-tr-xl rounded-b-xl">
         <div>
           <div className="absolute right-1 mt-1 cursor-pointer">
             <X
               onClick={() => { window.system.closeWindow("settings") }}
               className="hover:bg-red-500" />
           </div>
-          <div className="bg-secondary draggable absolute right-8 w-[213px] h-[30px]"></div>
+          <div className="bg-secondary draggable absolute right-8 w-[219px] h-[30px]"></div>
           <Tabs initialTabIndex={0}>
             <Tab label="General">
               <div className="flex flex-col justify-between space-y-6 mb-5">
                 <div className="flex justify-between">
-                  <h1 className="text-sm font-medium leading-none pt-3">Themes</h1>
+                  <span className="text-sm font-medium leading-none pt-3">Themes</span>
                   <Select value={theme}
                     onValueChange={(value: Theme) => {
                       setTheme(value)
@@ -148,8 +148,9 @@ export default function Settings() {
                   </Select>
                 </div>
                 <div className="flex justify-between">
-                  <h1 className="text-sm font-medium leading-none pt-3">Lenguague</h1>
+                  <span className="text-sm font-medium leading-none pt-3">Lenguague</span>
                   <Select defaultValue={getConfigValue('general.language')}
+                    disabled
                     onValueChange={(value) => {
                       setConfigValue('general.language', value)
                     }}>
@@ -350,7 +351,7 @@ export default function Settings() {
             </Tab>
           </Tabs>
         </div>
-        <div className="bg-transparent flex justify-end pr-0.5 m-1">
+        <div className="absolute bottom-0 right-0 pr-2 pb-0.5">
           <p className="text-sm">version: {version} </p>
         </div>
       </div>

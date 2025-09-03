@@ -41,6 +41,7 @@ class Window {
         nodeIntegration: true,
         experimentalFeatures: true,
       },
+      transparent: true,
       frame: false,
       show: false,
     });
