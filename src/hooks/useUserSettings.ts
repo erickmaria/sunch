@@ -8,7 +8,7 @@ export function useUserSettings(){
 
   const setConfigValue = (key: string, value: unknown) => window.system.store.set(key, value)
 
-  const syncConfig = (key: string, value: unknown) => window.system.dispatchSyncConfig(key, value)
+  const dispatchSyncConfig = (key: string, value: unknown) => window.system.dispatchSyncConfig(key, value)
 
   // const getConfigValue = <K extends keyof Schema>(key: K) => window.system.store.get(key)
 
@@ -17,6 +17,6 @@ export function useUserSettings(){
   return {
     getConfigValue,
     setConfigValue,
-    syncConfig
+    dispatchSyncConfig
   }
 }

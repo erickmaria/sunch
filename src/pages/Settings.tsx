@@ -26,7 +26,7 @@ export default function Settings() {
   const lineSelectContextStyle: CSSProperties = {
     maxHeight: '300px'
   }
-  const { setConfigValue, getConfigValue, syncConfig } = useUserSettings()
+  const { setConfigValue, getConfigValue, dispatchSyncConfig } = useUserSettings()
 
   const { setTheme, theme } = useTheme();
   const [genAI, setGenAI] = useState<string>(getConfigValue('models.current'));
@@ -47,6 +47,7 @@ export default function Settings() {
       if (data.key == `general.layout.mode`) setLayoutMode(data.value == "full" ? true : false)
       if (data.key == `general.chatMode.enable`) setChatMode(data.value as boolean)
     });
+    return function cleanup() {}
   });
 
   useEffect(() => {
@@ -55,12 +56,12 @@ export default function Settings() {
 
   useEffect(() => {
     setConfigValue('general.chatMode.enable', chatMode)
-    syncConfig('general.chatMode.enable', chatMode)
+    dispatchSyncConfig('general.chatMode.enable', chatMode)
   }, [chatMode])
 
   useEffect(() => {
     setConfigValue('general.layout.mode', layoutMode ? "full" : "minimalist")
-    syncConfig('general.layout.mode', layoutMode ? "full" : "minimalist")
+    dispatchSyncConfig('general.layout.mode', layoutMode ? "full" : "minimalist")
   }, [layoutMode])
 
   useEffect(() => {
@@ -112,7 +113,7 @@ export default function Settings() {
 
   function setDefaulGenAI(value: string) {
     setConfigValue('models.current', value)
-    syncConfig('models.current', value as string)
+    dispatchSyncConfig('models.current', value as string)
     setGenAI(value)
   }
 
@@ -134,7 +135,7 @@ export default function Settings() {
                   <Select value={theme}
                     onValueChange={(value: Theme) => {
                       setTheme(value)
-                      syncConfig('general.theme', value)
+                      dispatchSyncConfig('general.theme', value)
                     }} >
                     <SelectTrigger className="w-[230px]">
                       <SelectValue placeholder="Theme" />

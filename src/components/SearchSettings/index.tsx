@@ -27,11 +27,11 @@ interface SearchSettingsProps {
 export function SearchSettings({ setSettings }: SearchSettingsProps) {
 
     const { setTheme, theme } = useTheme();
-    const { syncConfig } = useUserSettings();
+    const { dispatchSyncConfig } = useUserSettings();
 
     function saveTheme(theme: Theme) {
         setTheme(theme)
-        syncConfig("general.theme", theme)
+        dispatchSyncConfig("general.theme", theme)
     }
 
     return (

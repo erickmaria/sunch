@@ -9,10 +9,8 @@ import { autoUpdater } from "electron-updater"
 import path from 'path';
 import fs from 'fs';
 import fsp from 'fs/promises';
+import { spawn,  } from 'child_process';
 
-import { spawn, spawnSync } from 'child_process';
-
-var exec = require('child_process').exec;
 const recordingsDir = path.join(app.getPath('documents'), app.getName(), 'recordings');
 
 const data = { lock: 'app.lock' }

@@ -54,7 +54,7 @@ export default function Search({ id }: SearchProps) {
 
   const { setTheme } = useTheme();
   const { awaiting, askSomething, features } = useGetAnswer({ id, genAI, chatMode });
-  const { syncConfig, setConfigValue } = useUserSettings()
+  const { dispatchSyncConfig, setConfigValue } = useUserSettings()
 
   // sync configs
   useEffect(() => {
@@ -65,7 +65,7 @@ export default function Search({ id }: SearchProps) {
 
   useEffect(() => {
     setConfigValue(`tabs.${id}.models.current`, genAI)
-    syncConfig(`tabs.${id}.models.current`, genAI)
+    dispatchSyncConfig(`tabs.${id}.models.current`, genAI)
   }, [genAI])
 
   useEffect(() => {
@@ -112,16 +112,16 @@ export default function Search({ id }: SearchProps) {
       }
       if (cmd.startsWith("/theme")) {
         setTheme(cmd.split(' ')[1] as string as Theme)
-        syncConfig('general.theme', cmd.split(' ')[1] as string)
+        dispatchSyncConfig('general.theme', cmd.split(' ')[1] as string)
       }
       if (cmd.startsWith("/chat")) {
         setChatMode(args[0] as boolean)
-        syncConfig('general.chatMode.enable', args[0] as boolean)
+        dispatchSyncConfig('general.chatMode.enable', args[0] as boolean)
 
       }
       if (cmd.startsWith("/layout")) {
         setLayoutMode(cmd.split(' ')[1] as string)
-        syncConfig('general.layout.mode', cmd.split(' ')[1] as string)
+        dispatchSyncConfig('general.layout.mode', cmd.split(' ')[1] as string)
       }
       if (cmd.startsWith("/settings")) {
         window.system.openWindow("settings")
