@@ -18,7 +18,7 @@ export default function App() {
 
   return (
     <>
-      <div>
+      <div className='text-sm'>
         <HashRouter>
           <Routes>
             <Route index path="/" element={<Home />} />

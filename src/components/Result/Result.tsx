@@ -11,12 +11,12 @@ export default function Result({ contents }: ResultProps) {
   if (contents.length > 0) {
     return (
       <>
-        <div className='w-full max-h-[800px] overflow-auto text-[0.875em] rounded-b-lg p-1 select-text' >
+        <div className='w-full max-h-[800px] overflow-auto rounded-b-lg p-1 select-text' >
           <PanelGroup direction="horizontal" >
               {contents.map((content, index) => (
                 <>
                 {(index > 0) && <PanelResizeHandle  /> }
-                  <Panel>
+                  <Panel key={index}>
                     <div className='p-1 whitespace-pre-wrap break-words leading-8 overflow-x-auto' style={ (index > 0) ? { whiteSpace: 'pre-wrap' } : { whiteSpace: 'wrap' } } >
                       <code>
                         <MarkdownHighlighter key={index} markdown={content} />

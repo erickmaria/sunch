@@ -7,6 +7,6 @@ export function toggleWindow(): void {
 
     const win = HomeWidown.getInstance().bw
 
-    !win.isFocused() ? win.show() : win.isVisible() ? win.hide() : win.show()
+    !win.isFocused() ? (win.show(), win.focus()) : win.isVisible() ? win.hide() : (win.show(), win.focus())
 
 }
