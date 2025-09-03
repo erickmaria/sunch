@@ -32,9 +32,9 @@ export default function Settings() {
   const [genAI, setGenAI] = useState<string>(getConfigValue('models.current'));
 
   const [notification, setNotification] = useState<boolean>(false);
-  const [layoutMode, setLayoutMode] = useState<boolean>(false);
+  const [layoutMode, setLayoutMode] = useState<boolean>((getConfigValue("general.layout.mode") as string) == "full" ? true : false);
 
-  const [chatMode, setChatMode] = useState<boolean>(false);
+  const [chatMode, setChatMode] = useState<boolean>(getConfigValue("general.chatMode.enable") as boolean);
 
   const [version, setVersion] = useState<string>("");
   const [gptModels, setGptModels] = useState<Array<string>>([]);

@@ -24,6 +24,12 @@ export const userSettingsSchema = {
 				default: {
 					enable: true,
 				}
+			},
+			layout: {
+				type: JSONSchemaType.Object,
+				default: {
+					mode: "minimalist",
+				}
 			}
 		},
 		default: {
@@ -39,7 +45,7 @@ export const userSettingsSchema = {
 			gemini: {
 				type: JSONSchemaType.Object,
 				default: {
-					version: 'gemini-2.0-flash',
+					version: 'gemini-2.5-flash',
 					apikey: ''
 				}
 			},

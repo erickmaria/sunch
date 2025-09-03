@@ -47,19 +47,21 @@ export default function Search({ id }: SearchProps) {
   const [values, setValues] = useState<Array<string>>(Array<string>);
   const [openOptions, setOpenOptions] = useState(false);
   const [chatMode, setChatMode] = useState<boolean>(false);
-  const [layoutMode, setLayoutMode] = useState<string>(getConfigValue("general.layout.mode"));
-
-
-
-
-
-  const [genAI, setGenAI] = useState<string>(getConfigValue('models.current'));
-
-  const { awaiting, askSomething, features } = useGetAnswer({ id, genAI, chatMode });
   const [audio, setAudio] = useState("");
 
+  const [layoutMode, setLayoutMode] = useState<string>(getConfigValue("general.layout.mode"));
+  const [genAI, setGenAI] = useState<string>(getConfigValue('models.current'));
+
   const { setTheme } = useTheme();
+  const { awaiting, askSomething, features } = useGetAnswer({ id, genAI, chatMode });
   const { syncConfig, setConfigValue } = useUserSettings()
+
+  // sync configs
+  useEffect(() => {
+    window.system.syncConfig((data) => {
+      if (data.key == `general.layout.mode`) setLayoutMode(data.value as unknown as string)
+    });
+  });
 
   useEffect(() => {
     setConfigValue(`tabs.${id}.models.current`, genAI)
