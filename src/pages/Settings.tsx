@@ -47,7 +47,6 @@ export default function Settings() {
       if (data.key == `general.layout.mode`) setLayoutMode(data.value == "full" ? true : false)
       if (data.key == `general.chatMode.enable`) setChatMode(data.value as boolean)
     });
-    return function cleanup() {}
   });
 
   useEffect(() => {
