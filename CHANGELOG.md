@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v1.5.0 - 2025-09-03
+
 - feat: revamp slash commands
 - feat: add ui layouts
 
