@@ -114,6 +114,8 @@ export default function Search({ id }: SearchProps) {
       }
       if (cmd.startsWith("/chat")) {
         setChatMode(args[0] as boolean)
+        syncConfig('general.chatMode.enable', args[0] as boolean)
+
       }
       if (cmd.startsWith("/layout")) {
         setLayoutMode(cmd.split(' ')[1] as string)

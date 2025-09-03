@@ -45,6 +45,7 @@ export default function Settings() {
   useEffect(() => {
     window.system.syncConfig((data) => {
       if (data.key == `general.layout.mode`) setLayoutMode(data.value == "full" ? true : false)
+      if (data.key == `general.chatMode.enable`) setChatMode(data.value as boolean)
     });
   });
 
@@ -190,6 +191,7 @@ export default function Settings() {
                   </p>
                 </div>
                 <Switch
+                  checked={chatMode}
                   onCheckedChange={(checked) => { setChatMode(checked) }}
                 />
               </div>
@@ -348,7 +350,7 @@ export default function Settings() {
           </Tabs>
         </div>
         <div className="bg-transparent flex justify-end pr-0.5 m-1">
-          <p className="text-[14px]">version: {version} </p>
+          <p className="text-sm">version: {version} </p>
         </div>
       </div>
     </>
