@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat: revamp slash commands
+
 ## v1.4.1 - 2025-09-01
 
 - fix: github releases
