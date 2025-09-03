@@ -3,10 +3,9 @@ import { useEffect, useState } from 'react'
 import sunchIcon from '@/assets/icon.svg'
 import { Microphone } from '@/components/Microphone/Microphone';
 import { useGetAnswer } from '@/hooks/useGetAnswer';
-import { SlashCommands } from '@/slash_comands/slash';
 import Result from '../Result/Result';
 import Loading from '../Loading/Loading';
-import { ArrowDown01Icon, ArtificialIntelligence01Icon, ArtificialIntelligence04Icon, Attachment02Icon, CenterFocusIcon, ChatBotIcon, ChatGptIcon, CleanIcon, ColorsIcon, GoogleGeminiIcon, Moon01Icon, Moon02Icon, Sun01Icon, Sun02Icon } from 'hugeicons-react';
+import { ArrowDown01Icon, ArtificialIntelligence04Icon, ArtificialIntelligence05Icon, Attachment02Icon, CenterFocusIcon, ChatGptIcon, Chatting01Icon, CleanIcon, ColorsIcon, GoogleGeminiIcon, Layout01Icon, Layout07Icon, LayoutBottomIcon, Logout04Icon, Moon02Icon, Sun02Icon, ToggleOffIcon, ToggleOnIcon } from 'hugeicons-react';
 import {
   Tooltip,
   TooltipContent,
@@ -16,10 +15,25 @@ import { SettingsSwitcher, SettingsSwitcherItem } from '../SearchSettings/Settin
 import { SettingsOptions } from '../SearchSettings/SettingsOptions';
 import { SettingsTittle } from '../SearchSettings/SettingsTittle';
 import { useUserSettings } from '@/hooks/useUserSettings';
-import { RiClaudeFill, RiGeminiFill, RiGeminiLine } from 'react-icons/ri';
+import { RiClaudeFill, RiGeminiFill, RiOpenaiFill } from 'react-icons/ri';
 import { Switch } from '../ui/switch';
 
 import TextareaAutosize from 'react-textarea-autosize';
+
+import { ComputerIcon, Settings } from "lucide-react"
+
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from "@/components/ui/command"
+import { Theme, useTheme } from '@/contexts/ThemeProvider';
+
 
 interface SearchProps {
   id: string
@@ -33,11 +47,18 @@ export default function Search({ id }: SearchProps) {
   const [values, setValues] = useState<Array<string>>(Array<string>);
   const [openOptions, setOpenOptions] = useState(false);
   const [chatMode, setChatMode] = useState<boolean>(false);
+  const [layoutMode, setLayoutMode] = useState<string>(getConfigValue("general.layout.mode"));
+
+
+
+
 
   const [genAI, setGenAI] = useState<string>(getConfigValue('models.current'));
+
   const { awaiting, askSomething, features } = useGetAnswer({ id, genAI, chatMode });
   const [audio, setAudio] = useState("");
 
+  const { setTheme } = useTheme();
   const { syncConfig, setConfigValue } = useUserSettings()
 
   useEffect(() => {
@@ -77,6 +98,180 @@ export default function Search({ id }: SearchProps) {
     })
   }
 
+  function Commands() {
+
+    // use the args parameter when the subcommand value is different from what is needed to perform the action  
+    function execCommand(cmd: string, ...args: unknown[]) {
+      if (cmd.startsWith("/use")) {
+        setGenAI(cmd.split(' ')[1] as string)
+      }
+      if (cmd.startsWith("/clear")) {
+        setValues([])
+      }
+      if (cmd.startsWith("/theme")) {
+        setTheme(cmd.split(' ')[1] as string as Theme)
+        syncConfig('general.theme', cmd.split(' ')[1] as string)
+      }
+      if (cmd.startsWith("/chat")) {
+        setChatMode(args[0] as boolean)
+      }
+      if (cmd.startsWith("/layout")) {
+        setLayoutMode(cmd.split(' ')[1] as string)
+        syncConfig('general.layout.mode', cmd.split(' ')[1] as string)
+      }
+      if (cmd.startsWith("/settings")) {
+        window.system.openWindow("settings")
+      }
+      if (cmd.startsWith("/exit")) {
+        window.system.closeWindow("home")
+        window.system.closeWindow("settings")
+      }
+      setInput('')
+    }
+
+
+    function CommandItems() {
+      switch (input) {
+        case "/theme":
+          return (
+            <>
+              <CommandGroup heading="Themes">
+                <CommandItem value="/theme system" onSelect={(value) => execCommand(value)}>
+                  <ComputerIcon />
+                  <span>System</span>
+                </CommandItem>
+                <CommandItem value="/theme dark" onSelect={(value) => execCommand(value)}>
+                  <Sun02Icon />
+                  <span>Dark</span>
+                </CommandItem>
+                <CommandItem value="/theme light" onSelect={(value) => execCommand(value)}>
+                  <Moon02Icon />
+                  <span>Light</span>
+                </CommandItem>
+              </CommandGroup>
+            </>
+          );
+        case "/use":
+          return (
+            <>
+              <CommandGroup heading="Select AI">
+                <CommandItem value="/use gemini" onSelect={(value) => execCommand(value)}>
+                  <GoogleGeminiIcon />
+                  <span>Gemini</span>
+                </CommandItem>
+                <CommandItem value="/use gpt" onSelect={(value) => execCommand(value)}>
+                  <ChatGptIcon />
+                  <span>GPT</span>
+                </CommandItem>
+                <CommandItem value="/use claude" onSelect={(value) => execCommand(value)}>
+                  <RiClaudeFill />
+                  <span>Claude</span>
+                </CommandItem>
+              </CommandGroup>
+            </>
+          );
+        case "/chat":
+          return (
+            <>
+              <CommandGroup heading="Chat Mode">
+                <CommandItem value="/chat on" onSelect={(value) => execCommand(value, true)}>
+                  <ToggleOnIcon />
+                  <span>On</span>
+                </CommandItem>
+                <CommandItem value="/chat of" onSelect={(value) => execCommand(value, false)}>
+                  <ToggleOffIcon />
+                  <span>Off</span>
+                </CommandItem>
+              </CommandGroup>
+            </>
+          )
+        case "/layout":
+          return (
+            <>
+              <CommandGroup heading="Change Layout">
+                <CommandItem value="/layout full" onSelect={(value) => execCommand(value)}>
+                  <Layout07Icon />
+                  <span>Full</span>
+                </CommandItem>
+                <CommandItem value="/layout minimalist" onSelect={(value) => execCommand(value)}>
+                  <LayoutBottomIcon />
+                  <span>Minimalist</span>
+                </CommandItem>
+              </CommandGroup>
+            </>
+          )
+        case "/ai":
+          return (
+            <>
+            </>
+          )
+        default:
+          return (
+            <>
+              <CommandEmpty>No results found.</CommandEmpty>
+              <CommandGroup heading="Suggestions">
+                <CommandItem value='/clear' onSelect={(value) => execCommand(value)}>
+                  <CleanIcon />
+                  <span>Clear content and Chat context</span>
+                  <CommandShortcut>/clear</CommandShortcut>
+                </CommandItem>
+                <CommandItem value='/use' onSelect={(value) => setInput(value)}>
+                  <ArtificialIntelligence04Icon />
+                  <span>Use other genereative AI</span>
+                  <CommandShortcut>/use</CommandShortcut>
+                </CommandItem>
+              </CommandGroup>
+              <CommandSeparator />
+              <CommandGroup heading="Quick Settings">
+                <CommandItem value='/theme' onSelect={(value) => setInput(value)}>
+                  <ColorsIcon />
+                  <span>Change theme</span>
+                  <CommandShortcut>/theme</CommandShortcut>
+                </CommandItem>
+                <CommandItem value='/chat' onSelect={(value) => setInput(value)}>
+                  <Chatting01Icon />
+                  <span>Chat Mode</span>
+                  <CommandShortcut>/chat</CommandShortcut>
+                </CommandItem>
+                <CommandItem value='/layout' onSelect={(value) => setInput(value)}>
+                  <Layout01Icon />
+                  <span>Change Layout</span>
+                  <CommandShortcut>/layout</CommandShortcut>
+                </CommandItem>
+              </CommandGroup>
+              <CommandSeparator />
+              <CommandGroup heading="General Settings">
+                <CommandItem value='/settings' onSelect={(value) => execCommand(value)}>
+                  <Settings />
+                  <span>Advanced Settings</span>
+                  <CommandShortcut>/settings</CommandShortcut>
+                </CommandItem>
+                <CommandItem disabled value='/ai' onSelect={(value) => execCommand(value)}>
+                  <ArtificialIntelligence05Icon />
+                  <span>AI Settings</span>
+                  <CommandShortcut>/ai</CommandShortcut>
+                </CommandItem>
+                <CommandItem value='/exit' onSelect={(value) => execCommand(value)}>
+                  <Logout04Icon />
+                  <span>Exit Program</span>
+                  <CommandShortcut>/exit</CommandShortcut>
+                </CommandItem>
+              </CommandGroup>
+            </>
+          );
+      }
+    }
+
+    return (
+      <Command className="">
+        <CommandInput className='' autoFocus value={input} onValueChange={e => { setInput(e) }} placeholder="Type a command or search..." />
+        <CommandList>
+          {CommandItems()}
+        </CommandList>
+      </Command>
+    )
+  }
+
   return (
     <>
       <div className='border-b rounded-xl flex flex-col justify-center'>
@@ -85,6 +280,13 @@ export default function Search({ id }: SearchProps) {
             <div className='flex flex-row justify-center align-middle pt-1'>
               <div className='draggable p-2 hover:cursor-move'>
                 <img style={{ width: 22, height: 22 }} src={sunchIcon} alt="sunch icon" />
+                {layoutMode == "minimalist" &&
+                  <div className='fixed top-2 left-4 bg-background rounded-xl'>
+                    {(genAI === 'gemini') && <RiGeminiFill size={16} />}
+                    {(genAI === 'gpt') && <RiOpenaiFill size={16} />}
+                    {(genAI === 'claude') && <RiClaudeFill size={16} />}
+                  </div>
+                }
               </div>
               <div className='w-[99%]'>
                 <TextareaAutosize
@@ -191,142 +393,10 @@ export default function Search({ id }: SearchProps) {
                 </div>
               </div>
             }
-          </> : <Commands
-            input={input}
-            setInput={setInput}
-            values={values}
-            setValues={setValues} />
+          </> : <Commands />
         }
       </div>
       {awaiting ? <Loading /> : !input.startsWith("/") && <Result contents={values} />}
     </>
-  )
-}
-
-import {
-  ComputerIcon,
-  Settings,
-} from "lucide-react"
-
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  // CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
-} from "@/components/ui/command"
-
-
-interface CommandsProps {
-  input: string
-  setInput: React.Dispatch<React.SetStateAction<string>>
-  values: string[]
-  setValues: React.Dispatch<React.SetStateAction<string[]>>
-}
-
-export function Commands({ input, setInput, values, setValues }: CommandsProps) {
-
-  SlashCommands.add('/clear', function (setValue: React.Dispatch<React.SetStateAction<Array<string>>>, setInput: React.Dispatch<React.SetStateAction<string>>) {
-    setValue([])
-    setInput('')
-  })
-
-
-  function execCommand(cmd: string) {
-    const callback = SlashCommands.execute(cmd.toLowerCase())
-    if (callback !== undefined) {
-      callback(setValues, setInput)
-      return
-    }
-    return
-  }
-
-
-  const renderItems = () => {
-    switch (input) {
-      case "/theme":
-        return (
-          <>
-            <CommandGroup heading="Themes">
-              <CommandItem value="/theme system" onSelect={() => console.log("system")}>
-              <ComputerIcon />
-              <span>System</span>
-              </CommandItem>
-              <CommandItem value="/theme dark" onSelect={() => console.log("dark")}>
-              <Sun02Icon />
-              <span>Dark</span>
-              </CommandItem>
-              <CommandItem value="/theme light" onSelect={() => console.log("light")}>
-              <Moon02Icon />
-              <span>Light</span>
-              </CommandItem>
-            </CommandGroup>
-          </>
-        );
-      case "/ai":
-        return (
-          <>
-            <CommandGroup heading="Generative AI">
-              <CommandItem value="/ai gemini" onSelect={() => console.log("gemini")}>
-                <GoogleGeminiIcon />
-                <span>Gemini</span>
-              </CommandItem>
-              <CommandItem value="/ai gpt" onSelect={() => console.log("gpt")}>
-                <ChatGptIcon />
-                <span>GPT</span>
-              </CommandItem>
-              <CommandItem value="/ai claude" onSelect={() => console.log("claude")}>
-                <RiClaudeFill />
-                <span>Claude</span>
-              </CommandItem>
-            </CommandGroup>
-          </>
-        );
-      default:
-        return (
-          <>
-          <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup heading="Commands">
-              <CommandItem value='/clear' onSelect={(value) => execCommand(value)}>
-                <CleanIcon />
-                <span>Clear content and Chat context</span>
-                <CommandShortcut>/clear</CommandShortcut>
-
-              </CommandItem>
-              <CommandItem value='/ai' onSelect={(value) => setInput(value)}>
-                <ArtificialIntelligence04Icon />
-                <span>Genereative AI settings</span>
-                <CommandShortcut>/ai</CommandShortcut>
-              </CommandItem>
-              <CommandItem value='/theme' onSelect={(value) => setInput(value)}>
-                <ColorsIcon />
-                <span>Select theme</span>
-                <CommandShortcut>/theme</CommandShortcut>
-              </CommandItem>
-            </CommandGroup>
-            <CommandSeparator />
-            <CommandGroup heading="Settings">
-              <CommandItem value='/settings' onSelect={(value) => execCommand(value)}>
-                <Settings />
-                <span>Settings</span>
-                <CommandShortcut>⌘S</CommandShortcut>
-              </CommandItem>
-            </CommandGroup>
-          </>
-        );
-    }
-  };
-
-  return (
-    <Command className="">
-      <CommandInput className='' autoFocus value={input} onValueChange={e => { setInput(e) }} placeholder="Type a command or search..." />
-      <CommandList >
-        {renderItems()}
-      </CommandList>
-    </Command>
   )
 }

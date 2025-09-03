@@ -3,8 +3,7 @@
 import * as React from "react"
 import { type DialogProps } from "@radix-ui/react-dialog"
 import { Command as CommandPrimitive } from "cmdk"
-import { Search } from "lucide-react"
-import sunchIcon from '@/assets/icon.svg'
+import { Terminal } from "lucide-react"
 
 
 import { cn } from "@/lib/utils"
@@ -44,8 +43,10 @@ const CommandInput = React.forwardRef<
   <div className="flex items-center border-b" cmdk-input-wrapper="">
     {/* <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" /> */}
     <div className='draggable p-2 hover:cursor-move'>
-
-      <img style={{ width: 21, height: 21 }} src={sunchIcon} alt="sunch icon" />
+      {/* <img style={{ width: 21, height: 21 }} src={sunchIcon} alt="sunch icon" /> */}
+      {/* <div className='fixed top-2 left-4'> */}
+        <Terminal />
+      {/* </div> */}
     </div>
     <div className='w-[99%]'>
       <CommandPrimitive.Input

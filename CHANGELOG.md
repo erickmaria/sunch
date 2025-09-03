@@ -3,6 +3,7 @@
 ## Unreleased
 
 - feat: revamp slash commands
+- feat: add ui layouts
 
 ## v1.4.1 - 2025-09-01
 

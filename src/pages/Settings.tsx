@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { MdOutlineNotificationsActive, MdOutlineNotificationsOff } from "react-icons/md";
-import { ChatBotIcon, ChatGptIcon, Chatting01Icon } from 'hugeicons-react';
+import { ChatBotIcon, ChatGptIcon, Chatting01Icon, Layout07Icon, LayoutBottomIcon } from 'hugeicons-react';
 import { RiClaudeFill, RiGeminiFill } from "react-icons/ri";
 import Separator from "@/components/Separator/Separator";
 import { Input } from "@/components/ui/input";
@@ -32,12 +32,21 @@ export default function Settings() {
   const [genAI, setGenAI] = useState<string>(getConfigValue('models.current'));
 
   const [notification, setNotification] = useState<boolean>(false);
+  const [layoutMode, setLayoutMode] = useState<boolean>(false);
+
   const [chatMode, setChatMode] = useState<boolean>(false);
 
   const [version, setVersion] = useState<string>("");
   const [gptModels, setGptModels] = useState<Array<string>>([]);
   const [geminiModels, setGeminiModels] = useState<Array<string>>([]);
   const [claudeModels, setClaudeModels] = useState<Array<string>>([]);
+
+  // sync configs
+  useEffect(() => {
+    window.system.syncConfig((data) => {
+      if (data.key == `general.layout.mode`) setLayoutMode(data.value == "full" ? true : false)
+    });
+  });
 
   useEffect(() => {
     setConfigValue('general.notification.enable', notification)
@@ -47,6 +56,11 @@ export default function Settings() {
     setConfigValue('general.chatMode.enable', chatMode)
     syncConfig('general.chatMode.enable', chatMode)
   }, [chatMode])
+
+  useEffect(() => {
+    setConfigValue('general.layout.mode', layoutMode ? "full" : "minimalist")
+    syncConfig('general.layout.mode', layoutMode ? "full" : "minimalist")
+  }, [layoutMode])
 
   useEffect(() => {
     window.system.getAppVersion().then((v) => {
@@ -148,6 +162,22 @@ export default function Settings() {
                 </div>
               </div>
               <Separator color={'var(--secondary)'} />
+
+              <div className=" flex items-center space-x-4 rounded-md border p-4 mt-5">
+                {layoutMode ? <Layout07Icon size={30} /> : <LayoutBottomIcon size={30} />}
+                <div className="flex-1 space-y-1">
+                  <p className="text-sm font-medium leading-none">
+                    Layout - {layoutMode ? "Full" : "Minimalist"}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Change the UI layout as per your preference
+                  </p>
+                </div>
+                <Switch
+                  checked={layoutMode}
+                  onCheckedChange={(checked) => { setLayoutMode(checked) }}
+                />
+              </div>
 
               <div className=" flex items-center space-x-4 rounded-md border p-4 mt-5">
                 {chatMode ? <Chatting01Icon size={30} /> : <ChatBotIcon size={30} />}
@@ -318,7 +348,7 @@ export default function Settings() {
           </Tabs>
         </div>
         <div className="bg-transparent flex justify-end pr-0.5 m-1">
-          <p  className="text-[14px]">version: {version} </p>
+          <p className="text-[14px]">version: {version} </p>
         </div>
       </div>
     </>
