@@ -15,7 +15,7 @@
   margin-right: 5px;
 }
 
-li:not(.active) {
+.tabs li:not(.active) {
   background-color: var(--color-secondary);
   /* border: 2px solid var(--foreground);
   border-bottom: 2px solid var(--foreground); */

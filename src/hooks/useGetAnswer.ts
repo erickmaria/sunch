@@ -37,9 +37,6 @@ export function useGetAnswer({ id, chatMode, genAI }: OptionGetAnswer) {
 
     const askSomething = async (prompt: string): Promise<string[] | undefined> => {
 
-        console.log(chatMode)
-
-
         setAwaiting(true);
 
         try {

@@ -1,6 +1,29 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@plugin "@tailwindcss/typography";
+
+@utility prose {
+  /* Remove backtick in inline code*/
+  :not(pre) > code::before, :not(pre) > code::after {
+    content: none !important;
+    @apply hidden;
+  }
+  :not(pre) > code {
+    @apply bg-secondary px-1 rounded-xs;
+  }
+
+  /* Remove extra quotes */
+  blockquote {
+    p {
+      &:first-of-type::before,
+      &:last-of-type::after {
+        display: none;
+      }
+    }
+  }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {

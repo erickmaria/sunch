@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix: break markdown parsing to html
+
 ## v1.5.0 - 2025-09-03
 
 - feat: revamp slash commands
