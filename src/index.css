@@ -4,6 +4,7 @@
 @plugin "@tailwindcss/typography";
 
 @utility prose {
+  @apply text-sm;
   /* Remove backtick in inline code*/
   :not(pre) > code::before, :not(pre) > code::after {
     content: none !important;

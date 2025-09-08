@@ -13,11 +13,10 @@ export default function MarkdownHighlighter({ markdown }: MarkProps) {
 
     return (
         <div className='my-2 mx-6'>
-            <div className="">
+            <div className="max-w-none prose prose-pre:m-0 prose-pre:p-0 dark:prose-invert prose-hr:prose-invert prose-hr:my-6">
                 <Markdown
                     remarkPlugins={[remarkGfm]}
                     rehypePlugins={[rehypeRaw]}
-                    
                     components={{
                         code({ node, className, children: codeChildren, ...props }) {
                             const match = /language-(\w+)/.exec(className || "");
@@ -27,8 +26,6 @@ export default function MarkdownHighlighter({ markdown }: MarkProps) {
                                     style={oneDark}
                                     PreTag="div"
                                     language={match[1]}
-                                    
-                                //   {...props}
                                 >
                                     {String(codeChildren).replace(/\n$/, "")}
                                 </SyntaxHighlighter>
@@ -41,8 +38,7 @@ export default function MarkdownHighlighter({ markdown }: MarkProps) {
 
                         p({ node, children, ...props }) {
                             return (
-                                <p
-                                    style={{ marginBottom: "0.5rem", whiteSpace: "pre-line" }}
+                                <p className='text-sm'
                                     {...props}
                                 >
                                     {children}

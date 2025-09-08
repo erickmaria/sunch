@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix: add uncommitted code
+
 ## v1.5.1 - 2025-09-08
 
 - fix: break markdown parsing to html
