@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v1.5.2 - 2025-09-08
+
 - fix: add uncommitted code
 
 ## v1.5.1 - 2025-09-08
