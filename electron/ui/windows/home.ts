@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain } from "electron";
+import { BrowserWindow, ipcMain, shell } from "electron";
 import { searchReadyNotification, stillRunningNotification } from "../../notifications/notifcation";
 import { join } from 'path';
 import { SettingsWindow } from "./settings";
@@ -50,6 +50,11 @@ class Window {
       win.loadFile('dist/index.html')
     }
 
+    win.webContents.setWindowOpenHandler((details) => {
+      shell.openExternal(details.url); // Open URL in user's browser
+      return { action: "deny" }; // Prevent the URL from opening in the app
+    });
+
     ipcMain.on('resize', (e: Electron.IpcMainEvent, screen: { w: string, h: string }) => {
 
       let height = Number(screen.h.toString().replace('px', ''))
@@ -58,7 +63,7 @@ class Window {
         height = this.maxHeight
       }
 
-      Window.getInstance().bw.setSize(this.width, height)
+      Window.getInstance().bw.setSize(this.width, height+2)
 
     })
 

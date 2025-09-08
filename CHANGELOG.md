@@ -3,6 +3,7 @@
 ## Unreleased
 
 - fix: break markdown parsing to html
+- fix: markdown links opening in the current window
 
 ## v1.5.0 - 2025-09-03
 
