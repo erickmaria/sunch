@@ -1,4 +1,5 @@
 
+DEFAULT_BRANCH := main
 CURRENT_DIR := $(shell pwd)
 
 define _build
