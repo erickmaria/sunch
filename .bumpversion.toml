@@ -31,6 +31,4 @@ filename = "CHANGELOG.md"
 search = "Unreleased"
 replace = """Unreleased
 
-$BUMPVERSION_PARSE
-
 ## v{new_version} - {now:%Y-%m-%d}"""
