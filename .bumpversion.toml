@@ -16,19 +16,21 @@ commit = false
 message = "chore: bump version: {current_version} → {new_version}"
 moveable_tags = []
 commit_args = ""
-setup_hooks = [
-    "git config --global user.email \"erickmaria08@gmail.com\"",
-    "git config --global user.name \"Erick Maria\"",
-    "git --version",
-    "git config --list",
-]
-pre_commit_hooks = ["npm version $BVHOOK_CURRENT_VERSION --no-git-tag-version"]
-post_commit_hooks = ["echo Done"]
+# setup_hooks = [
+#     "git config --global user.email \"erickmaria08@gmail.com\"",
+#     "git config --global user.name \"Erick Maria\"",
+#     "git --version",
+#     "git config --list",
+# ]
+# pre_commit_hooks = ["npm version $BVHOOK_CURRENT_VERSION --no-git-tag-version"]
+# post_commit_hooks = ["echo Done"]
 
 
 [[tool.bumpversion.files]]
 filename = "CHANGELOG.md"
 search = "Unreleased"
 replace = """Unreleased
+
+$BUMPVERSION_PARSE
 
 ## v{new_version} - {now:%Y-%m-%d}"""
