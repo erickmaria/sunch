@@ -35,6 +35,9 @@ jobs:
       - name: Make Bump
         id: bump
         shell: bash
+        env:
+          BUMPVERSION_TAG: true
+          BUMPVERSION_COMMIT: true
         run: |
           echo "previous-version=$(bump-my-version show current_version)" >> $GITHUB_OUTPUT
 

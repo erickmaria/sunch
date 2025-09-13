@@ -10,7 +10,7 @@ ignore_missing_files = false
 tag = false
 sign_tags = false
 tag_name = "v{new_version}"
-tag_message = "Version: {current_version} → {new_version}"
+tag_message = "Version: {current_version}"
 allow_dirty = false
 commit = false
 message = "chore: bump version: {current_version} → {new_version}"
@@ -24,7 +24,6 @@ commit_args = ""
 # ]
 pre_commit_hooks = ["npm version ${BUMP_TYPE} --no-git-tag-version"]
 post_commit_hooks = ["echo Done"]
-
 
 [[tool.bumpversion.files]]
 filename = "CHANGELOG.md"
