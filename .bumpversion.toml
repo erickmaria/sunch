@@ -16,12 +16,12 @@ commit = false
 message = "chore: bump version: {current_version} → {new_version}"
 moveable_tags = []
 commit_args = ""
-setup_hooks = [
-    "git config --global user.email \"erickmaria08@gmail.com\"",
-    "git config --global user.name \"Erick Maria\"",
-    "git --version",
-    "git config --list",
-]
+# setup_hooks = [
+#     "git config --global user.email \"youremail@github.actions\"",
+#     "git config --global user.name \"Test Name\"",
+#     "git --version",
+#     "git config --list",
+# ]
 pre_commit_hooks = ["npm version ${BUMP_TYPE} --no-git-tag-version"]
 post_commit_hooks = ["echo Done"]
 
