@@ -22,11 +22,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
-      - name: Setting up git config
+      - name: Setup Git
         shell: bash
         run: |
-          git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
-          git config --global user.name "$(gh api /users/${GITHUB_ACTOR} | jq .name -r)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config -l
       - name: Install uv
         uses: astral-sh/setup-uv@v6
