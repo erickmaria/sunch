@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- feat: add bump-my-version
+- chore: change github action deploy strategy
+- fix: window resize error message
+
 ## v1.5.2 - 2025-09-08
 
 - fix: add uncommitted code
