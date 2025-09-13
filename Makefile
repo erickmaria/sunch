@@ -42,7 +42,7 @@ bump-version/minor:  ## Increment the minor version (x.Y.z)
 
 .PHONY:  bump-version/patch
 bump-version/patch:  ## Increment the patch version (x.y.Z)
-	BUMP_TYPE=patch bump-my-version bump patch
+	bump-my-version bump patch
 
 .PHONY: release
 release:  ## Push the new project version
