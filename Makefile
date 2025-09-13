@@ -30,3 +30,19 @@ electron-builder/all:
 .PHONY: clean
 clean:
 	rm -rf release/
+
+.PHONY: bump-version/major
+bump-version/major:  ## Increment the major version (X.y.z)
+	bump-my-version major
+
+.PHONY: bump-version/minor
+bump-version/minor:  ## Increment the minor version (x.Y.z)
+	bump-my-version minor
+
+.PHONY:  bump-version/patch
+bump-version/patch:  ## Increment the patch version (x.y.Z)
+	bump-my-version patch
+
+.PHONY: release
+release:  ## Push the new project version
+	git push --follow-tags origin $(DEFAULT_BRANCH)
