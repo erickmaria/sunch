@@ -22,7 +22,7 @@ setup_hooks = [
     "git --version",
     "git config --list",
 ]
-pre_commit_hooks = ["npm version {patch} --no-git-tag-version"]
+pre_commit_hooks = ["npm version $BVHOOK_CURRENT_VERSION --no-git-tag-version"]
 post_commit_hooks = ["echo Done"]
 
 
