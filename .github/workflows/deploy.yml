@@ -1,13 +1,43 @@
-name: Create Tag and Release
+name: Deploy Release
 
 on:
-  pull_request:
-    types:
-      - closed
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version name'
+        required: true
+        default: 'minor'
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
 
 jobs:
+  update:
+    name: Bump Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - name: Bump version
+        id: bump
+        uses: callowayproject/bump-my-version@master
+        env:
+          BUMPVERSION_TAG: "true"
+        with:
+          args: ${{ inputs.version }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check
+        if: steps.bump.outputs.bumped == 'true'
+        run: |
+          echo "Version was bumped from ${{ steps.bump.outputs.previous-version }} to ${{ steps.bump.outputs.current-version }}!"
+
   build:
-    if: startsWith(github.event.pull_request.title, 'Release:')
+    name: Build Releases
+    needs: update
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -62,7 +92,7 @@ jobs:
           ./release/${{ steps.get_project_version.outputs.project_version }}/*.deb
         
   release:
-    if: startsWith(github.event.pull_request.title, 'Release:')
+    name: Publish Release
     needs: build
     runs-on: ubuntu-latest
 
