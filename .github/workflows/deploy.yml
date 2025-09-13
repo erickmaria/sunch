@@ -22,18 +22,33 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
-      - name: Bump version
-        id: bump
-        uses: callowayproject/bump-my-version@master
-        env:
-          BUMPVERSION_TAG: "true"
-        with:
-          args: ${{ inputs.version }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Check
-        if: steps.bump.outputs.bumped == 'true'
+      - name: Setting up git config
+        shell: bash
         run: |
-          echo "Version was bumped from ${{ steps.bump.outputs.previous-version }} to ${{ steps.bump.outputs.current-version }}!"
+          git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
+          git config --global user.name "$(gh api /users/${GITHUB_ACTOR} | jq .name -r)"
+          git config -l
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+      - name: Install bump-my-version
+        run: uv tool install bump-my-version
+      - name: Make Bump
+        id: bump
+        shell: bash
+        run: |
+          echo "previous-version=$(bump-my-version show current_version)" >> $GITHUB_OUTPUT
+
+          make bump-version/${{ github.event.inputs.version }}
+          ([[ $? -gt 0 ]] && echo "bumped=false" || echo "bumped=true") >> $GITHUB_OUTPUT
+          echo "current-version=$(bump-my-version show current_version)" >> $GITHUB_OUTPUT
+          make release
+      - name: Check Bump
+        if: steps.bump.outputs.bumped == 'true'
+        run: echo "Version was bumped from ${{ steps.bump.outputs.previous-version }} to ${{ steps.bump.outputs.current-version }}!"
+      - name: Push Changes
+        if: steps.bump.outputs.bumped == 'true'
+        run: make release
+
 
   build:
     name: Build Releases
