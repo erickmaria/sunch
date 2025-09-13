@@ -63,8 +63,7 @@ class Window {
         height = this.maxHeight
       }
 
-      Window.getInstance().bw.setSize(this.width, height+2)
-
+      Window.getInstance().bw.setSize(Math.ceil(this.width), Math.ceil(height))
     })
 
     ipcMain.on('dispatch-sync-config', async (e: Electron.IpcMainEvent, key: string, value: unknown) => {
