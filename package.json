@@ -10,7 +10,7 @@
     "url": "git+https://github.com/erickmaria/sunch.git"
   },
   "private": true,
-  "version": "1.5.2",
+  "version": "1.5.3",
   "type": "commonjs",
   "main": "dist-electron/main.js",
   "homepage": "./",

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v1.5.3 - 2025-09-14
+
 - feat: add bump-my-version
 - chore: change github action deploy strategy
 - fix: window resize error message
