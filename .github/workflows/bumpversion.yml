@@ -39,7 +39,7 @@ jobs:
         shell: bash
         env:
           BUMPVERSION_TAG: false
-          BUMPVERSION_COMMIT: true
+          BUMPVERSION_COMMIT: false
         run: |
           echo "previous-version=$(bump-my-version show current_version)" >> $GITHUB_OUTPUT
 
@@ -64,5 +64,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: release/${{ needs.make-bump-version.outputs.version }}
           title: "Release: ${{ needs.make-bump-version.outputs.version }} Pull Request"
-          body: "This pull request contains the updated package.json with the new release version"
+          body: "This pull request bumps the project to the new release version"
           base: main
