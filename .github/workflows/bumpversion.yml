@@ -1,0 +1,68 @@
+name: "Bump Version and Create Release's PR"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version name'
+        required: true
+        default: 'minor'
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+
+jobs:
+  make-bump-version:
+    name: Make Bump Version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.bump.outputs.previous-version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - name: Setup Git
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config -l
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+      - name: Install bump-my-version
+        run: uv tool install bump-my-version
+      - name: Make Bump
+        id: bump
+        shell: bash
+        env:
+          BUMPVERSION_TAG: false
+          BUMPVERSION_COMMIT: true
+        run: |
+          echo "previous-version=$(bump-my-version show current_version)" >> $GITHUB_OUTPUT
+
+          make bump-version/${{ github.event.inputs.version }}
+          ([[ $? -gt 0 ]] && echo "bumped=false" || echo "bumped=true") >> $GITHUB_OUTPUT
+          echo "current-version=$(bump-my-version show current_version)" >> $GITHUB_OUTPUT
+      - name: Check Bump
+        if: steps.bump.outputs.bumped == 'true'
+        run: |
+          echo "Version was bumped from ${{ steps.bump.outputs.previous-version }} to ${{ steps.bump.outputs.current-version }}!"
+          git log --oneline -n 3 
+
+  create-pull-request:
+    name: Create Release's PR
+    runs-on: ubuntu-latest
+    needs: make-bump-version
+    steps:
+      - name: Create pull request
+        id: create_pr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: release/${{ needs.make-bump-version.outputs.version }}
+          title: "Release: ${{ needs.make-bump-version.outputs.version }} Pull Request"
+          body: "This pull request contains the updated package.json with the new release version"
+          base: main
