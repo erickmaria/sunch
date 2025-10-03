@@ -278,69 +278,71 @@ export default function Search({ id }: SearchProps) {
 
   return (
     <>
-      <div className='border-b rounded-xl flex flex-col justify-center'>
+      <div>
         {!input.startsWith("/") ?
           <>
-            <div className='flex flex-row justify-center align-middle pt-1'>
-              <div className='draggable p-2 hover:cursor-move'>
-                <img style={{ width: 22, height: 22 }} src={sunchIcon} alt="sunch icon" />
-                {layoutMode == "minimalist" &&
-                  <div className='fixed top-2 left-4 bg-background rounded-xl'>
-                    {(genAI === 'gemini') && <RiGeminiFill size={16} />}
-                    {(genAI === 'gpt') && <RiOpenaiFill size={16} />}
-                    {(genAI === 'claude') && <RiClaudeFill size={16} />}
-                  </div>
-                }
-              </div>
-              <div className='w-[99%]'>
-                <TextareaAutosize
-                  className='py-2 px-1 w-full min-h-[35px] rounded-sm resize-none bg-input/10  placeholder:opacity-40'
-                  autoFocus
-                  // onFocus={() => { setSettings(false)}
-                  name='search'
-                  id='search'
-                  rows={1}
-                  minRows={1}
-                  maxRows={10}
-                  placeholder='Ask something or type / to check commands'
-                  value={input}
-                  onChange={e => setInput(e.target.value)}
-                  onKeyDown={e => keyDownHandler(e)}
-                />
-                {/* /> */}
-              </div>
-              <div className='p-1.5'>
-                <ArrowDown01Icon strokeWidth={1.5} onClick={() => (openOptions ? setOpenOptions(false) : setOpenOptions(true))} />
+            <div className='bg-background border-b rounded-b-md rounded-tr-md flex flex-col justify-center'>
+              <div className='flex flex-row justify-center align-middle pt-1'>
+                <div className='draggable p-2 hover:cursor-move'>
+                  <img style={{ width: 22, height: 22 }} src={sunchIcon} alt="sunch icon" />
+                  {layoutMode == "minimalist" &&
+                    <div className='fixed top-2 left-4 bg-background rounded-xl'>
+                      {(genAI === 'gemini') && <RiGeminiFill size={16} />}
+                      {(genAI === 'gpt') && <RiOpenaiFill size={16} />}
+                      {(genAI === 'claude') && <RiClaudeFill size={16} />}
+                    </div>
+                  }
+                </div>
+                <div className='w-[99%]'>
+                  <TextareaAutosize
+                    className='py-2 px-1.5 w-full min-h-[35px] rounded-sm resize-none bg-input/10  placeholder:opacity-40'
+                    autoFocus
+                    name='search'
+                    id='search'
+                    rows={1}
+                    minRows={1}
+                    maxRows={10}
+                    placeholder='Ask something or type / to check commands'
+                    value={input}
+                    onChange={e => setInput(e.target.value)}
+                    onKeyDown={e => keyDownHandler(e)}
+                  />
+                </div>
+                <div className='p-1.5'>
+                  <ArrowDown01Icon strokeWidth={1.5} onClick={() => (openOptions ? setOpenOptions(false) : setOpenOptions(true))} />
+                </div>
               </div>
             </div>
             {openOptions &&
-              <div className='flex justify-between align-middle w-full border-2 pr-1 pl-1 pb-0.5 border-transparent'>
-                <div className='flex'>
-                  <div className='flex'>
-                    <SettingsOptions>
-                      <div className='pt-1.5 pr-2 pl-1'>
-                        <SettingsTittle name='AI' />
+              <>
+                <div className='bg-background rounded-md border-2 border-transparent w-full px-1 my-0.5'>
+                  <div className='flex justify-between align-middle '>
+                    <div className='flex'>
+                      <div className='flex'>
+                        <SettingsOptions>
+                          <div className='pt-1.5 pr-2 pl-1'>
+                            <SettingsTittle name='AI' />
+                          </div>
+                          <SettingsSwitcher name="AI" defaultValue={genAI}>
+                            <SettingsSwitcherItem onClick={() => setGenAI('gemini')} value='gemini' icon={<GoogleGeminiIcon size={15} />} />
+                            <SettingsSwitcherItem onClick={() => setGenAI('gpt')} value='gpt' icon={<ChatGptIcon size={15} />} />
+                            <SettingsSwitcherItem onClick={() => setGenAI('claude')} value='claude' icon={<RiClaudeFill size={15} />} />
+                          </SettingsSwitcher>
+                        </SettingsOptions>
                       </div>
-                      <SettingsSwitcher name="AI" defaultValue={genAI}>
-                        <SettingsSwitcherItem onClick={() => setGenAI('gemini')} value='gemini' icon={<GoogleGeminiIcon size={15} />} />
-                        <SettingsSwitcherItem onClick={() => setGenAI('gpt')} value='gpt' icon={<ChatGptIcon size={15} />} />
-                        <SettingsSwitcherItem onClick={() => setGenAI('claude')} value='claude' icon={<RiClaudeFill size={15} />} />
-                      </SettingsSwitcher>
-                    </SettingsOptions>
-                  </div>
-                  <span className='pl-2 p-0.5 opacity-40'>|</span>
-                  <div className='flex items-center'>
-                    <div className='flex items-center space-x-1 rounded-md'>
-                      <div className='pl-2 p-1'>
-                        <SettingsTittle name='chat' />
+                      <span className='pl-2 p-0.5 opacity-40'>|</span>
+                      <div className='flex items-center'>
+                        <div className='flex items-center space-x-1 rounded-md'>
+                          <div className='pl-2 p-1'>
+                            <SettingsTittle name='chat' />
+                          </div>
+                          <Switch className='' checked={chatMode} onCheckedChange={(checked) => { setChatMode(checked) }} />
+                          <div>
+                          </div>
+                        </div>
                       </div>
-                      <Switch className='' checked={chatMode} onCheckedChange={(checked) => { setChatMode(checked) }} />
-                      <div>
-                      </div>
-                    </div>
-                  </div>
 
-                  {/* <span className='pl-2 p-0.5 opacity-40'>|</span>
+                      {/* <span className='pl-2 p-0.5 opacity-40'>|</span>
 
                   <div className='flex space-x-1'>
                     <div className='flex items-center w-fit h-fit hover:bg-secondary rounded-md'>
@@ -376,32 +378,35 @@ export default function Search({ id }: SearchProps) {
                     </div>
                   </div> */}
 
-                </div>
-                <div className='flex'>
-                  <div className={`${!features.audio && 'pointer-events-none opacity-10'} p-1`}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div>
-                          <Microphone
-                            className=''
-                            lang='pt-BR'
-                            onError={setValues}
-                            audioData={setAudio}
-                          />
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Use Voice</p>
-                      </TooltipContent>
-                    </Tooltip>
+                    </div>
+                    <div className='flex'>
+                      <div className={`${!features.audio && 'pointer-events-none opacity-10'} p-1`}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div>
+                              <Microphone
+                                className=''
+                                lang='pt-BR'
+                                onError={setValues}
+                                audioData={setAudio}
+                              />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Use Voice</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </>
             }
+            {awaiting ? <Loading /> : !input.startsWith("/") && <Result contents={values} />}
           </> : <Commands />
         }
       </div>
-      {awaiting ? <Loading /> : !input.startsWith("/") && <Result contents={values} />}
+
     </>
   )
 }

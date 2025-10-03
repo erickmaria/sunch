@@ -12,7 +12,7 @@ interface MarkProps {
 export default function MarkdownHighlighter({ markdown }: MarkProps) {
 
     return (
-        <div className='my-2 mx-6'>
+        <div className='my-2 mx-3'>
             <div className="max-w-none prose prose-pre:m-0 prose-pre:p-0 dark:prose-invert prose-hr:prose-invert prose-hr:my-6">
                 <Markdown
                     remarkPlugins={[remarkGfm]}

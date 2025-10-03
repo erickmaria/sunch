@@ -11,7 +11,7 @@ export default function Result({ contents }: ResultProps) {
   if (contents.length > 0) {
     return (
       <>
-        <div className='w-full max-h-[780px] overflow-auto rounded-b-lg p-1 select-text' >
+        <div className='bg-background w-full max-h-[780px] overflow-auto rounded-md p-1 my-0.5 select-text' >
           <PanelGroup direction="horizontal" >
               {contents.map((content, index) => (
                 <>

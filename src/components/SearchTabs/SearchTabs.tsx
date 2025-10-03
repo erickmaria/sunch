@@ -73,7 +73,7 @@ export function SearchTabs() {
 
   return (
     <>
-      <div className="space-x-1">
+      <div className="bg-background rounded-b-md rounded-tr-md  space-x-1">
         <div className="flex align-middle justify-between">
           <div className="flex space-x-1 items-center overflow-hidden">
             <div className="flex text-xs overflow-hidden">

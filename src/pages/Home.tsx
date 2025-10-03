@@ -17,7 +17,8 @@ export default function Home() {
 
   return (
     <>
-      <div className="bg-background rounded-b-xl rounded-tr-xl" autoFocus>
+      {/* <div className="bg-background rounded-b-xl rounded-tr-xl" autoFocus> */}
+      <div autoFocus>
         {layoutMode == "full" && <SearchTabs /> }
         {layoutMode == "minimalist" && <Search id='1' key={1} /> }
       </div>
