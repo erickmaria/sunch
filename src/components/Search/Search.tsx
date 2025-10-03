@@ -294,7 +294,7 @@ export default function Search({ id }: SearchProps) {
               </div>
               <div className='w-[99%]'>
                 <TextareaAutosize
-                  className='py-2 w-full min-h-[35px] rounded-sm resize-none bg-input/10 placeholder:opacity-40'
+                  className='py-2 px-1 w-full min-h-[35px] rounded-sm resize-none bg-input/10  placeholder:opacity-40'
                   autoFocus
                   // onFocus={() => { setSettings(false)}
                   name='search'
@@ -339,7 +339,8 @@ export default function Search({ id }: SearchProps) {
                       </div>
                     </div>
                   </div>
-                  <span className='pl-2 p-0.5 opacity-40'>|</span>
+
+                  {/* <span className='pl-2 p-0.5 opacity-40'>|</span>
 
                   <div className='flex space-x-1'>
                     <div className='flex items-center w-fit h-fit hover:bg-secondary rounded-md'>
@@ -373,7 +374,7 @@ export default function Search({ id }: SearchProps) {
                         </div>
                       </label>
                     </div>
-                  </div>
+                  </div> */}
 
                 </div>
                 <div className='flex'>

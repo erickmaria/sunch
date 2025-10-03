@@ -5,6 +5,10 @@ export const userSettingsSchema = {
 		type: JSONSchemaType.Object,
 		properties: {
 			theme: { type: JSONSchemaType.String, },
+			backgroundOpacity: { 
+				type: JSONSchemaType.Boolean,
+				default: false
+			},
 			language: { type: JSONSchemaType.String },
 			chatMode: {
 				type: JSONSchemaType.Object,

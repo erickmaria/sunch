@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- chore: add background opacity option
+
 ## v1.5.3 - 2025-09-14
 
 - feat: add bump-my-version
