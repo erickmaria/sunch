@@ -1,5 +1,5 @@
 import { Chat, ContentListUnion, GenerateContentResponse, GoogleGenAI, HarmBlockThreshold, HarmCategory } from '@google/genai';
-import { AIFeatures, Service, SYSTEM_INSTRUCTION_CONTENT } from "./service";
+import { AIFeatures, Service, getSystemPrompt } from "./service";
 
 export default class GeminiService implements Service {
 
@@ -108,7 +108,7 @@ export default class GeminiService implements Service {
                     model: this.getModel(),
                     config: {
                         safetySettings: this.safetySettings,
-                        systemInstruction: SYSTEM_INSTRUCTION_CONTENT,
+                        systemInstruction: getSystemPrompt(),
                     }
                 });
                 this.chatSessions.set(sessionId, chat);
@@ -123,7 +123,7 @@ export default class GeminiService implements Service {
                 contents: contents,
                 config: {
                     safetySettings: this.safetySettings,
-                    systemInstruction: SYSTEM_INSTRUCTION_CONTENT,
+                    systemInstruction: getSystemPrompt(),
                     // CONTEXT CHACHING
                     // cachedContent: cache!.name,
                 }

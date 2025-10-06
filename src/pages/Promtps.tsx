@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Checkbox } from "@/components/ui/checkbox"
+
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useUserSettings } from "@/hooks/useUserSettings"
@@ -15,12 +17,13 @@ const formPromptSchema = z.object({
   }),
   content: z.string().nonempty({
     message: "Content cannot be empty.",
-  })
+  }),
+  default: z.boolean()
 })
 
 export default function Promtps() {
 
-  const { setConfig, dispatchSyncConfig } = useUserSettings();
+  const { getConfig, setConfig, dispatchSyncConfig } = useUserSettings();
   const [Id, setId] = useState("");
 
   // sync configs
@@ -32,9 +35,10 @@ export default function Promtps() {
           return
         }
 
-        const prompts = data.value as { title: string; content: string }
+        const prompts = data.value as { title: string; content: string, default: boolean }
         promptForm.setValue("title", prompts.title);
         promptForm.setValue("content", prompts.content);
+        promptForm.setValue("default", prompts.default);
 
         setId(data.key.split(".")[1])
       }
@@ -46,6 +50,7 @@ export default function Promtps() {
     defaultValues: {
       title: "",
       content: "",
+      default: false
     }
   })
 
@@ -56,7 +61,20 @@ export default function Promtps() {
       uuid = Id
     }
 
+    if (values.default) {
+
+      let prompts = getConfig(`prompts`) as unknown as Map<string, { title: string, content: string, default: boolean }>;
+
+      Object.entries(prompts).map(([key, value]) => {
+        if (value.default) {
+          value.default = false
+          setConfig(`prompts.${key}`, value)
+        }
+      })
+    }
+
     setConfig(`prompts.${uuid}`, values)
+
     dispatchSyncConfig(`prompts.#update#`, null)
     closeWindow()
   }
@@ -78,7 +96,7 @@ export default function Promtps() {
         </div>
         <div className="px-6 pb-3">
           <p className="text-lg font-medium">
-            {Id == ""  ? "New Prompt" : "Edit Prompt"}
+            {Id == "" ? "New Prompt" : "Edit Prompt"}
           </p>
           <span className="text-sm text-muted-foreground">
             {Id == "" ? "Create a prompt here" : "Make changes to your prompt here"}. Click save when you're done.
@@ -86,7 +104,7 @@ export default function Promtps() {
         </div>
         <div className="flex px-6 pb-6">
           <Form {...promptForm}>
-            <form onSubmit={promptForm.handleSubmit(onSubmit)} className="space-y-8 w-full">
+            <form onSubmit={promptForm.handleSubmit(onSubmit)} className="space-y-4 w-full">
               <FormField
                 control={promptForm.control}
                 name="title"
@@ -110,11 +128,36 @@ export default function Promtps() {
                   <FormItem>
                     <FormLabel className="text-sm">Content</FormLabel>
                     <FormControl>
-                      <Textarea rows={7} placeholder="Content..." {...field} className="text-sm resize-none " />
+                      <Textarea rows={7} placeholder="Content..." {...field} className="text-sm resize-none" />
                     </FormControl>
                     <FormDescription>
                       This is your prompt content.
                     </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={promptForm.control}
+                name="default"
+                render={({ field }) => (
+                  <FormItem className="flex">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        onBlur={field.onBlur}
+                        ref={field.ref}
+                        name={field.name}
+                      />
+                    </FormControl>
+                    <div>
+                      <FormLabel className="text-sm">Set this prompt as default</FormLabel>
+                      <FormDescription className="text-muted-foreground text-sm">
+                        You can change default prompts at any time.
+                      </FormDescription>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -126,7 +169,7 @@ export default function Promtps() {
             </form>
           </Form>
         </div>
-      </div>
+      </div >
       {/* <div className="bg-background rounded-b-xl rounded-tr-xl" autoFocus></div> */}
       {/* <FormField
         control={promptForm.control}

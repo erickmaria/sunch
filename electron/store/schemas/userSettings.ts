@@ -78,9 +78,11 @@ export const UserSettingsSchema = {
 			type: JSONSchemaType.Object,
 			properties: {
 				title: { type: JSONSchemaType.String },
-				content: { type: JSONSchemaType.String }
+				content: { type: JSONSchemaType.String },
+				selected: { type: JSONSchemaType.Boolean },
+				default: { type: JSONSchemaType.Boolean }
 			},
-			required: ['title', 'content']
+			// required: ['title', 'content']
 		},
 		default: {}
 	},
