@@ -5,14 +5,15 @@ import Settings from './pages/Settings';
 import { useEffect, useState } from 'react';
 import { Theme, useTheme } from './contexts/ThemeProvider';
 import { useUserSettings } from './hooks/useUserSettings';
+import Promtps from './pages/Promtps';
 
 
 export default function App() {
 
   const { setTheme, theme } = useTheme()
-  const { getConfigValue } = useUserSettings()
+  const { getConfig } = useUserSettings()
 
-  const [backgroundOpacity, setBackgroundOpacity] = useState<boolean>((getConfigValue("general.backgroundOpacity") as boolean));
+  const [backgroundOpacity, setBackgroundOpacity] = useState<boolean>((getConfig("general.backgroundOpacity") as boolean));
 
   useEffect(() => {
     window.system.syncConfig((data) => {
@@ -27,8 +28,9 @@ export default function App() {
       {/* <div className="text-sm"> */}
         <HashRouter>
           <Routes>
-            <Route index path="/" element={<Home />} />
+            <Route index path="/"  element={<Home />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/prompts" element={<Promtps />} />
           </Routes>
         </HashRouter>
       </div>

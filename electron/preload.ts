@@ -14,12 +14,15 @@ contextBridge.exposeInMainWorld('system', {
         set(property: string, value: unknown) {
             ipcRenderer.send('electron-store-set', property, value);
         },
+        delete(key: string) {
+            ipcRenderer.send('electron-store-del', key);
+        },
         openInEditor() {
             return ipcRenderer.send('electron-store-open-editor');
         },
     },
-    openWindow(windowName: string) {
-        return ipcRenderer.send('open-window', windowName);
+    openWindow(windowName: string, ...args: unknown[]) {
+        return ipcRenderer.send('open-window', windowName, ...args);
     },
     minimizeWindow(windowName: string) {
         return ipcRenderer.send('minimize-window', windowName);

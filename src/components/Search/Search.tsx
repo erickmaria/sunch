@@ -5,7 +5,7 @@ import { Microphone } from '@/components/Microphone/Microphone';
 import { useGetAnswer } from '@/hooks/useGetAnswer';
 import Result from '../Result/Result';
 import Loading from '../Loading/Loading';
-import { ArrowDown01Icon, ArtificialIntelligence04Icon, ArtificialIntelligence05Icon, Attachment02Icon, CenterFocusIcon, ChatGptIcon, Chatting01Icon, CleanIcon, ColorsIcon, GoogleGeminiIcon, Layout01Icon, Layout07Icon, LayoutBottomIcon, Logout04Icon, Moon02Icon, Sun02Icon, ToggleOffIcon, ToggleOnIcon } from 'hugeicons-react';
+import { AiBrowserIcon, ArrowDown01Icon, ArtificialIntelligence04Icon, ArtificialIntelligence05Icon, ChatGptIcon, Chatting01Icon, CleanIcon, ColorsIcon, CosIcon, GoogleGeminiIcon, Layout01Icon, Layout07Icon, LayoutBottomIcon, Logout04Icon, Moon02Icon, Sun02Icon, ToggleOffIcon, ToggleOnIcon } from 'hugeicons-react';
 import {
   Tooltip,
   TooltipContent,
@@ -17,10 +17,8 @@ import { SettingsTittle } from '../SearchSettings/SettingsTittle';
 import { useUserSettings } from '@/hooks/useUserSettings';
 import { RiClaudeFill, RiGeminiFill, RiOpenaiFill } from 'react-icons/ri';
 import { Switch } from '../ui/switch';
-
 import TextareaAutosize from 'react-textarea-autosize';
-
-import { ComputerIcon, Settings } from "lucide-react"
+import { ComputerIcon, Edit, Plus, Settings, Trash2 } from "lucide-react"
 
 import {
   Command,
@@ -32,7 +30,9 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command"
+
 import { Theme, useTheme } from '@/contexts/ThemeProvider';
+import { Kbd } from '../ui/kbd';
 
 
 interface SearchProps {
@@ -41,7 +41,9 @@ interface SearchProps {
 
 export default function Search({ id }: SearchProps) {
 
-  const { getConfigValue } = useUserSettings();
+  let PROMPT_EVENT = false
+
+  const { getConfig, delConfig } = useUserSettings();
 
   const [input, setInput] = useState<string>("");
   const [values, setValues] = useState<Array<string>>(Array<string>);
@@ -49,12 +51,12 @@ export default function Search({ id }: SearchProps) {
   const [chatMode, setChatMode] = useState<boolean>(false);
   const [audio, setAudio] = useState("");
 
-  const [layoutMode, setLayoutMode] = useState<string>(getConfigValue("general.layout.mode"));
-  const [genAI, setGenAI] = useState<string>(getConfigValue('models.current'));
+  const [layoutMode, setLayoutMode] = useState<string>(getConfig("general.layout.mode"));
+  const [genAI, setGenAI] = useState<string>(getConfig('models.current'));
 
   const { setTheme } = useTheme();
   const { awaiting, askSomething, features } = useGetAnswer({ id, genAI, chatMode });
-  const { dispatchSyncConfig, setConfigValue } = useUserSettings()
+  const { dispatchSyncConfig, setConfig } = useUserSettings()
 
   // sync configs
   useEffect(() => {
@@ -64,7 +66,7 @@ export default function Search({ id }: SearchProps) {
   });
 
   useEffect(() => {
-    setConfigValue(`tabs.${id}.models.current`, genAI)
+    setConfig(`tabs.${id}.models.current`, genAI)
     dispatchSyncConfig(`tabs.${id}.models.current`, genAI)
   }, [genAI])
 
@@ -104,6 +106,12 @@ export default function Search({ id }: SearchProps) {
 
     // use the args parameter when the subcommand value is different from what is needed to perform the action  
     function execCommand(cmd: string, ...args: unknown[]) {
+
+      if (PROMPT_EVENT) {
+        PROMPT_EVENT = false
+        return;
+      }
+
       if (cmd.startsWith("/use")) {
         setGenAI(cmd.split(' ')[1] as string)
       }
@@ -126,10 +134,15 @@ export default function Search({ id }: SearchProps) {
       if (cmd.startsWith("/settings")) {
         window.system.openWindow("settings")
       }
+      if (cmd.startsWith("/prompts")) {
+        // window.system.openWindow("prompts")
+
+      }
       if (cmd.startsWith("/exit")) {
         window.system.closeWindow("home")
         window.system.closeWindow("settings")
       }
+
       setInput('')
     }
 
@@ -204,9 +217,69 @@ export default function Search({ id }: SearchProps) {
               </CommandGroup>
             </>
           )
-        case "/ai":
+        case "/prompts":
+
+          // let prompts: Map<string, { title: string, content: string }> = new Map();
+
+          const [prompts, setPrompts] = useState<Map<string, { title: string, content: string }>>(getConfig("prompts"))
+
+
+          function upsetPromptWindow(id?: string, value?: unknown) {
+            PROMPT_EVENT = true;
+
+            if(id == undefined){
+              dispatchSyncConfig(`prompts.#new#`, null)
+            }else{
+              dispatchSyncConfig(`prompts.${id}`, value)
+            }
+
+
+            window.system.openWindow("prompts");
+          }
+
+          function deletePrompt(id?: string) {
+            PROMPT_EVENT = true;
+            if (id != undefined) {
+              delConfig(`prompts.${id}`)
+            }
+            dispatchSyncConfig(`prompts.#update#`, null)
+          }
+
+          // sync configs
+          useEffect(() => {
+            window.system.syncConfig((data) => {
+              if (data.key.startsWith("prompts.#update#")) {
+                console.log("prompt update")
+                setPrompts(getConfig("prompts"))
+              }
+            });
+          });
+
+
+
           return (
             <>
+              <div className={`cursor-pointer absolute right-1 top-1 hover:bg-secondary rounded-md m-1 p-0.5`}>
+                <Plus size={24} onClick={() => { upsetPromptWindow() }} />
+              </div>
+              <CommandGroup heading="Select a Prompt">
+                <CommandItem> sadfsd</CommandItem>
+                {Object.entries(prompts).map(([key, value]) => (
+                  <CommandItem key={key} className='flex justify-between' value={`/prompts ${value.title}`} onSelect={(value) => { execCommand(value, key) }} >
+                    <span>{value.title}</span>
+                    <div className='flex space-x-2'>
+                      <div className='cursor-pointer hover:bg-background rounded-md' onClick={() => { upsetPromptWindow(key, value) }}>
+                        <Edit size={20} />
+                      </div>
+                      <div className='cursor-pointer hover:bg-background rounded-md' onClick={() => { deletePrompt(key) }}>
+                        <Trash2 />
+                      </div>
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+
+
             </>
           )
         default:
@@ -217,12 +290,27 @@ export default function Search({ id }: SearchProps) {
                 <CommandItem value='/clear' onSelect={(value) => execCommand(value)}>
                   <CleanIcon />
                   <span>Clear content and Chat context</span>
-                  <CommandShortcut>/clear</CommandShortcut>
+                  <CommandShortcut>
+                    <Kbd>/clear</Kbd>
+                  </CommandShortcut>
                 </CommandItem>
                 <CommandItem value='/use' onSelect={(value) => setInput(value)}>
                   <ArtificialIntelligence04Icon />
                   <span>Use other genereative AI</span>
-                  <CommandShortcut>/use</CommandShortcut>
+                  <CommandShortcut>
+                    <Kbd>
+                      /use
+                    </Kbd>
+                  </CommandShortcut>
+                </CommandItem>
+                <CommandItem value='/prompts' onSelect={(value) => setInput(value)}>
+                  <AiBrowserIcon />
+                  <span>Use prompt a genereative AI</span>
+                  <CommandShortcut>
+                    <Kbd>
+                      /prompts
+                    </Kbd>
+                  </CommandShortcut>
                 </CommandItem>
               </CommandGroup>
               <CommandSeparator />
@@ -230,17 +318,29 @@ export default function Search({ id }: SearchProps) {
                 <CommandItem value='/theme' onSelect={(value) => setInput(value)}>
                   <ColorsIcon />
                   <span>Change theme</span>
-                  <CommandShortcut>/theme</CommandShortcut>
+                  <CommandShortcut>
+                    <Kbd>
+                      /theme
+                    </Kbd>
+                  </CommandShortcut>
                 </CommandItem>
                 <CommandItem value='/chat' onSelect={(value) => setInput(value)}>
                   <Chatting01Icon />
                   <span>Chat Mode</span>
-                  <CommandShortcut>/chat</CommandShortcut>
+                  <CommandShortcut>
+                    <Kbd>
+                      /chat
+                    </Kbd>
+                  </CommandShortcut>
                 </CommandItem>
                 <CommandItem value='/layout' onSelect={(value) => setInput(value)}>
                   <Layout01Icon />
                   <span>Change Layout</span>
-                  <CommandShortcut>/layout</CommandShortcut>
+                  <CommandShortcut>
+                    <Kbd>
+                      /layout
+                    </Kbd>
+                  </CommandShortcut>
                 </CommandItem>
               </CommandGroup>
               <CommandSeparator />
@@ -248,17 +348,29 @@ export default function Search({ id }: SearchProps) {
                 <CommandItem value='/settings' onSelect={(value) => execCommand(value)}>
                   <Settings />
                   <span>Advanced Settings</span>
-                  <CommandShortcut>/settings</CommandShortcut>
+                  <CommandShortcut>
+                    <Kbd>
+                      /settings
+                    </Kbd>
+                  </CommandShortcut>
                 </CommandItem>
                 <CommandItem disabled value='/ai' onSelect={(value) => execCommand(value)}>
                   <ArtificialIntelligence05Icon />
                   <span>AI Settings</span>
-                  <CommandShortcut>/ai</CommandShortcut>
+                  <CommandShortcut>
+                    <Kbd>
+                      /ai
+                    </Kbd>
+                  </CommandShortcut>
                 </CommandItem>
                 <CommandItem value='/exit' onSelect={(value) => execCommand(value)}>
                   <Logout04Icon />
                   <span>Exit Program</span>
-                  <CommandShortcut>/exit</CommandShortcut>
+                  <CommandShortcut>
+                    <Kbd>
+                      /exit
+                    </Kbd>
+                  </CommandShortcut>
                 </CommandItem>
               </CommandGroup>
             </>

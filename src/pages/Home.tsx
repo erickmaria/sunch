@@ -5,8 +5,8 @@ import { SearchTabs } from '@/components/SearchTabs/SearchTabs';
 
 export default function Home() {
 
-    const { getConfigValue } = useUserSettings()
-    const [layoutMode, setLayoutMode] = useState<string>(getConfigValue("general.layout.mode"));
+    const { getConfig } = useUserSettings()
+    const [layoutMode, setLayoutMode] = useState<string>(getConfig("general.layout.mode"));
 
     // sync configs
     useEffect(() => {

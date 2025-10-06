@@ -1,11 +1,11 @@
 import { JSONSchemaType } from 'json-schema-typed'
 
-export const userSettingsSchema = {
+export const UserSettingsSchema = {
 	general: {
 		type: JSONSchemaType.Object,
 		properties: {
 			theme: { type: JSONSchemaType.String, },
-			backgroundOpacity: { 
+			backgroundOpacity: {
 				type: JSONSchemaType.Boolean,
 				default: false
 			},
@@ -71,6 +71,18 @@ export const userSettingsSchema = {
 		default: {
 			current: 'gemini',
 		}
+	},
+	prompts: {
+		type: JSONSchemaType.Object,
+		additionalProperties: {
+			type: JSONSchemaType.Object,
+			properties: {
+				title: { type: JSONSchemaType.String },
+				content: { type: JSONSchemaType.String }
+			},
+			required: ['title', 'content']
+		},
+		default: {}
 	},
 	tabs: {
 		type: JSONSchemaType.Object,

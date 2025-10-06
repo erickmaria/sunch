@@ -9,7 +9,9 @@ import { autoUpdater } from "electron-updater"
 import path from 'path';
 import fs from 'fs';
 import fsp from 'fs/promises';
-import { spawn,  } from 'child_process';
+import { spawn, } from 'child_process';
+import { PromptsWindow } from './ui/windows/prompts';
+import { UserSettingsSchema } from './store/schemas/userSettings'
 
 const recordingsDir = path.join(app.getPath('documents'), app.getName(), 'recordings');
 
@@ -26,8 +28,9 @@ if (!gotTheLock) {
 } else {
 
   const App = () => {
-    HomeWidown.getInstance()
     SettingsWindow.getInstance().bw.hide()
+    PromptsWindow.getInstance().bw.hide()
+
     Tray.getInstance()
   }
 
@@ -54,18 +57,25 @@ if (!gotTheLock) {
       ipcMain.on('electron-store-set', async (e: Electron.IpcMainEvent, key: string, value: unknown) => {
         store.set(key, value);
       });
+      ipcMain.on('electron-store-del', async <Key extends keyof typeof UserSettingsSchema>(e: Electron.IpcMainEvent, key: Key) => {
+        store.delete(key)
+        console.log("delete: " + key)
+      });
 
       ipcMain.on('electron-store-open-editor', async () => {
         store.openInEditor()
       });
 
-      ipcMain.on('open-window', async (e: Electron.IpcMainEvent, windowName: string) => {
+      ipcMain.on('open-window', async (e: Electron.IpcMainEvent, windowName: string, ...args: unknown[]) => {
         switch (windowName) {
           case "home":
             HomeWidown.getInstance().bw.show()
             break;
           case "settings":
             SettingsWindow.getInstance().bw.show()
+            break;
+          case "prompts":
+            PromptsWindow.getInstance().bw.show()
             break;
         }
       });
@@ -78,6 +88,9 @@ if (!gotTheLock) {
             break;
           case "settings":
             SettingsWindow.getInstance().bw.hide()
+            break;
+          case "prompts":
+            PromptsWindow.getInstance().bw.hide()
             break;
         }
       })

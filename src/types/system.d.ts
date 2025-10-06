@@ -9,13 +9,14 @@ declare global {
         get: (key: string) => any;
         // get: <K extends keyof Schema>(key: K) => Schema[Key];
         set: (key: string, value: unknown) => void;
+        delete: (key: string) => void;
         // set: <K extends keyof Schema>(key: K, value: unknown) => void;
 
         openInEditor: () => void;
       };
       // exit();
       closeWindow(windowName: string);
-      openWindow(windowName: string);
+      openWindow(windowName: string, ...args: unknown[]);
       minimizeWindow(windowName: string);
       syncConfig: (callback: (data: { key: string, value: unknown }) => void) => void;
       dispatchSyncConfig: (key: string, value: unknown) => void;
