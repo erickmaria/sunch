@@ -8,4 +8,4 @@ export const store = new Store({
     watch: true
 });
 
-if (process.env.VITE_DEV_SERVER_URL) console.log(store.path)
+if (process.env.VITE_DEV_SERVER_URL) console.log(`[DEBUG][GENERAL] App Setting: ${store.path}`)

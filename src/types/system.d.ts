@@ -18,7 +18,7 @@ declare global {
       closeWindow(windowName: string);
       openWindow(windowName: string, ...args: unknown[]);
       minimizeWindow(windowName: string);
-      syncConfig: (callback: (data: { key: string, value: unknown }) => void) => void;
+      syncConfig: (callback: (data: { key: string, value: unknown }) => void) => () => void;
       dispatchSyncConfig: (key: string, value: unknown) => void;
       getAppVersion: () => Promise<string>;
       saveAudioBlob: (data: { base64: string; filename: string }) => void;

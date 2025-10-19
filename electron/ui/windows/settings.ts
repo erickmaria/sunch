@@ -57,10 +57,6 @@ class Window {
        win.loadFile('dist/index.html', { hash: "/settings" })
     }
 
-    ipcMain.on('dispatch-sync-config', async (e: Electron.IpcMainEvent, key: string, value: unknown) => {
-      win.webContents.send('sync-config', {key, value} );
-    })
-
     win.on("ready-to-show", () => {
         win.show()
     })

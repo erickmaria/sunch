@@ -166,9 +166,13 @@ function SearchTabTitle({ id }: SearchTabTitleProps) {
 
   // sync configs
   useEffect(() => {
-    window.system.syncConfig((data) => {
+    const removeListener = window.system.syncConfig((data) => {
       if (data.key == `tabs.${id}.models.current`) setGenAI(data.value as unknown as string)
     });
+
+    return () => {
+      removeListener();
+    };
   });
 
   useEffect(() => {

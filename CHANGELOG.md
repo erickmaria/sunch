@@ -3,6 +3,8 @@
 ## Unreleased
 
 - chore: add background opacity option
+- fix: MaxListenersExceededWarning
+- fix: UnhandledPromiseRejectionWarning
 
 ## v1.5.3 - 2025-09-14
 

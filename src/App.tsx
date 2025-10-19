@@ -16,19 +16,23 @@ export default function App() {
   const [backgroundOpacity, setBackgroundOpacity] = useState<boolean>((getConfig("general.backgroundOpacity") as boolean));
 
   useEffect(() => {
-    window.system.syncConfig((data) => {
+    const removeListener = window.system.syncConfig((data) => {
       if (data.key == "general.theme") setTheme(data.value as unknown as Theme)
       if (data.key == "general.backgroundOpacity") setBackgroundOpacity(data.value as unknown as boolean)
     });
+
+    return () => {
+      removeListener();
+    };
   }, [theme]);
 
   return (
     <>
       <div className={`text-sm ${backgroundOpacity && `opacity-95`}`}>
-      {/* <div className="text-sm"> */}
+        {/* <div className="text-sm"> */}
         <HashRouter>
           <Routes>
-            <Route index path="/"  element={<Home />} />
+            <Route index path="/" element={<Home />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/prompts" element={<Promtps />} />
           </Routes>

@@ -28,7 +28,7 @@ export default function Promtps() {
 
   // sync configs
   useEffect(() => {
-    window.system.syncConfig((data) => {
+    const removeListener = window.system.syncConfig((data) => {
       if (data.key.startsWith("prompts")) {
         if (data.key == "prompts.#new#") {
           setId("")
@@ -43,6 +43,10 @@ export default function Promtps() {
         setId(data.key.split(".")[1])
       }
     });
+
+    return () => {
+      removeListener();
+    };
   });
 
   const promptForm = useForm<z.infer<typeof formPromptSchema>>({
@@ -63,7 +67,7 @@ export default function Promtps() {
 
     if (values.default) {
 
-      let prompts = getConfig(`prompts`) as unknown as Map<string, { title: string, content: string, default: boolean }>;
+      const prompts = getConfig(`prompts`) as unknown as Map<string, { title: string, content: string, default: boolean }>;
 
       Object.entries(prompts).map(([key, value]) => {
         if (value.default) {

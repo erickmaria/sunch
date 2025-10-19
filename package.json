@@ -15,7 +15,7 @@
   "main": "dist-electron/main.js",
   "homepage": "./",
   "scripts": {
-    "dev": "vite && tsc --unhandled-rejections=strict",
+    "dev": "vite && tsc --trace-warnings",
     "clean": "rimraf dist/ dist-electron/ release/",
     "build": "tsc && vite build",
     "build:windows": "npm run build && electron-builder --win --config",

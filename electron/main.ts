@@ -1,6 +1,6 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, ipcRenderer } from 'electron';
 import { runningNotification, stillRunningNotification } from './notifications/notifcation';
-import { HomeWidown } from './ui/windows/home';
+import { HomeWindow } from './ui/windows/home';
 import { Tray } from './ui/tray';
 import { Shortcuts } from './helpers/shortcuts';
 import { store } from './store/config';
@@ -43,7 +43,7 @@ if (!gotTheLock) {
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      HomeWidown.getInstance()
+      HomeWindow.getInstance()
     }
   });
 
@@ -69,7 +69,7 @@ if (!gotTheLock) {
       ipcMain.on('open-window', async (e: Electron.IpcMainEvent, windowName: string, ...args: unknown[]) => {
         switch (windowName) {
           case "home":
-            HomeWidown.getInstance().bw.show()
+            HomeWindow.getInstance().bw.show()
             break;
           case "settings":
             SettingsWindow.getInstance().bw.show()
@@ -84,7 +84,7 @@ if (!gotTheLock) {
 
         switch (windowName) {
           case "home":
-            HomeWidown.getInstance().bw.hide()
+            HomeWindow.getInstance().bw.hide()
             break;
           case "settings":
             SettingsWindow.getInstance().bw.hide()
@@ -99,7 +99,7 @@ if (!gotTheLock) {
 
         switch (windowName) {
           case "home":
-            HomeWidown.getInstance().bw.minimize()
+            HomeWindow.getInstance().bw.minimize()
             break;
           case "settings":
             SettingsWindow.getInstance().bw.minimize()
@@ -154,6 +154,10 @@ if (!gotTheLock) {
           console.log(`transcript: child process exited with code ${code}`);
         });
       });
+
+      ipcMain.on('dispatch-sync-config', async (e: Electron.IpcMainEvent, key: string, value: unknown) => {
+        HomeWindow.getInstance().bw.webContents.send('sync-config', { key, value });
+      })
 
     })
     .then(() => {

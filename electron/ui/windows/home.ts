@@ -2,7 +2,6 @@ import { app, BrowserWindow, ipcMain, shell } from "electron";
 import { searchReadyNotification, stillRunningNotification } from "../../notifications/notifcation";
 import { join } from 'path';
 import { SettingsWindow } from "./settings";
-// import fs from "fs"
 
 class Window {
 
@@ -48,7 +47,7 @@ class Window {
 
         const userDataPath = app.getPath("userData");
         const prefPath = join(userDataPath, "Preferences")
-        console.log("[DEBUG][GENERAL] Electron Preferences: " + prefPath)
+        console.log(`[DEBUG][GENERAL] Electron Preferences: ${prefPath}`)
         // "electron": {
         //   "devtools": {
         //     "bounds": {
@@ -61,19 +60,6 @@ class Window {
         // }
 
         win.webContents.openDevTools({ mode: 'detach' });
-        // win.webContents.once("devtools-opened", () => {
-        //   const prefs = JSON.parse(fs.readFileSync(prefPath, "utf-8"))
-        //   prefs.electron.devtools = {
-        //     preferences: {
-        //       "InspectorView.splitViewState": JSON.stringify({
-        //         vertical: { size: 300 },
-        //         horizontal: { size: 300 }
-        //       })
-        //     }
-        //   }
-        //   fs.writeFileSync(prefPath, JSON.stringify(prefs))
-        // })
-
       }
     } else {
       win.loadFile('dist/index.html')
@@ -95,14 +81,8 @@ class Window {
       Window.getInstance().bw.setSize(Math.ceil(this.width), Math.ceil(height))
     })
 
-    ipcMain.on('dispatch-sync-config', async (e: Electron.IpcMainEvent, key: string, value: unknown) => {
-      win.webContents.send('sync-config', { key, value });
-    })
-
     ipcMain.on('searchReady', () => {
-
       const win = Window.getInstance().bw
-
       if (!win.isFocused() || !win.isVisible()) {
         searchReadyNotification()
       }
@@ -131,4 +111,4 @@ class Window {
 
 }
 
-export { Window as HomeWidown }
+export { Window as HomeWindow }

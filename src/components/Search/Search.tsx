@@ -5,7 +5,7 @@ import { Microphone } from '@/components/Microphone/Microphone';
 import { useGetAnswer } from '@/hooks/useGetAnswer';
 import Result from '../Result/Result';
 import Loading from '../Loading/Loading';
-import { AiBrowserIcon, AiIdeaIcon, ArrowDown01Icon, ArtificialIntelligence04Icon, ArtificialIntelligence05Icon, ChatGptIcon, Chatting01Icon, CleanIcon, ColorsIcon, GoogleGeminiIcon, Layout01Icon, Layout07Icon, LayoutBottomIcon, Logout04Icon, Moon02Icon, Sun02Icon, ToggleOffIcon, ToggleOnIcon } from 'hugeicons-react';
+import { AiBrowserIcon, AiIdeaIcon, ArtificialIntelligence04Icon, ArtificialIntelligence05Icon, ChatGptIcon, Chatting01Icon, CleanIcon, ColorsIcon, GoogleGeminiIcon, Layout01Icon, Layout07Icon, LayoutBottomIcon, Logout04Icon, Menu01Icon, Moon02Icon, Sun02Icon, ToggleOffIcon, ToggleOnIcon } from 'hugeicons-react';
 import {
   Tooltip,
   TooltipContent,
@@ -69,7 +69,7 @@ export default function Search({ id }: SearchProps) {
 
   // sync configs
   useEffect(() => {
-    window.system.syncConfig((data) => {
+    const removeListener = window.system.syncConfig((data) => {
       if (data.key == `general.layout.mode`) setLayoutMode(data.value as unknown as string)
       if (data.key == `prompts.#selected#`) {
         const promptData = getConfig(`prompts.${data.value}`)
@@ -77,16 +77,19 @@ export default function Search({ id }: SearchProps) {
           id: data.value as string,
           ...promptData
         })
-
         console.log(prompt)
       }
     });
+
+    return () => {
+      removeListener();
+    };
   });
 
-  useEffect(() => {
-    setConfig(`tabs.${id}.models.current`, genAI)
-    dispatchSyncConfig(`tabs.${id}.models.current`, genAI)
-  }, [genAI])
+  // useEffect(() => {
+  //   setConfig(`tabs.${id}.models.current`, genAI)
+  //   dispatchSyncConfig(`tabs.${id}.models.current`, genAI)
+  // }, [genAI])
 
   useEffect(() => {
     if (audio != '') {
@@ -167,6 +170,42 @@ export default function Search({ id }: SearchProps) {
 
 
     function CommandItems() {
+
+      // let prompts: Map<string, { title: string, content: string, default: boolean }> = new Map();
+      const [prompts, setPrompts] = useState<Map<string, { title: string, content: string, default: boolean }>>(getConfig("prompts"))
+      // sync configs
+      useEffect(() => {
+        const removeListener = window.system.syncConfig((data) => {
+          if (data.key.startsWith("prompts.#update#")) {
+            setPrompts(getConfig("prompts"))
+          }
+        });
+
+        return () => {
+          removeListener();
+        };
+      });
+
+      function upsetPromptWindow(id?: string, value?: unknown) {
+        PROMPT_EVENT = true;
+
+        if (id == undefined) {
+          dispatchSyncConfig(`prompts.#new#`, null)
+        } else {
+          dispatchSyncConfig(`prompts.${id}`, value)
+        }
+
+        window.system.openWindow("prompts");
+      }
+
+      function deletePrompt(id?: string) {
+        PROMPT_EVENT = true;
+        if (id != undefined) {
+          delConfig(`prompts.${id}`)
+        }
+        dispatchSyncConfig(`prompts.#update#`, null)
+      }
+
       switch (input) {
         case "/theme":
           return (
@@ -237,39 +276,6 @@ export default function Search({ id }: SearchProps) {
             </>
           );
         case "/prompts":
-
-          // let prompts: Map<string, { title: string, content: string, default: boolean }> = new Map();
-          const [prompts, setPrompts] = useState<Map<string, { title: string, content: string, default: boolean }>>(getConfig("prompts"))
-
-          function upsetPromptWindow(id?: string, value?: unknown) {
-            PROMPT_EVENT = true;
-
-            if (id == undefined) {
-              dispatchSyncConfig(`prompts.#new#`, null)
-            } else {
-              dispatchSyncConfig(`prompts.${id}`, value)
-            }
-
-            window.system.openWindow("prompts");
-          }
-
-          function deletePrompt(id?: string) {
-            PROMPT_EVENT = true;
-            if (id != undefined) {
-              delConfig(`prompts.${id}`)
-            }
-            dispatchSyncConfig(`prompts.#update#`, null)
-          }
-
-          // sync configs
-          useEffect(() => {
-            window.system.syncConfig((data) => {
-              if (data.key.startsWith("prompts.#update#")) {
-                setPrompts(getConfig("prompts"))
-              }
-            });
-          });
-
           return (
             <>
               <div className={`cursor-pointer absolute right-1 top-1 hover:bg-secondary rounded-md m-1 p-0.5`}>
@@ -453,10 +459,11 @@ export default function Search({ id }: SearchProps) {
                   }
                   <InputGroupButton
                     onClick={() => (openOptions ? setOpenOptions(false) : setOpenOptions(true))}
-                    variant="outline"
+                    // variant="outline"
+                    size="icon-xs"
                     className="rounded-full"
                   >
-                    <ArrowDown01Icon strokeWidth={1.5} />
+                    <Menu01Icon />
                   </InputGroupButton>
                 </InputGroupAddon>
               </InputGroup>
