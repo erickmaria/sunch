@@ -23,7 +23,7 @@ interface TabItemProps {
 
 export function SearchTabs() {
 
-  const { getConfigValue, setConfigValue } = useUserSettings();
+  const { getConfig, setConfig } = useUserSettings();
 
 
   const [tabs, setTabs] = useState<Tab[]>([
@@ -56,7 +56,7 @@ export function SearchTabs() {
   const handleAddTab = () => {
     const newId = crypto.randomUUID();
 
-    setConfigValue(`tabs.${newId}.models.current`, getConfigValue("models.current"))
+    setConfig(`tabs.${newId}.models.current`, getConfig("models.current"))
 
     const newTab = {
       id: newId,
@@ -73,7 +73,7 @@ export function SearchTabs() {
 
   return (
     <>
-      <div className="space-x-1">
+      <div className="bg-background rounded-b-md rounded-tr-md  space-x-1">
         <div className="flex align-middle justify-between">
           <div className="flex space-x-1 items-center overflow-hidden">
             <div className="flex text-xs overflow-hidden">
@@ -160,15 +160,19 @@ interface SearchTabTitleProps {
 }
 function SearchTabTitle({ id }: SearchTabTitleProps) {
 
-  const { getConfigValue } = useUserSettings();
-  const [genAI, setGenAI] = useState<string>(getConfigValue('models.current'));
+  const { getConfig } = useUserSettings();
+  const [genAI, setGenAI] = useState<string>(getConfig('models.current'));
   const [tabIcon, setTabIcon] = useState<ReactNode>(<></>);
 
   // sync configs
   useEffect(() => {
-    window.system.syncConfig((data) => {
+    const removeListener = window.system.syncConfig((data) => {
       if (data.key == `tabs.${id}.models.current`) setGenAI(data.value as unknown as string)
     });
+
+    return () => {
+      removeListener();
+    };
   });
 
   useEffect(() => {

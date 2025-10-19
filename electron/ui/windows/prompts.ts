@@ -5,7 +5,7 @@ class Window {
 
   private static instance: Window | null = null;
 
-  private width = 400
+  private width = 500
   private maxHeight = 700
   public bw: BrowserWindow
 
@@ -21,17 +21,17 @@ class Window {
     return Window.instance;
   }
 
-  public static setInstanceNull(){
+  public static setInstanceNull() {
     Window.instance = null
   }
 
   private create(): BrowserWindow {
     const win = new BrowserWindow({
-      title: "settings",
+      title: "prompts",
       width: this.width,
       minWidth: this.width,
       maxWidth: this.width,
-      y: 50,
+      // y: 50,
       resizable: false,
       minimizable: false,
       maximizable: false,
@@ -47,20 +47,18 @@ class Window {
     });
 
     if (process.env.VITE_DEV_SERVER_URL) {
-      win.loadURL(process.env.VITE_DEV_SERVER_URL + "#/settings", {
-
-      })
-      if (process.env.SUNCH_PAGE_SETTINGS_DEVTOOLS_ENABLED === 'true') {
+      win.loadURL(process.env.VITE_DEV_SERVER_URL + `#/prompts`, {})
+      if (process.env.SUNCH_PAGE_PROMPTS_DEVTOOLS_ENABLED === 'true') {
         win.webContents.openDevTools({ mode: 'detach' })
       }
     } else {
-       win.loadFile('dist/index.html', { hash: "/settings" })
+      win.loadFile('dist/index.html', { hash: `/prompts` })
     }
 
     win.on("ready-to-show", () => {
-        win.show()
+      win.show()
     })
-    
+
     win.on('close', (e: Electron.Event) => {
       // e.preventDefault()
 
@@ -77,4 +75,4 @@ class Window {
 
 }
 
-export { Window as SettingsWindow }
+export { Window as PromptsWindow }

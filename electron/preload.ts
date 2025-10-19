@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from "electron";
+import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
 
 contextBridge.exposeInMainWorld('system', {
     resize: (screen: { w: string, h: string }) => {
@@ -14,12 +14,15 @@ contextBridge.exposeInMainWorld('system', {
         set(property: string, value: unknown) {
             ipcRenderer.send('electron-store-set', property, value);
         },
+        delete(key: string) {
+            ipcRenderer.send('electron-store-del', key);
+        },
         openInEditor() {
             return ipcRenderer.send('electron-store-open-editor');
         },
     },
-    openWindow(windowName: string) {
-        return ipcRenderer.send('open-window', windowName);
+    openWindow(windowName: string, ...args: unknown[]) {
+        return ipcRenderer.send('open-window', windowName, ...args);
     },
     minimizeWindow(windowName: string) {
         return ipcRenderer.send('minimize-window', windowName);
@@ -28,11 +31,29 @@ contextBridge.exposeInMainWorld('system', {
         return ipcRenderer.send('close-window', windowName);
     },
     dispatchSyncConfig(property: string, value: unknown) {
-        return ipcRenderer.send('dispatch-sync-config', property, value);
+        ipcRenderer.send('dispatch-sync-config', property, value);
+        // ipcRenderer.removeAllListeners('dispatch-sync-config');
+        // ipcRenderer.removeAllListeners('sync-config');
+        // // console.log("Listeners cleaned")
     },
-    syncConfig: (callback: (data: any) => void) => ipcRenderer.on('sync-config', (_event, data) => {
-        callback(data);
-    }),
+    syncConfig: (callback: (data: { key: string, value: unknown }) => void) => {
+
+        const wrappedCallback = (event: IpcRendererEvent, data: { key: string, value: unknown }) => callback(data);
+        ipcRenderer.on('sync-config', wrappedCallback);
+
+        return () => {
+            ipcRenderer.removeListener('sync-config', wrappedCallback);
+        };
+
+
+        // ipcRenderer.on('sync-config', (_event, data) => { callback(data) })
+        // return () => {
+        //     ipcRenderer.removeAllListeners('sync-config');
+        // };
+    },
+    // syncConfig: (callback: (data: any) => void) => ipcRenderer.on('sync-config', (_event, data) => {
+    //     callback(data);
+    // }),
     getAppVersion: () => ipcRenderer.invoke('get-app-version'),
     saveAudioBlob: (data: { base64: string; filename: string }) => ipcRenderer.send('save-audio-blob', data),
     transcript: () => ipcRenderer.send('transcript'),

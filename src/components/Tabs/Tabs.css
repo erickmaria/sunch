@@ -8,18 +8,17 @@
 }
 
 .tabs li {
-  padding: 5px 11px 5px 11px;
+  padding: 4px 11px 4px 11px;
   cursor: pointer;
   /* border: 1px solid transparent; */
   /* border-radius: 5px 5px 0 0; */
-  margin-right: 5px;
 }
 
 .tabs li:not(.active) {
   background-color: var(--color-secondary);
   /* border: 2px solid var(--foreground);
   border-bottom: 2px solid var(--foreground); */
-  font-weight: 300;
+  /* font-weight: 300; */
 }
 
 .tab-content {

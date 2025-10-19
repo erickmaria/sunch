@@ -26,42 +26,53 @@ export default function Settings() {
   const lineSelectContextStyle: CSSProperties = {
     maxHeight: '300px'
   }
-  
-  const { setConfigValue, getConfigValue, dispatchSyncConfig } = useUserSettings()
+
+  const { setConfig, getConfig, dispatchSyncConfig } = useUserSettings()
   const { setTheme, theme } = useTheme();
-  
+
   const [notification, setNotification] = useState<boolean>(false);
-  const [genAI, setGenAI] = useState<string>(getConfigValue('models.current'));
-  const [layoutMode, setLayoutMode] = useState<boolean>((getConfigValue("general.layout.mode") as string) == "full" ? true : false);
-  const [chatMode, setChatMode] = useState<boolean>(getConfigValue("general.chatMode.enable") as boolean);
-  
+  const [genAI, setGenAI] = useState<string>(getConfig('models.current'));
+  const [layoutMode, setLayoutMode] = useState<boolean>((getConfig("general.layout.mode") as string) == "full" ? true : false);
+  const [chatMode, setChatMode] = useState<boolean>(getConfig("general.chatMode.enable") as boolean);
+  const [backgroundOpacity, setBackgroundOpacity] = useState<boolean>((getConfig("general.backgroundOpacity") as boolean));
+
+
   const [version, setVersion] = useState<string>("");
   const [gptModels, setGptModels] = useState<Array<string>>([]);
   const [geminiModels, setGeminiModels] = useState<Array<string>>([]);
   const [claudeModels, setClaudeModels] = useState<Array<string>>([]);
-  
+
 
   // sync configs
   useEffect(() => {
-    window.system.syncConfig((data) => {
+    const removeListener = window.system.syncConfig((data) => {
       if (data.key == `general.layout.mode`) setLayoutMode(data.value == "full" ? true : false)
       if (data.key == `general.chatMode.enable`) setChatMode(data.value as boolean)
     });
+
+    return () => {
+      removeListener();
+    };
   });
 
   useEffect(() => {
-    setConfigValue('general.notification.enable', notification)
+    setConfig('general.notification.enable', notification)
   }, [notification])
 
   useEffect(() => {
-    setConfigValue('general.chatMode.enable', chatMode)
+    setConfig('general.chatMode.enable', chatMode)
     dispatchSyncConfig('general.chatMode.enable', chatMode)
   }, [chatMode])
 
   useEffect(() => {
-    setConfigValue('general.layout.mode', layoutMode ? "full" : "minimalist")
+    setConfig('general.layout.mode', layoutMode ? "full" : "minimalist")
     dispatchSyncConfig('general.layout.mode', layoutMode ? "full" : "minimalist")
   }, [layoutMode])
+
+  useEffect(() => {
+    setConfig('general.backgroundOpacity', backgroundOpacity)
+    dispatchSyncConfig('general.backgroundOpacity', backgroundOpacity)
+  }, [backgroundOpacity])
 
   useEffect(() => {
     window.system.getAppVersion().then((v) => {
@@ -111,7 +122,7 @@ export default function Settings() {
   }
 
   function setDefaulGenAI(value: string) {
-    setConfigValue('models.current', value)
+    setConfig('models.current', value)
     dispatchSyncConfig('models.current', value as string)
     setGenAI(value)
   }
@@ -125,33 +136,20 @@ export default function Settings() {
               onClick={() => { window.system.closeWindow("settings") }}
               className="hover:bg-red-500" />
           </div>
-          <div className="bg-secondary draggable absolute right-8 w-[219px] h-[30px]"></div>
+
+          {/* <div className="bg-secondary draggable absolute right-8 w-[148px] h-[28px]"></div> */}
+          <div className="bg-secondary draggable absolute right-8 w-[225px] h-[28px]"></div>
+
           <Tabs initialTabIndex={0}>
             <Tab label="General">
               <div className="flex flex-col justify-between space-y-6 mb-5">
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium leading-none pt-3">Themes</span>
-                  <Select value={theme}
-                    onValueChange={(value: Theme) => {
-                      setTheme(value)
-                      dispatchSyncConfig('general.theme', value)
-                    }} >
-                    <SelectTrigger className="w-[230px]">
-                      <SelectValue placeholder="Theme" />
-                    </SelectTrigger>
-                    <SelectContent style={lineSelectContextStyle}>
-                      <SelectItem value="light">Light</SelectItem>
-                      <SelectItem value="dark">Dark</SelectItem>
-                      <SelectItem value="system">System</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+
                 <div className="flex justify-between">
                   <span className="text-sm font-medium leading-none pt-3">Lenguague</span>
-                  <Select defaultValue={getConfigValue('general.language')}
+                  <Select defaultValue={getConfig('general.language')}
                     disabled
                     onValueChange={(value) => {
-                      setConfigValue('general.language', value)
+                      setConfig('general.language', value)
                     }}>
                     <SelectTrigger className="w-[230px]">
                       <SelectValue placeholder="Lenguague" />
@@ -162,7 +160,41 @@ export default function Settings() {
                     </SelectContent>
                   </Select>
                 </div>
+
+                <div className="flex flex-col">
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium leading-none pt-3">Themes</span>
+                    <Select value={theme}
+                      onValueChange={(value: Theme) => {
+                        setTheme(value)
+                        dispatchSyncConfig('general.theme', value)
+                      }} >
+                      <SelectTrigger className="w-[230px]">
+                        <SelectValue placeholder="Theme" />
+                      </SelectTrigger>
+                      <SelectContent style={lineSelectContextStyle}>
+                        <SelectItem value="light">Light</SelectItem>
+                        <SelectItem value="dark">Dark</SelectItem>
+                        <SelectItem value="system">System</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex items-center rounded-md border mt-2 py-1 px-1">
+                    <div className="flex-1">
+                      <p className="text-sm font-medium leading-none">
+                        transparency
+                      </p>
+                    </div>
+                    <Switch
+                      checked={backgroundOpacity}
+                      onCheckedChange={(checked) => { setBackgroundOpacity(checked) }}
+                    />
+                  </div>
+
+                </div>
               </div>
+
               <Separator color={'var(--secondary)'} />
 
               <div className=" flex items-center space-x-4 rounded-md border p-4 mt-5">
@@ -242,9 +274,9 @@ export default function Settings() {
                       Set configuration
                     </p>
                   </div>
-                  <Select onOpenChange={loadModels} defaultValue={getConfigValue('models.gemini.version')}
+                  <Select onOpenChange={loadModels} defaultValue={getConfig('models.gemini.version')}
                     onValueChange={(value) => {
-                      setConfigValue('models.gemini.version', value)
+                      setConfig('models.gemini.version', value)
                     }}>
                     <SelectTrigger className="w-[200px]">
                       <SelectValue placeholder="Gemini Version" />
@@ -260,11 +292,11 @@ export default function Settings() {
                   <p className="pl-2 text-sm text-muted-foreground">
                     Api Key
                   </p>
-                  <Input defaultValue={getConfigValue("models.gemini.apikey")}
+                  <Input defaultValue={getConfig("models.gemini.apikey")}
                     type="password"
                     placeholder="provide your API key"
                     className="w-[500px] placeholder:text-xs placeholder:opacity-20" onChange={(e) => {
-                      setConfigValue('models.gemini.apikey', e.target.value)
+                      setConfig('models.gemini.apikey', e.target.value)
                     }} />
                 </div>
               </div>
@@ -280,9 +312,9 @@ export default function Settings() {
                       Set configuration
                     </p>
                   </div>
-                  <Select onOpenChange={loadModels} defaultValue={getConfigValue('models.gpt.version')}
+                  <Select onOpenChange={loadModels} defaultValue={getConfig('models.gpt.version')}
                     onValueChange={(value) => {
-                      setConfigValue('models.gpt.version', value)
+                      setConfig('models.gpt.version', value)
                     }}>
                     <SelectTrigger className="w-[200px]">
                       <SelectValue placeholder="GPT Version" />
@@ -299,11 +331,11 @@ export default function Settings() {
                     Api Key
                   </p>
                   <Input
-                    defaultValue={getConfigValue("models.gpt.apikey")}
+                    defaultValue={getConfig("models.gpt.apikey")}
                     type="password"
                     placeholder="provide your API key"
                     className="w-[500px] placeholder:text-xs placeholder:opacity-20" onChange={(e) => {
-                      setConfigValue('models.gpt.apikey', e.target.value)
+                      setConfig('models.gpt.apikey', e.target.value)
                     }} />
                 </div>
               </div>
@@ -319,9 +351,9 @@ export default function Settings() {
                       Set configuration
                     </p>
                   </div>
-                  <Select onOpenChange={loadModels} defaultValue={getConfigValue('models.claude.version')}
+                  <Select onOpenChange={loadModels} defaultValue={getConfig('models.claude.version')}
                     onValueChange={(value) => {
-                      setConfigValue('models.claude.version', value)
+                      setConfig('models.claude.version', value)
                     }}>
                     <SelectTrigger className="w-[200px]">
                       <SelectValue placeholder="Claude Version" />
@@ -338,16 +370,21 @@ export default function Settings() {
                     Api Key
                   </p>
                   <Input
-                    defaultValue={getConfigValue("models.claude.apikey")}
+                    defaultValue={getConfig("models.claude.apikey")}
                     type="password"
                     placeholder="provide your API key"
                     className="w-[500px] placeholder:text-xs placeholder:opacity-20" onChange={(e) => {
-                      setConfigValue('models.claude.apikey', e.target.value)
+                      setConfig('models.claude.apikey', e.target.value)
                     }} />
                 </div>
               </div>
 
             </Tab>
+            {/* <Tab label="Prompts">
+              <div>
+                Prompts
+              </div>
+            </Tab> */}
           </Tabs>
         </div>
         <div className="absolute bottom-0 right-0 pr-2 pb-0.5">

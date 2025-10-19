@@ -20,33 +20,33 @@
 
 //     const getDefaultTheme = (): Themes =>  window.matchMedia("(prefers-color-scheme: dark)").matches == true ? 'dark' : 'light'
 
-//     const { getConfigValue, setConfigValue } = useUserSettings()
+//     const { getConfig, setConfig } = useUserSettings()
 
 //     const [theme, setTheme] = useState<Themes>('auto');
 
 //     useEffect(() => {
-//         if(getConfigValue('general.theme') == "auto"){
-//             setConfigValue('general.theme', 'auto')
+//         if(getConfig('general.theme') == "auto"){
+//             setConfig('general.theme', 'auto')
 //             setTheme(getDefaultTheme())
 //             return
 //         }
-//         setTheme(getConfigValue('general.theme'));
+//         setTheme(getConfig('general.theme'));
 //     },[theme]);
 
 //     const changeThemeTo = (theme: Themes) => {
 
 //         if (theme == 'auto'){
-//             setConfigValue('general.theme', 'auto')
+//             setConfig('general.theme', 'auto')
 //             setTheme(getDefaultTheme());
 //             return
 //         }
 
 //         setTheme(theme);
-//         setConfigValue('general.theme', theme as string)
+//         setConfig('general.theme', theme as string)
 //     };
 
 //     const getCurrentTheme = (): string => {
-//         return getConfigValue('general.theme') as string
+//         return getConfig('general.theme') as string
 //     };
 
 //     return (
@@ -104,7 +104,7 @@ export function ThemeProvider({
         () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
     )
 
-    const { setConfigValue } = useUserSettings()
+    const { setConfig } = useUserSettings()
 
 
     useEffect(() => {
@@ -130,7 +130,7 @@ export function ThemeProvider({
         setTheme: (theme: Theme) => {
             localStorage.setItem(storageKey, theme)
             setTheme(theme)
-            setConfigValue('general.theme', theme as string)
+            setConfig('general.theme', theme as string)
 
         },
     }

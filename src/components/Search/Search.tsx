@@ -5,7 +5,7 @@ import { Microphone } from '@/components/Microphone/Microphone';
 import { useGetAnswer } from '@/hooks/useGetAnswer';
 import Result from '../Result/Result';
 import Loading from '../Loading/Loading';
-import { ArrowDown01Icon, ArtificialIntelligence04Icon, ArtificialIntelligence05Icon, Attachment02Icon, CenterFocusIcon, ChatGptIcon, Chatting01Icon, CleanIcon, ColorsIcon, GoogleGeminiIcon, Layout01Icon, Layout07Icon, LayoutBottomIcon, Logout04Icon, Moon02Icon, Sun02Icon, ToggleOffIcon, ToggleOnIcon } from 'hugeicons-react';
+import { AiBrowserIcon, AiIdeaIcon, ArtificialIntelligence04Icon, ArtificialIntelligence05Icon, ChatGptIcon, Chatting01Icon, CleanIcon, ColorsIcon, GoogleGeminiIcon, Layout01Icon, Layout07Icon, LayoutBottomIcon, Logout04Icon, Menu01Icon, Moon02Icon, Sun02Icon, ToggleOffIcon, ToggleOnIcon } from 'hugeicons-react';
 import {
   Tooltip,
   TooltipContent,
@@ -17,10 +17,7 @@ import { SettingsTittle } from '../SearchSettings/SettingsTittle';
 import { useUserSettings } from '@/hooks/useUserSettings';
 import { RiClaudeFill, RiGeminiFill, RiOpenaiFill } from 'react-icons/ri';
 import { Switch } from '../ui/switch';
-
-import TextareaAutosize from 'react-textarea-autosize';
-
-import { ComputerIcon, Settings } from "lucide-react"
+import { ComputerIcon, Edit, Plus, Settings, Trash2 } from "lucide-react"
 
 import {
   Command,
@@ -32,16 +29,23 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command"
-import { Theme, useTheme } from '@/contexts/ThemeProvider';
 
+import { Theme, useTheme } from '@/contexts/ThemeProvider';
+import { Kbd } from '../ui/kbd';
+import { Badge } from '../ui/badge';
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextareaAutosize } from '../ui/input-group';
 
 interface SearchProps {
   id: string
 }
 
+type Prompt = { id: string, title?: string, content?: string }
+
 export default function Search({ id }: SearchProps) {
 
-  const { getConfigValue } = useUserSettings();
+  let PROMPT_EVENT = false
+
+  const { getConfig, delConfig } = useUserSettings();
 
   const [input, setInput] = useState<string>("");
   const [values, setValues] = useState<Array<string>>(Array<string>);
@@ -49,24 +53,43 @@ export default function Search({ id }: SearchProps) {
   const [chatMode, setChatMode] = useState<boolean>(false);
   const [audio, setAudio] = useState("");
 
-  const [layoutMode, setLayoutMode] = useState<string>(getConfigValue("general.layout.mode"));
-  const [genAI, setGenAI] = useState<string>(getConfigValue('models.current'));
+  const [layoutMode, setLayoutMode] = useState<string>(getConfig("general.layout.mode"));
+  const [genAI, setGenAI] = useState<string>(getConfig('models.current'));
+
+  const promptSelectedId = getConfig(`prompts._selected_`)?.id
+  const promptSelected = getConfig(`prompts.${promptSelectedId}`)
+  const [prompt, setPrompt] = useState<Prompt | undefined>({
+    id: promptSelectedId,
+    ...promptSelected
+  });
 
   const { setTheme } = useTheme();
   const { awaiting, askSomething, features } = useGetAnswer({ id, genAI, chatMode });
-  const { dispatchSyncConfig, setConfigValue } = useUserSettings()
+  const { dispatchSyncConfig, setConfig } = useUserSettings()
 
   // sync configs
   useEffect(() => {
-    window.system.syncConfig((data) => {
+    const removeListener = window.system.syncConfig((data) => {
       if (data.key == `general.layout.mode`) setLayoutMode(data.value as unknown as string)
+      if (data.key == `prompts.#selected#`) {
+        const promptData = getConfig(`prompts.${data.value}`)
+        setPrompt({
+          id: data.value as string,
+          ...promptData
+        })
+        console.log(prompt)
+      }
     });
+
+    return () => {
+      removeListener();
+    };
   });
 
-  useEffect(() => {
-    setConfigValue(`tabs.${id}.models.current`, genAI)
-    dispatchSyncConfig(`tabs.${id}.models.current`, genAI)
-  }, [genAI])
+  // useEffect(() => {
+  //   setConfig(`tabs.${id}.models.current`, genAI)
+  //   dispatchSyncConfig(`tabs.${id}.models.current`, genAI)
+  // }, [genAI])
 
   useEffect(() => {
     if (audio != '') {
@@ -104,6 +127,12 @@ export default function Search({ id }: SearchProps) {
 
     // use the args parameter when the subcommand value is different from what is needed to perform the action  
     function execCommand(cmd: string, ...args: unknown[]) {
+
+      if (PROMPT_EVENT) {
+        PROMPT_EVENT = false
+        return;
+      }
+
       if (cmd.startsWith("/use")) {
         setGenAI(cmd.split(' ')[1] as string)
       }
@@ -126,15 +155,57 @@ export default function Search({ id }: SearchProps) {
       if (cmd.startsWith("/settings")) {
         window.system.openWindow("settings")
       }
+      if (cmd.startsWith("/prompts")) {
+        setConfig(`prompts._selected_`, { id: args[0] as string })
+        dispatchSyncConfig(`prompts.#selected#`, args[0] as unknown)
+
+      }
       if (cmd.startsWith("/exit")) {
         window.system.closeWindow("home")
         window.system.closeWindow("settings")
       }
+
       setInput('')
     }
 
 
     function CommandItems() {
+
+      // let prompts: Map<string, { title: string, content: string, default: boolean }> = new Map();
+      const [prompts, setPrompts] = useState<Map<string, { title: string, content: string, default: boolean }>>(getConfig("prompts"))
+      // sync configs
+      useEffect(() => {
+        const removeListener = window.system.syncConfig((data) => {
+          if (data.key.startsWith("prompts.#update#")) {
+            setPrompts(getConfig("prompts"))
+          }
+        });
+
+        return () => {
+          removeListener();
+        };
+      });
+
+      function upsetPromptWindow(id?: string, value?: unknown) {
+        PROMPT_EVENT = true;
+
+        if (id == undefined) {
+          dispatchSyncConfig(`prompts.#new#`, null)
+        } else {
+          dispatchSyncConfig(`prompts.${id}`, value)
+        }
+
+        window.system.openWindow("prompts");
+      }
+
+      function deletePrompt(id?: string) {
+        PROMPT_EVENT = true;
+        if (id != undefined) {
+          delConfig(`prompts.${id}`)
+        }
+        dispatchSyncConfig(`prompts.#update#`, null)
+      }
+
       switch (input) {
         case "/theme":
           return (
@@ -188,7 +259,7 @@ export default function Search({ id }: SearchProps) {
                 </CommandItem>
               </CommandGroup>
             </>
-          )
+          );
         case "/layout":
           return (
             <>
@@ -203,12 +274,40 @@ export default function Search({ id }: SearchProps) {
                 </CommandItem>
               </CommandGroup>
             </>
-          )
-        case "/ai":
+          );
+        case "/prompts":
           return (
             <>
+              <div className={`cursor-pointer absolute right-1 top-1 hover:bg-secondary rounded-md m-1 p-0.5`}>
+                <Plus size={24} onClick={() => { upsetPromptWindow() }} />
+              </div>
+              <CommandEmpty>No results found.</CommandEmpty>
+              <CommandGroup heading="Select a Prompt">
+                {Object.entries(prompts).map(([key, value]) =>
+                  value.title === undefined ? null : (
+                    <CommandItem key={key} className='flex justify-between align-middle' value={`/prompts ${value.title}`} onSelect={(v) => { execCommand(v, key) }} >
+                      <span>{value.title}</span>
+                      <div className='flex space-x-2'>
+                        {value.default &&
+                          <Badge className='bg-background' variant="outline">
+                            <span>default</span>
+                          </Badge>
+                        }
+                        <div className='cursor-pointer p-0.5' onClick={() => { upsetPromptWindow(key, value) }}>
+                          <Edit />
+                        </div>
+                        <div className='cursor-pointer p-0.5' onClick={() => { deletePrompt(key) }}>
+                          <Trash2 />
+                        </div>
+                      </div>
+                    </CommandItem>
+                  )
+                )}
+              </CommandGroup>
+
+
             </>
-          )
+          );
         default:
           return (
             <>
@@ -217,12 +316,27 @@ export default function Search({ id }: SearchProps) {
                 <CommandItem value='/clear' onSelect={(value) => execCommand(value)}>
                   <CleanIcon />
                   <span>Clear content and Chat context</span>
-                  <CommandShortcut>/clear</CommandShortcut>
+                  <CommandShortcut>
+                    <Kbd>/clear</Kbd>
+                  </CommandShortcut>
                 </CommandItem>
                 <CommandItem value='/use' onSelect={(value) => setInput(value)}>
                   <ArtificialIntelligence04Icon />
                   <span>Use other genereative AI</span>
-                  <CommandShortcut>/use</CommandShortcut>
+                  <CommandShortcut>
+                    <Kbd>
+                      /use
+                    </Kbd>
+                  </CommandShortcut>
+                </CommandItem>
+                <CommandItem value='/prompts' onSelect={(value) => setInput(value)}>
+                  <AiBrowserIcon />
+                  <span>Use prompt a genereative AI</span>
+                  <CommandShortcut>
+                    <Kbd>
+                      /prompts
+                    </Kbd>
+                  </CommandShortcut>
                 </CommandItem>
               </CommandGroup>
               <CommandSeparator />
@@ -230,17 +344,29 @@ export default function Search({ id }: SearchProps) {
                 <CommandItem value='/theme' onSelect={(value) => setInput(value)}>
                   <ColorsIcon />
                   <span>Change theme</span>
-                  <CommandShortcut>/theme</CommandShortcut>
+                  <CommandShortcut>
+                    <Kbd>
+                      /theme
+                    </Kbd>
+                  </CommandShortcut>
                 </CommandItem>
                 <CommandItem value='/chat' onSelect={(value) => setInput(value)}>
                   <Chatting01Icon />
                   <span>Chat Mode</span>
-                  <CommandShortcut>/chat</CommandShortcut>
+                  <CommandShortcut>
+                    <Kbd>
+                      /chat
+                    </Kbd>
+                  </CommandShortcut>
                 </CommandItem>
                 <CommandItem value='/layout' onSelect={(value) => setInput(value)}>
                   <Layout01Icon />
                   <span>Change Layout</span>
-                  <CommandShortcut>/layout</CommandShortcut>
+                  <CommandShortcut>
+                    <Kbd>
+                      /layout
+                    </Kbd>
+                  </CommandShortcut>
                 </CommandItem>
               </CommandGroup>
               <CommandSeparator />
@@ -248,17 +374,29 @@ export default function Search({ id }: SearchProps) {
                 <CommandItem value='/settings' onSelect={(value) => execCommand(value)}>
                   <Settings />
                   <span>Advanced Settings</span>
-                  <CommandShortcut>/settings</CommandShortcut>
+                  <CommandShortcut>
+                    <Kbd>
+                      /settings
+                    </Kbd>
+                  </CommandShortcut>
                 </CommandItem>
                 <CommandItem disabled value='/ai' onSelect={(value) => execCommand(value)}>
                   <ArtificialIntelligence05Icon />
                   <span>AI Settings</span>
-                  <CommandShortcut>/ai</CommandShortcut>
+                  <CommandShortcut>
+                    <Kbd>
+                      /ai
+                    </Kbd>
+                  </CommandShortcut>
                 </CommandItem>
                 <CommandItem value='/exit' onSelect={(value) => execCommand(value)}>
                   <Logout04Icon />
                   <span>Exit Program</span>
-                  <CommandShortcut>/exit</CommandShortcut>
+                  <CommandShortcut>
+                    <Kbd>
+                      /exit
+                    </Kbd>
+                  </CommandShortcut>
                 </CommandItem>
               </CommandGroup>
             </>
@@ -278,129 +416,115 @@ export default function Search({ id }: SearchProps) {
 
   return (
     <>
-      <div className='border-b rounded-xl flex flex-col justify-center'>
+      <div>
         {!input.startsWith("/") ?
           <>
-            <div className='flex flex-row justify-center align-middle pt-1'>
-              <div className='draggable p-2 hover:cursor-move'>
-                <img style={{ width: 22, height: 22 }} src={sunchIcon} alt="sunch icon" />
-                {layoutMode == "minimalist" &&
-                  <div className='fixed top-2 left-4 bg-background rounded-xl'>
-                    {(genAI === 'gemini') && <RiGeminiFill size={16} />}
-                    {(genAI === 'gpt') && <RiOpenaiFill size={16} />}
-                    {(genAI === 'claude') && <RiClaudeFill size={16} />}
+            <div className='bg-background rounded-md'>
+              <InputGroup className='border-none dark:bg-input/0 items-start'>
+                <InputGroupAddon align="inline-start" className='pt-3'>
+                  <div className='draggable'>
+                    <img className='size-5' src={sunchIcon} alt="sunch icon" />
+                    {layoutMode == "minimalist" &&
+                      <div className='fixed top-2 left-6 bg-background rounded-xl'>
+                        {(genAI === 'gemini') && <RiGeminiFill size={16} />}
+                        {(genAI === 'gpt') && <RiOpenaiFill size={16} />}
+                        {(genAI === 'claude') && <RiClaudeFill size={16} />}
+                      </div>
+                    }
                   </div>
-                }
-              </div>
-              <div className='w-[99%]'>
-                <TextareaAutosize
-                  className='py-2 w-full min-h-[35px] rounded-sm resize-none bg-input/10 placeholder:opacity-40'
+                </InputGroupAddon>
+                <InputGroupTextareaAutosize
+                  className='rounded-sm resize-none placeholder:opacity-40'
                   autoFocus
-                  // onFocus={() => { setSettings(false)}
                   name='search'
                   id='search'
-                  rows={1}
-                  minRows={1}
-                  maxRows={10}
                   placeholder='Ask something or type / to check commands'
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={e => keyDownHandler(e)}
                 />
-                {/* /> */}
-              </div>
-              <div className='p-1.5'>
-                <ArrowDown01Icon strokeWidth={1.5} onClick={() => (openOptions ? setOpenOptions(false) : setOpenOptions(true))} />
-              </div>
-            </div>
-            {openOptions &&
-              <div className='flex justify-between align-middle w-full border-2 pr-1 pl-1 pb-0.5 border-transparent'>
-                <div className='flex'>
-                  <div className='flex'>
-                    <SettingsOptions>
-                      <div className='pt-1.5 pr-2 pl-1'>
-                        <SettingsTittle name='AI' />
-                      </div>
-                      <SettingsSwitcher name="AI" defaultValue={genAI}>
-                        <SettingsSwitcherItem onClick={() => setGenAI('gemini')} value='gemini' icon={<GoogleGeminiIcon size={15} />} />
-                        <SettingsSwitcherItem onClick={() => setGenAI('gpt')} value='gpt' icon={<ChatGptIcon size={15} />} />
-                        <SettingsSwitcherItem onClick={() => setGenAI('claude')} value='claude' icon={<RiClaudeFill size={15} />} />
-                      </SettingsSwitcher>
-                    </SettingsOptions>
-                  </div>
-                  <span className='pl-2 p-0.5 opacity-40'>|</span>
-                  <div className='flex items-center'>
-                    <div className='flex items-center space-x-1 rounded-md'>
-                      <div className='pl-2 p-1'>
-                        <SettingsTittle name='chat' />
-                      </div>
-                      <Switch className='' checked={chatMode} onCheckedChange={(checked) => { setChatMode(checked) }} />
-                      <div>
-                      </div>
-                    </div>
-                  </div>
-                  <span className='pl-2 p-0.5 opacity-40'>|</span>
-
-                  <div className='flex space-x-1'>
-                    <div className='flex items-center w-fit h-fit hover:bg-secondary rounded-md'>
-                      <div className='flex p-1'>
-                        <div className={`${!features.files && 'pointer-events-none opacity-10'}`}>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Attachment02Icon size={20} />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Upload file</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </div>
-                      </div>
-                    </div>
-                    <div className='flex items-center w-fit h-fit hover:bg-secondary rounded-md'>
-                      <input type='checkbox' className='peer/web-search hidden' id="web-search" />
-                      <label htmlFor="web-search" className={`${!features.image && 'pointer-events-none'} peer-checked/web-search:bg-blue-800 rounded-md p-1`}>
-                        <div className='flex'>
-                          <div className={`${!features.image && 'pointer-events-none opacity-10'}`}>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <CenterFocusIcon size={20} />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Take a screenshot</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-
-                </div>
-                <div className='flex'>
-                  <div className={`${!features.audio && 'pointer-events-none opacity-10'} p-1`}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div>
-                          <Microphone
-                            className=''
-                            lang='pt-BR'
-                            onError={setValues}
-                            audioData={setAudio}
-                          />
-                        </div>
+                <InputGroupAddon align="inline-end" className='pt-2.5'>
+                  {prompt?.id != undefined &&
+                    <Tooltip >
+                      <TooltipTrigger asChild className='cursor-pointer' onContextMenu={() => {
+                        delConfig("prompts._selected_")
+                        setPrompt(undefined)
+                      }}>
+                        <AiIdeaIcon />
                       </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Use Voice</p>
+                      <TooltipContent side='bottom'>
+                        <p>{prompt.title}</p>
                       </TooltipContent>
                     </Tooltip>
+                  }
+                  <InputGroupButton
+                    onClick={() => (openOptions ? setOpenOptions(false) : setOpenOptions(true))}
+                    // variant="outline"
+                    size="icon-xs"
+                    className="rounded-full"
+                  >
+                    <Menu01Icon />
+                  </InputGroupButton>
+                </InputGroupAddon>
+              </InputGroup>
+            </div>
+            {openOptions &&
+              <>
+                <div className='bg-background rounded-md border-2 border-transparent w-full px-1 my-0.5'>
+                  <div className='flex justify-between align-middle '>
+                    <div className='flex'>
+                      <div className='flex'>
+                        <SettingsOptions>
+                          <div className='pt-1.5 pr-2 pl-1'>
+                            <SettingsTittle name='AI' />
+                          </div>
+                          <SettingsSwitcher name="AI" defaultValue={genAI}>
+                            <SettingsSwitcherItem onClick={() => setGenAI('gemini')} value='gemini' icon={<GoogleGeminiIcon size={15} />} />
+                            <SettingsSwitcherItem onClick={() => setGenAI('gpt')} value='gpt' icon={<ChatGptIcon size={15} />} />
+                            <SettingsSwitcherItem onClick={() => setGenAI('claude')} value='claude' icon={<RiClaudeFill size={15} />} />
+                          </SettingsSwitcher>
+                        </SettingsOptions>
+                      </div>
+                      <span className='pl-2 p-0.5 opacity-40'>|</span>
+                      <div className='flex items-center'>
+                        <div className='flex items-center space-x-1 rounded-md'>
+                          <div className='pl-2 p-1'>
+                            <SettingsTittle name='chat' />
+                          </div>
+                          <Switch className='' checked={chatMode} onCheckedChange={(checked) => { setChatMode(checked) }} />
+                          <div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className='flex'>
+                      <div className={`${!features.audio && 'pointer-events-none opacity-10'} p-1`}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div>
+                              <Microphone
+                                className=''
+                                lang='pt-BR'
+                                onError={setValues}
+                                audioData={setAudio}
+                              />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Use Voice</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </>
             }
+            {awaiting ? <Loading /> : !input.startsWith("/") && <Result contents={values} />}
           </> : <Commands />
         }
       </div>
-      {awaiting ? <Loading /> : !input.startsWith("/") && <Result contents={values} />}
+
     </>
   )
 }

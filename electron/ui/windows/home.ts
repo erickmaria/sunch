@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain, shell } from "electron";
+import { app, BrowserWindow, ipcMain, shell } from "electron";
 import { searchReadyNotification, stillRunningNotification } from "../../notifications/notifcation";
 import { join } from 'path';
 import { SettingsWindow } from "./settings";
@@ -44,7 +44,22 @@ class Window {
     if (process.env.VITE_DEV_SERVER_URL) {
       win.loadURL(process.env.VITE_DEV_SERVER_URL)
       if (process.env.SUNCH_PAGE_HOME_DEVTOOLS_ENABLED === 'true') {
-        win.webContents.openDevTools({ mode: 'detach' })
+
+        const userDataPath = app.getPath("userData");
+        const prefPath = join(userDataPath, "Preferences")
+        console.log(`[DEBUG][GENERAL] Electron Preferences: ${prefPath}`)
+        // "electron": {
+        //   "devtools": {
+        //     "bounds": {
+        //       "height": 600,
+        //         "width": 600,
+        //           "x": 100,
+        //             "y": 200
+        //     },
+        //   }
+        // }
+
+        win.webContents.openDevTools({ mode: 'detach' });
       }
     } else {
       win.loadFile('dist/index.html')
@@ -66,14 +81,8 @@ class Window {
       Window.getInstance().bw.setSize(Math.ceil(this.width), Math.ceil(height))
     })
 
-    ipcMain.on('dispatch-sync-config', async (e: Electron.IpcMainEvent, key: string, value: unknown) => {
-      win.webContents.send('sync-config', {key, value} );
-    })
-
     ipcMain.on('searchReady', () => {
-
       const win = Window.getInstance().bw
-
       if (!win.isFocused() || !win.isVisible()) {
         searchReadyNotification()
       }
@@ -85,11 +94,6 @@ class Window {
       }
     })
 
-    win.on("ready-to-show", () => {
-      if (process.env.VITE_DEV_SERVER_URL) {
-        win.show()
-      }
-    })
 
     win.on('close', () => {
       stillRunningNotification()
@@ -107,4 +111,4 @@ class Window {
 
 }
 
-export { Window as HomeWidown }
+export { Window as HomeWindow }
