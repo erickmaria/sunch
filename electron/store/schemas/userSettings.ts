@@ -67,6 +67,13 @@ export const UserSettingsSchema = {
 					apikey: ''
 				}
 			},
+			openrouter: {
+				type: JSONSchemaType.Object,
+				default: {
+					version: '',
+					apikey: ''
+				}
+			}
 		},
 		default: {
 			current: 'gemini',

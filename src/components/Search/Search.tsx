@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import sunchIcon from '@/assets/icon.svg'
 import { Microphone } from '@/components/Microphone/Microphone';
 import { useGetAnswer } from '@/hooks/useGetAnswer';
@@ -34,6 +34,7 @@ import { Theme, useTheme } from '@/contexts/ThemeProvider';
 import { Kbd } from '../ui/kbd';
 import { Badge } from '../ui/badge';
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextareaAutosize } from '../ui/input-group';
+import OpenRouter from '../icons/OpenRouter/OpenRouter';
 
 interface SearchProps {
   id: string
@@ -242,6 +243,10 @@ export default function Search({ id }: SearchProps) {
                   <RiClaudeFill />
                   <span>Claude</span>
                 </CommandItem>
+                <CommandItem value="/use openrouter" onSelect={(value) => execCommand(value)}>
+                  <OpenRouter />
+                  <span>OpenRouter</span>
+                </CommandItem>
               </CommandGroup>
             </>
           );
@@ -331,7 +336,7 @@ export default function Search({ id }: SearchProps) {
                 </CommandItem>
                 <CommandItem value='/prompts' onSelect={(value) => setInput(value)}>
                   <AiBrowserIcon />
-                  <span>Use prompt a genereative AI</span>
+                  <span>Use system prompts to guide the generative AI</span>
                   <CommandShortcut>
                     <Kbd>
                       /prompts
@@ -426,9 +431,10 @@ export default function Search({ id }: SearchProps) {
                     <img className='size-5' src={sunchIcon} alt="sunch icon" />
                     {layoutMode == "minimalist" &&
                       <div className='fixed top-2 left-6 bg-background rounded-xl'>
-                        {(genAI === 'gemini') && <RiGeminiFill size={16} />}
-                        {(genAI === 'gpt') && <RiOpenaiFill size={16} />}
-                        {(genAI === 'claude') && <RiClaudeFill size={16} />}
+                        {(genAI === 'openrouter') && <SeachIconTooltip provider='openrouter' icon={<OpenRouter size={16} />} />}
+                        {(genAI === 'gemini') && <SeachIconTooltip provider='gemini' icon={<RiGeminiFill size={16} />} />}
+                        {(genAI === 'gpt') && <SeachIconTooltip provider='gpt' icon={<RiOpenaiFill size={16} />} />}
+                        {(genAI === 'claude') && <SeachIconTooltip provider='claude' icon={<RiClaudeFill size={16} />} />}
                       </div>
                     }
                   </div>
@@ -445,14 +451,14 @@ export default function Search({ id }: SearchProps) {
                 />
                 <InputGroupAddon align="inline-end" className='pt-2.5'>
                   {prompt?.id != undefined &&
-                    <Tooltip >
+                    <Tooltip>
                       <TooltipTrigger asChild className='cursor-pointer' onContextMenu={() => {
                         delConfig("prompts._selected_")
                         setPrompt(undefined)
                       }}>
                         <AiIdeaIcon />
                       </TooltipTrigger>
-                      <TooltipContent side='bottom'>
+                      <TooltipContent side={document.body.offsetHeight > 0 ? "bottom" : "left"}>
                         <p>{prompt.title}</p>
                       </TooltipContent>
                     </Tooltip>
@@ -482,6 +488,7 @@ export default function Search({ id }: SearchProps) {
                             <SettingsSwitcherItem onClick={() => setGenAI('gemini')} value='gemini' icon={<GoogleGeminiIcon size={15} />} />
                             <SettingsSwitcherItem onClick={() => setGenAI('gpt')} value='gpt' icon={<ChatGptIcon size={15} />} />
                             <SettingsSwitcherItem onClick={() => setGenAI('claude')} value='claude' icon={<RiClaudeFill size={15} />} />
+                            <SettingsSwitcherItem onClick={() => setGenAI('openrouter')} value='openrouter' icon={<OpenRouter size={15} />} />
                           </SettingsSwitcher>
                         </SettingsOptions>
                       </div>
@@ -527,4 +534,39 @@ export default function Search({ id }: SearchProps) {
 
     </>
   )
+}
+
+interface SeachIconTooltipProps {
+  provider: "gpt" | "gemini" | "claude" | "openrouter"
+  icon: ReactNode
+}
+
+function SeachIconTooltip({ provider, icon }: SeachIconTooltipProps) {
+
+  const { getConfig } = useUserSettings();
+  const [model, setModel] = useState(getConfig(`models.${provider}.version`))
+
+    useEffect(() => {
+    const removeListener = window.system.syncConfig((data) => {
+      if (data.key == `models.${provider}.version`) setModel(data.value as unknown as string)
+    });
+
+    return () => {
+      removeListener();
+    };
+  });
+
+
+  return <>
+    <Tooltip>
+      <TooltipTrigger asChild className='cursor-pointer'>
+        <div>
+          {icon}
+        </div>
+      </TooltipTrigger>
+      <TooltipContent side={document.body.offsetHeight > 0 ? "bottom" : "left"}>
+        {model}
+      </TooltipContent>
+    </Tooltip>
+  </>
 }

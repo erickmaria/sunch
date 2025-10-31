@@ -71,12 +71,9 @@ export default class ClaudeService implements Service {
       .then((response) => {
         return response.data
           .map((model) => model.id);
-
       })
       .catch((error) => {
-        console.error("Error listing models:", error);
-
-        return [];
+        throw  `${error.error.error.type}: ${error.error.error.message}`
       });
   }
 
