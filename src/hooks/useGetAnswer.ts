@@ -3,6 +3,7 @@ import GeminiService from "../services/GeminiService";
 import GPTService from "../services/GPTService";
 import { AIFeatures, Service } from "../services/service";
 import ClaudeService from "@/services/ClaudeService";
+import OpenRouterService from "@/services/OpenRouterService";
 
 interface OptionGetAnswer {
     id: string
@@ -25,8 +26,8 @@ export function useGetAnswer({ id, chatMode, genAI }: OptionGetAnswer) {
             svc.push(GPTService.getInstance(chatMode))
         } else if (genAI == 'claude') {
             svc.push(ClaudeService.getInstance(chatMode))
-        } else if (genAI == 'both') {
-            svc.push(GeminiService.getInstance(chatMode), GPTService.getInstance())
+        } else if (genAI == 'openrouter') {
+            svc.push(OpenRouterService.getInstance(chatMode))
         } else {
             throw new Error('cant instace Generative AI service, invalid value.')
         }

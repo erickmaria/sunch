@@ -2,9 +2,10 @@
 
 ## Unreleased
 
+- feat: add OpenRouter support
+- chore: improvement ui usage
 - chore: add background opacity option
-- fix: MaxListenersExceededWarning
-- fix: UnhandledPromiseRejectionWarning
+- chore: improvement performace
 
 ## v1.5.3 - 2025-09-14
 
