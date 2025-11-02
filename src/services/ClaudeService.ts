@@ -1,16 +1,16 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { Service, AIFeatures } from "./service";
+import { IILLMService, ILLMCapabilities } from "./LLMService";
 import { TextBlock } from '@anthropic-ai/sdk/resources/messages.mjs';
 
-export default class ClaudeService implements Service {
+export default class ClaudeService implements IILLMService {
 
   private genAI: Anthropic
   chatMode: boolean;
-  features: AIFeatures = {
+  capabilities: ILLMCapabilities = {
     text: true,
     audio: false,
     image: false,
-    files: false,
+    file: false,
   };
 
   private constructor(chatMode = false) {

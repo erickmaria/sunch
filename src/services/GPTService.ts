@@ -1,15 +1,15 @@
 import { OpenAI } from "openai";
-import { AIFeatures, Service } from "./service";
+import { ILLMCapabilities, IILLMService } from "./LLMService";
 
-export default class GPTService implements Service {
+export default class GPTService implements IILLMService {
 
   private genAI: OpenAI
   chatMode: boolean;
-  features: AIFeatures = {
+  capabilities: ILLMCapabilities = {
     text: true,
     audio: false,
     image: false,
-    files: false,
+    file: false,
   };
 
   private constructor(chatMode = false) {

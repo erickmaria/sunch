@@ -1,16 +1,16 @@
 import { Chat, ContentListUnion, GenerateContentResponse, GoogleGenAI, HarmBlockThreshold, HarmCategory } from '@google/genai';
-import { AIFeatures, Service, getSystemPrompt } from "./service";
+import { IILLMService, ILLMCapabilities, getSystemPrompt } from "./LLMService";
 
-export default class GeminiService implements Service {
+export default class GeminiService implements IILLMService {
 
     private chatSessions: Map<string, Chat> = new Map();
 
     private genAI: GoogleGenAI;
-    features: AIFeatures = {
+    capabilities: ILLMCapabilities = {
         text: true,
         audio: true,
         image: false,
-        files: false,
+        file: false,
     };
     chatMode: boolean;
     private safetySettings = [

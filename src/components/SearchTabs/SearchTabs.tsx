@@ -6,6 +6,8 @@ import { SearchSettings } from "../SearchSettings";
 import { KeepAlive } from "keepalive-for-react";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { RiClaudeFill } from "react-icons/ri";
+import { LLMProvider } from "@/services/LLMService";
+import OpenRouter from "../icons/OpenRouter/OpenRouter";
 
 interface Tab {
   id: string;
@@ -73,8 +75,8 @@ export function SearchTabs() {
 
   return (
     <>
-      <div className="bg-background rounded-b-md rounded-tr-md  space-x-1">
-        <div className="flex align-middle justify-between">
+      <div className="rounded-b-md rounded-tr-md">
+        <div className="bg-background flex align-middle justify-between">
           <div className="flex space-x-1 items-center overflow-hidden">
             <div className="flex text-xs overflow-hidden">
               {tabs.map((tab) => (
@@ -161,13 +163,13 @@ interface SearchTabTitleProps {
 function SearchTabTitle({ id }: SearchTabTitleProps) {
 
   const { getConfig } = useUserSettings();
-  const [genAI, setGenAI] = useState<string>(getConfig('models.current'));
+  const [providers, setProviders] = useState<Array<LLMProvider>>([getConfig(`models.current`) as LLMProvider]);
   const [tabIcon, setTabIcon] = useState<ReactNode>(<></>);
 
   // sync configs
   useEffect(() => {
     const removeListener = window.system.syncConfig((data) => {
-      if (data.key == `tabs.${id}.models.current`) setGenAI(data.value as unknown as string)
+      if (data.key == `tabs.${id}.models.current`) setProviders([data.value as unknown as LLMProvider])
     });
 
     return () => {
@@ -177,7 +179,7 @@ function SearchTabTitle({ id }: SearchTabTitleProps) {
 
   useEffect(() => {
 
-    switch (genAI) {
+    switch (providers[0]) {
       case 'gemini':
         setTabIcon(<GoogleGeminiIcon size={15} />)
         break;
@@ -187,10 +189,13 @@ function SearchTabTitle({ id }: SearchTabTitleProps) {
       case 'claude':
         setTabIcon(<RiClaudeFill size={15} />)
         break;
+      case 'openrouter':
+        setTabIcon(<OpenRouter size={15} />)
+        break;
       default:
         setTabIcon(<></>)
     }
-  }, [genAI])
+  }, [providers])
   return (
     <>
       <div className="flex space-x-2">

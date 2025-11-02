@@ -1,15 +1,15 @@
 import { OpenAI } from "openai";
-import { AIFeatures, Service } from "./service";
+import { ILLMCapabilities, IILLMService } from "./LLMService";
 
-export default class OpenRouterService implements Service {
+export default class OpenRouterService implements IILLMService {
 
   private genAI: OpenAI
   chatMode: boolean;
-  features: AIFeatures = {
+  capabilities: ILLMCapabilities = {
     text: true,
     audio: false,
     image: false,
-    files: false,
+    file: false,
   };
 
   private constructor(chatMode = false) {
@@ -41,8 +41,6 @@ export default class OpenRouterService implements Service {
   }
 
   async execute(sessionId: string, prompt: string): Promise<string> {
-
-    console.log("OpenRouter called")
 
     // eslint-disable-next-line no-empty
     if (sessionId) { }
