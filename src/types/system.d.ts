@@ -28,6 +28,7 @@ declare global {
       readonly SUNCH_GEMINI_API_KEY: string;
       readonly SUNCH_GPT_API_KEY: string;
       readonly SUNCH_CLAUDE_API_KEY: string;
+      readonly SUNCH_OPENROUTER_API_KEY: string;
     }
   }
 }

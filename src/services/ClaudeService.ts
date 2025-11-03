@@ -1,16 +1,16 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { Service, AIFeatures } from "./service";
+import { IILLMService, ILLMCapabilities } from "./LLMService";
 import { TextBlock } from '@anthropic-ai/sdk/resources/messages.mjs';
 
-export default class ClaudeService implements Service {
+export default class ClaudeService implements IILLMService {
 
   private genAI: Anthropic
   chatMode: boolean;
-  features: AIFeatures = {
+  capabilities: ILLMCapabilities = {
     text: true,
     audio: false,
     image: false,
-    files: false,
+    file: false,
   };
 
   private constructor(chatMode = false) {
@@ -71,12 +71,9 @@ export default class ClaudeService implements Service {
       .then((response) => {
         return response.data
           .map((model) => model.id);
-
       })
       .catch((error) => {
-        console.error("Error listing models:", error);
-
-        return [];
+        throw  `${error.error.error.type}: ${error.error.error.message}`
       });
   }
 

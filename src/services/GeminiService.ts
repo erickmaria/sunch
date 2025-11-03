@@ -1,16 +1,16 @@
 import { Chat, ContentListUnion, GenerateContentResponse, GoogleGenAI, HarmBlockThreshold, HarmCategory } from '@google/genai';
-import { AIFeatures, Service, getSystemPrompt } from "./service";
+import { IILLMService, ILLMCapabilities, getSystemPrompt } from "./LLMService";
 
-export default class GeminiService implements Service {
+export default class GeminiService implements IILLMService {
 
     private chatSessions: Map<string, Chat> = new Map();
 
     private genAI: GoogleGenAI;
-    features: AIFeatures = {
+    capabilities: ILLMCapabilities = {
         text: true,
         audio: true,
         image: false,
-        files: false,
+        file: false,
     };
     chatMode: boolean;
     private safetySettings = [
@@ -195,18 +195,21 @@ export default class GeminiService implements Service {
     }
 
     async listModels(): Promise<Array<string>> {
-        return await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${this.getApiKey()}`)
-            .then(response => response.json())
-            .then(data => {
+        try {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${this.getApiKey()}`;
+            const response = await fetch(url);
+            const data = await response.json();
 
-                if (data instanceof Object) {
-                    if (Object.prototype.hasOwnProperty.call(data, 'error')) {
-                        return [];
-                    }
-                }
-                return (data.models as Array<any>).map((model) => (model.name as string).replaceAll('models/', ''))
-            })
-            .catch(error => { return error });
+            if (!response.ok) {
+                throw new Error(data.error.message);
+            }
+
+            return (data.models as Array<any>).map((model) =>
+                (model.name as string).replace(/^models\//, '')
+            );
+        } catch (error) {
+            throw new Error((error as any).message);
+        }
     }
 
 

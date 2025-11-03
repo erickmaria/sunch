@@ -1,13 +1,16 @@
-export interface AIFeatures {
+export type LLMProvider = "gpt" | "gemini" | "claude" | "openrouter"
+export type LLMResponses = Map<LLMProvider, string>
+
+export interface ILLMCapabilities {
     text: boolean,
     audio: boolean,
     image: boolean,
-    files: boolean,
+    file: boolean,
 }
 
-export interface Service {
+export interface IILLMService {
     chatMode: boolean
-    features: AIFeatures,
+    capabilities: ILLMCapabilities,
     execute(sessionId: string, prompt: string): Promise<string>;
     getApiKey(): string;
     getModel(): string;
@@ -19,5 +22,3 @@ export function getSystemPrompt() {
 You are a concise assistant. Always respond clearly, directly, and succinctly, without unnecessary details or explanations. Use short sentences and get straight to the point. If there are options, present only the most relevant ones.
 `;
 }
-
- 

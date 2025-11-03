@@ -1,8 +1,7 @@
 
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import sunchIcon from '@/assets/icon.svg'
 import { Microphone } from '@/components/Microphone/Microphone';
-import { useGetAnswer } from '@/hooks/useGetAnswer';
 import Result from '../Result/Result';
 import Loading from '../Loading/Loading';
 import { AiBrowserIcon, AiIdeaIcon, ArtificialIntelligence04Icon, ArtificialIntelligence05Icon, ChatGptIcon, Chatting01Icon, CleanIcon, ColorsIcon, GoogleGeminiIcon, Layout01Icon, Layout07Icon, LayoutBottomIcon, Logout04Icon, Menu01Icon, Moon02Icon, Sun02Icon, ToggleOffIcon, ToggleOnIcon } from 'hugeicons-react';
@@ -34,6 +33,9 @@ import { Theme, useTheme } from '@/contexts/ThemeProvider';
 import { Kbd } from '../ui/kbd';
 import { Badge } from '../ui/badge';
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextareaAutosize } from '../ui/input-group';
+import OpenRouter from '../icons/OpenRouter/OpenRouter';
+import { LLMProvider, LLMResponses } from '@/services/LLMService';
+import { useLLMService } from '@/hooks/useLLMService';
 
 interface SearchProps {
   id: string
@@ -48,13 +50,13 @@ export default function Search({ id }: SearchProps) {
   const { getConfig, delConfig } = useUserSettings();
 
   const [input, setInput] = useState<string>("");
-  const [values, setValues] = useState<Array<string>>(Array<string>);
+  const [LLMResponses, setLLMResponses] = useState<LLMResponses | undefined>(undefined);
   const [openOptions, setOpenOptions] = useState(false);
   const [chatMode, setChatMode] = useState<boolean>(false);
   const [audio, setAudio] = useState("");
 
   const [layoutMode, setLayoutMode] = useState<string>(getConfig("general.layout.mode"));
-  const [genAI, setGenAI] = useState<string>(getConfig('models.current'));
+  const [providers, setProviders] = useState<Array<LLMProvider>>([getConfig(`models.current`) as LLMProvider]);
 
   const promptSelectedId = getConfig(`prompts._selected_`)?.id
   const promptSelected = getConfig(`prompts.${promptSelectedId}`)
@@ -64,7 +66,7 @@ export default function Search({ id }: SearchProps) {
   });
 
   const { setTheme } = useTheme();
-  const { awaiting, askSomething, features } = useGetAnswer({ id, genAI, chatMode });
+  const { awaiting, capabilities, askSomething } = useLLMService({ id, providers, chatMode });
   const { dispatchSyncConfig, setConfig } = useUserSettings()
 
   // sync configs
@@ -86,10 +88,10 @@ export default function Search({ id }: SearchProps) {
     };
   });
 
-  // useEffect(() => {
-  //   setConfig(`tabs.${id}.models.current`, genAI)
-  //   dispatchSyncConfig(`tabs.${id}.models.current`, genAI)
-  // }, [genAI])
+  useEffect(() => {
+    setConfig(`tabs.${id}.models.current`, providers[0])
+    dispatchSyncConfig(`tabs.${id}.models.current`, providers[0])
+  }, [providers])
 
   useEffect(() => {
     if (audio != '') {
@@ -107,14 +109,14 @@ export default function Search({ id }: SearchProps) {
   }
 
   function sendAsk(input: string) {
-    askSomething(input).then((result) => {
-      if (result !== undefined) {
-        setValues(result)
+    askSomething(input).then((responses) => {
+      if (responses !== undefined) {
+        setLLMResponses(responses)
         setInput('')
       }
     }).catch(err => {
       if (err instanceof Error) {
-        setValues([err.message])
+        // setLLMResponses(err)
       }
     })
 
@@ -134,10 +136,10 @@ export default function Search({ id }: SearchProps) {
       }
 
       if (cmd.startsWith("/use")) {
-        setGenAI(cmd.split(' ')[1] as string)
+        setProviders([cmd.split(' ')[1] as LLMProvider])
       }
       if (cmd.startsWith("/clear")) {
-        setValues([])
+        setLLMResponses(undefined)
       }
       if (cmd.startsWith("/theme")) {
         setTheme(cmd.split(' ')[1] as string as Theme)
@@ -171,8 +173,8 @@ export default function Search({ id }: SearchProps) {
 
     function CommandItems() {
 
-      // let prompts: Map<string, { title: string, content: string, default: boolean }> = new Map();
       const [prompts, setPrompts] = useState<Map<string, { title: string, content: string, default: boolean }>>(getConfig("prompts"))
+      
       // sync configs
       useEffect(() => {
         const removeListener = window.system.syncConfig((data) => {
@@ -241,6 +243,10 @@ export default function Search({ id }: SearchProps) {
                 <CommandItem value="/use claude" onSelect={(value) => execCommand(value)}>
                   <RiClaudeFill />
                   <span>Claude</span>
+                </CommandItem>
+                <CommandItem value="/use openrouter" onSelect={(value) => execCommand(value)}>
+                  <OpenRouter />
+                  <span>OpenRouter</span>
                 </CommandItem>
               </CommandGroup>
             </>
@@ -331,7 +337,7 @@ export default function Search({ id }: SearchProps) {
                 </CommandItem>
                 <CommandItem value='/prompts' onSelect={(value) => setInput(value)}>
                   <AiBrowserIcon />
-                  <span>Use prompt a genereative AI</span>
+                  <span>Use system prompts to guide the generative AI</span>
                   <CommandShortcut>
                     <Kbd>
                       /prompts
@@ -419,22 +425,21 @@ export default function Search({ id }: SearchProps) {
       <div>
         {!input.startsWith("/") ?
           <>
-            <div className='bg-background rounded-md'>
+            <div className={`bg-background ${layoutMode == "minimalist" ? 'rounded-md' : 'rounded-b-md'}`}>
               <InputGroup className='border-none dark:bg-input/0 items-start'>
                 <InputGroupAddon align="inline-start" className='pt-3'>
                   <div className='draggable'>
                     <img className='size-5' src={sunchIcon} alt="sunch icon" />
-                    {layoutMode == "minimalist" &&
-                      <div className='fixed top-2 left-6 bg-background rounded-xl'>
-                        {(genAI === 'gemini') && <RiGeminiFill size={16} />}
-                        {(genAI === 'gpt') && <RiOpenaiFill size={16} />}
-                        {(genAI === 'claude') && <RiClaudeFill size={16} />}
+                      <div className='relative bottom-6 left-3 bg-background rounded-xl'>
+                        {(providers[0] === 'openrouter') && <SeachIconTooltip provider='openrouter' icon={<OpenRouter size={16} />} />}
+                        {(providers[0] === 'gemini') && <SeachIconTooltip provider='gemini' icon={<RiGeminiFill size={16} />} />}
+                        {(providers[0] === 'gpt') && <SeachIconTooltip provider='gpt' icon={<RiOpenaiFill size={16} />} />}
+                        {(providers[0] === 'claude') && <SeachIconTooltip provider='claude' icon={<RiClaudeFill size={16} />} />}
                       </div>
-                    }
                   </div>
                 </InputGroupAddon>
                 <InputGroupTextareaAutosize
-                  className='rounded-sm resize-none placeholder:opacity-40'
+                  className={`rounded-sm h-[44px] placeholder:opacity-40`}
                   autoFocus
                   name='search'
                   id='search'
@@ -445,14 +450,14 @@ export default function Search({ id }: SearchProps) {
                 />
                 <InputGroupAddon align="inline-end" className='pt-2.5'>
                   {prompt?.id != undefined &&
-                    <Tooltip >
+                    <Tooltip>
                       <TooltipTrigger asChild className='cursor-pointer' onContextMenu={() => {
                         delConfig("prompts._selected_")
                         setPrompt(undefined)
                       }}>
                         <AiIdeaIcon />
                       </TooltipTrigger>
-                      <TooltipContent side='bottom'>
+                      <TooltipContent side={document.body.offsetHeight > 0 ? "bottom" : "left"}>
                         <p>{prompt.title}</p>
                       </TooltipContent>
                     </Tooltip>
@@ -468,6 +473,7 @@ export default function Search({ id }: SearchProps) {
                 </InputGroupAddon>
               </InputGroup>
             </div>
+            
             {openOptions &&
               <>
                 <div className='bg-background rounded-md border-2 border-transparent w-full px-1 my-0.5'>
@@ -478,10 +484,11 @@ export default function Search({ id }: SearchProps) {
                           <div className='pt-1.5 pr-2 pl-1'>
                             <SettingsTittle name='AI' />
                           </div>
-                          <SettingsSwitcher name="AI" defaultValue={genAI}>
-                            <SettingsSwitcherItem onClick={() => setGenAI('gemini')} value='gemini' icon={<GoogleGeminiIcon size={15} />} />
-                            <SettingsSwitcherItem onClick={() => setGenAI('gpt')} value='gpt' icon={<ChatGptIcon size={15} />} />
-                            <SettingsSwitcherItem onClick={() => setGenAI('claude')} value='claude' icon={<RiClaudeFill size={15} />} />
+                          <SettingsSwitcher name="AI" defaultValue={providers[0]}>
+                            <SettingsSwitcherItem onClick={() => setProviders(['gemini'])} value='gemini' icon={<GoogleGeminiIcon size={15} />} />
+                            <SettingsSwitcherItem onClick={() => setProviders(['gpt'])} value='gpt' icon={<ChatGptIcon size={15} />} />
+                            <SettingsSwitcherItem onClick={() => setProviders(['claude'])} value='claude' icon={<RiClaudeFill size={15} />} />
+                            <SettingsSwitcherItem onClick={() => setProviders(['openrouter'])} value='openrouter' icon={<OpenRouter size={15} />} />
                           </SettingsSwitcher>
                         </SettingsOptions>
                       </div>
@@ -498,14 +505,14 @@ export default function Search({ id }: SearchProps) {
                       </div>
                     </div>
                     <div className='flex'>
-                      <div className={`${!features.audio && 'pointer-events-none opacity-10'} p-1`}>
+                      <div className={`${!(capabilities.get(providers[0])?.audio) && 'pointer-events-none opacity-10'} p-1`}>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <div>
                               <Microphone
                                 className=''
                                 lang='pt-BR'
-                                onError={setValues}
+                                onError={setLLMResponses}
                                 audioData={setAudio}
                               />
                             </div>
@@ -520,11 +527,47 @@ export default function Search({ id }: SearchProps) {
                 </div>
               </>
             }
-            {awaiting ? <Loading /> : !input.startsWith("/") && <Result contents={values} />}
+            {awaiting ? <Loading /> : !input.startsWith("/") && <Result contents={LLMResponses} />}
           </> : <Commands />
         }
       </div>
 
     </>
   )
+}
+
+interface SeachIconTooltipProps {
+  provider: "gpt" | "gemini" | "claude" | "openrouter"
+  icon: ReactNode
+}
+
+function SeachIconTooltip({ provider, icon }: SeachIconTooltipProps) {
+
+  const { getConfig } = useUserSettings();
+  const [model, setModel] = useState(getConfig(`models.${provider}.version`))
+
+  useEffect(() => {
+    const removeListener = window.system.syncConfig((data) => {
+      if (data.key == `models.${provider}.version`) setModel(data.value as unknown as string)
+    });
+
+    return () => {
+      removeListener();
+    };
+  });
+
+
+  return <>
+    <Tooltip>
+      <TooltipTrigger asChild className='cursor-pointer'>
+        <div
+          className='absolute'>
+          {icon}
+        </div>
+      </TooltipTrigger>
+      <TooltipContent side={document.body.offsetHeight > 0 ? "bottom" : "left"}>
+        {model}
+      </TooltipContent>
+    </Tooltip>
+  </>
 }

@@ -38,17 +38,18 @@ const CommandDialog = ({ children, ...props }: DialogProps) => {
 
 const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
->(({ className, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input> & {
+    icon?: React.ReactNode
+  }
+>(({ className, icon, draggable = false, ...props }, ref) => (
   <div className="flex items-center border-b" cmdk-input-wrapper="">
-    {/* <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" /> */}
-    <div className='draggable p-2 hover:cursor-move'>
-      {/* <img style={{ width: 21, height: 21 }} src={sunchIcon} alt="sunch icon" /> */}
-      {/* <div className='fixed top-2 left-4'> */}
-        <Terminal />
-      {/* </div> */}
+    <div
+      className={cn("p-2", draggable ? "draggable cursor-move" : "")}
+      {...(draggable ? { draggable: true } : {})}
+    >
+      {icon ?? <Terminal />}
     </div>
-    <div className='w-[99%]'>
+    <div className="w-[99%]">
       <CommandPrimitive.Input
         ref={ref}
         className={cn(

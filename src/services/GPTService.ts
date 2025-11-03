@@ -1,15 +1,15 @@
 import { OpenAI } from "openai";
-import { AIFeatures, Service } from "./service";
+import { ILLMCapabilities, IILLMService } from "./LLMService";
 
-export default class GPTService implements Service {
+export default class GPTService implements IILLMService {
 
   private genAI: OpenAI
   chatMode: boolean;
-  features: AIFeatures = {
+  capabilities: ILLMCapabilities = {
     text: true,
     audio: false,
     image: false,
-    files: false,
+    file: false,
   };
 
   private constructor(chatMode = false) {
@@ -42,7 +42,7 @@ export default class GPTService implements Service {
   async execute(sessionId: string, prompt: string): Promise<string> {
 
     // eslint-disable-next-line no-empty
-    if (sessionId) {} 
+    if (sessionId) { }
 
     if (this.genAI.apiKey != this.getApiKey()) {
       this.genAI.apiKey = this.getApiKey()
@@ -63,6 +63,7 @@ export default class GPTService implements Service {
   }
 
   async listModels(): Promise<Array<string>> {
+
     return await this.genAI.models.list()
       .then((response) => {
         return response.data
@@ -71,9 +72,28 @@ export default class GPTService implements Service {
 
       })
       .catch((error) => {
-        console.error("Error listing models:", error);
+        throw error;
+        //   // Check for specific error types
+        //   if (error instanceof RateLimitError) {
+        //     console.error(`Rate limit exceeded: ${error.message}`);
+        //     // Implement retry logic with exponential backoff here
+        //   } else if (error instanceof AuthenticationError) {
+        //     console.error(`Authentication failed: ${error.message}`);
+        //     console.error("Please check your API key.");
+        //   } else if (error instanceof NotFoundError) {
+        //     console.error(`Resource not found: ${error.message}`);
+        //   } else if (error instanceof BadRequestError) {
+        //     console.error(`Bad request: ${error.message}`);
+        //   } else if (error instanceof APIConnectionError) {
+        //     console.error(`API connection error: ${error.message}`);
+        //   } else if (error instanceof APIError) {
+        //     // General API errors (e.g., server issues >= 500)
+        //     console.error(`OpenAI API Error: ${error.status} - ${error.message}`);
+        //   } else {
+        //     // Handle other potential errors (e.g., network issues, local exceptions)
+        //     console.error("An unexpected error occurred:", error);
+        //   }
 
-        return [];
       });
   }
 
