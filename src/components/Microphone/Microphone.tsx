@@ -12,7 +12,7 @@ interface MicrophoneProps {
 }
 
 export function Microphone({audioData, onError, className }: MicrophoneProps) {
-    const { isRecording, startRecording, stopRecording, status, audioBase64, error } = useVoiceRecorder()
+    const { isRecording, startRecording, stopRecording, status, audioBase64 } = useVoiceRecorder()
     
     useEffect(() => {
 
