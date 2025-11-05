@@ -6,7 +6,9 @@ interface SettingsTittleProps {
 export function SettingsTittle({ name }: SettingsTittleProps) {
     return (
         <> 
-            <div className="text-[12px]">{ name }</div>
+        <div>
+            <p className="text-xs">{ name }</p>
+        </div>
         </>
     )
 }

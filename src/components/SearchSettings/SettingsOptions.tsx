@@ -1,16 +1,18 @@
+import { cn } from '@/lib/utils';
 import './index.css'
 import { ReactNode } from "react"
 
 interface SettingsOptionsProps {
-    children: ReactNode
+    children: ReactNode;
+    className?: string;
 }
 
-export function SettingsOptions({ children }: SettingsOptionsProps) {
+export function SettingsOptions({ children, className }: SettingsOptionsProps) {
     return (
         <>
-            <div className="flex align-middle justify-between">
-                { children }
-            </div >
+            <div className={cn("flex justify-between items-center gap-x-1", className)}>
+                {children}
+            </div>
         </>
     )
 }

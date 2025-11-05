@@ -1,21 +1,25 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { IILLMService, ILLMCapabilities } from "./LLMService";
-import { TextBlock } from '@anthropic-ai/sdk/resources/messages.mjs';
+import { getSystemPrompt, IILLMService, ILLMCapabilities } from "./LLMService";
+import { MessageParam, TextBlock } from '@anthropic-ai/sdk/resources/messages.mjs';
 
 export default class ClaudeService implements IILLMService {
 
   private genAI: Anthropic
+  private chatHistory: Array<MessageParam>;
+  
   chatMode: boolean;
   capabilities: ILLMCapabilities = {
+    context: true,
     text: true,
     audio: false,
-    image: false,
+    // image: false,
     file: false,
   };
 
   private constructor(chatMode = false) {
 
     this.chatMode = chatMode
+    this.chatHistory = []
 
     this.genAI = new Anthropic({
       apiKey: this.getApiKey(),
@@ -42,6 +46,18 @@ export default class ClaudeService implements IILLMService {
 
   async execute(sessionId: string, prompt: string): Promise<string> {
     
+        if (this.chatMode) {
+      if (this.chatHistory.length == 0) {
+        this.chatHistory.push({ role: "assistant", content: getSystemPrompt() })
+      }
+      this.chatHistory.push({ role: "user", content: prompt })
+    } else {
+      this.chatHistory = [
+        { role: "assistant", content: getSystemPrompt() },
+        { role: "user", content: prompt }
+      ]
+    }
+
     // eslint-disable-next-line no-empty
     if (sessionId) {} 
 
@@ -51,10 +67,7 @@ export default class ClaudeService implements IILLMService {
 
     const message = await this.genAI.messages.create({
       max_tokens: 1024,
-      messages: [
-        { role: 'user', content: prompt },
-        { role: 'assistant', content: '' }
-      ],
+      messages: this.chatHistory,
       model: this.getModel(),
     });
 

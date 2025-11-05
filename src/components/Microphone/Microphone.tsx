@@ -5,14 +5,14 @@ import { useVoiceRecorder } from "@/hooks/useVoiceRecorder";
 import { LLMResponses } from "@/services/LLMService";
 
 interface MicrophoneProps {
-    lang: string
+    lang?: string
     onError: Dispatch<SetStateAction<LLMResponses | undefined>>
     audioData: Dispatch<SetStateAction<string>>
-    className: string | undefined
+    className?: string
 }
 
 export function Microphone({audioData, onError, className }: MicrophoneProps) {
-    const { isRecording, startRecording, stopRecording, status, audioBase64 } = useVoiceRecorder()
+    const { isRecording, startRecording, stopRecording, status, audioBase64, error } = useVoiceRecorder()
     
     useEffect(() => {
 
@@ -23,7 +23,7 @@ export function Microphone({audioData, onError, className }: MicrophoneProps) {
                 audioData(audioBase64 || "")
                 break;
             case "ERROR":
-                onError(undefined)
+                onError(error as LLMResponses)
                 break;
         }
     }, [status])

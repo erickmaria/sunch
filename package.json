@@ -76,6 +76,7 @@
     "react": "^18.2.0",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.2.0",
+    "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.64.0",
     "react-icons": "^5.4.0",
     "react-markdown": "^9.1.0",
@@ -104,7 +105,7 @@
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
     "@vitejs/plugin-react": "^4.0.0",
-    "electron": "^25.1.1",
+    "electron": "^38.5.0",
     "electron-builder": "^24.9.1",
     "electron-is-dev": "^2.0.0",
     "eslint": "^8.38.0",
@@ -115,7 +116,7 @@
     "tailwindcss": "^4.1.5",
     "tree-kill": "^1.2.2",
     "typescript": "^5.0.2",
-    "vite": "^6.3.4",
+    "vite": "^4.3.9 || ^5.0.0",
     "vite-plugin-commonjs-externals": "^0.1.1",
     "vite-plugin-electron": "^0.15.6"
   }
