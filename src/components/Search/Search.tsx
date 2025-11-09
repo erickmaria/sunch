@@ -1,5 +1,5 @@
 
-import { ClipboardEvent, ReactNode, useCallback, useEffect, useState } from 'react'
+import { ClipboardEvent, useCallback, useEffect, useState } from 'react'
 import { Microphone } from '@/components/Microphone/Microphone';
 import Result from '../Result/Result';
 import { AiBrowserIcon, AiIdeaIcon, ArtificialIntelligence04Icon, ArtificialIntelligence05Icon, ChatGptIcon, Chatting01Icon, CleanIcon, ColorsIcon, GoogleGeminiIcon, Layout01Icon, Layout07Icon, LayoutBottomIcon, Logout04Icon, Menu01Icon, Moon02Icon, Sun02Icon, ToggleOffIcon, ToggleOnIcon, UploadCircle01Icon } from 'hugeicons-react';
@@ -40,7 +40,6 @@ import { Spinner } from '../ui/spinner';
 import { MdWarningAmber } from 'react-icons/md';
 import { cn } from '@/lib/utils';
 import AppIcon from '../icons/AppIcon/AppIcon';
-import { Input } from '../ui/input';
 
 interface FilesUpload {
   // filename: string

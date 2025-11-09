@@ -59,14 +59,10 @@ export default class GeminiService implements IILLMService {
 
         let parts: Part[] = []
         if (files != undefined && Array.isArray(files) && files.every(file => file instanceof Blob)) {
-            try {
-                parts = await this.fileToGenerativePart(files)
-            } catch (error) {
-                throw error;
-            }
+            parts = await this.fileToGenerativePart(files)
         }
 
-        let isAudio: boolean = false;
+        let isAudio = false;
         let contents: ContentListUnion;
         if (prompt.includes("data:audio/webm;base64")) {
             isAudio = true
@@ -128,31 +124,26 @@ export default class GeminiService implements IILLMService {
     }
 
     async fileToGenerativePart(files: Blob[]): Promise<Part[]> {
-        try {
-            if (!Array.isArray(files) || !files.every(file => file instanceof Blob)) {
-                return [];
-            }
-
-            const parts: Array<Part> = await Promise.all(files.map(async (f) => {
-                try {
-                    const base64String = await blobToBase64(f);
-                    const pureBase64 = (base64String as string).split(',')[1];
-                    return {
-                        inlineData: {
-                            data: pureBase64,
-                            mimeType: f.type.length == 0 ? "text/plain" : f.type
-                        }
-                    } as Part;
-                } catch (error) {
-                    console.error('Error converting blob to base64 for file:', f, error);
-                    throw error;
-                }
-            }));
-
-            return parts;
-        } catch (err) {
-            throw err;
+        if (!Array.isArray(files) || !files.every(file => file instanceof Blob)) {
+            return [];
         }
+
+        const parts: Array<Part> = await Promise.all(files.map(async (f) => {
+            try {
+                const base64String = await blobToBase64(f);
+                const pureBase64 = (base64String as string).split(',')[1];
+                return {
+                    inlineData: {
+                        data: pureBase64,
+                        mimeType: f.type.length == 0 ? "text/plain" : f.type
+                    }
+                } as Part;
+            } catch (error) {
+                console.error('Error converting blob to base64 for file:', f, error);
+                throw error;
+            }
+        }));
+        return parts;
     }
 
     async listModels(): Promise<Array<string>> {

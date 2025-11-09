@@ -14,20 +14,20 @@ import {
   FileRejection,
   useDropzone as rootUseDropzone,
 } from "react-dropzone";
-import { Button, ButtonProps } from "./button";
+import { Button } from "./button";
 
 type DropzoneResult<TUploadRes, TUploadError> =
   | {
-      status: "pending";
-    }
+    status: "pending";
+  }
   | {
-      status: "error";
-      error: TUploadError;
-    }
+    status: "error";
+    error: TUploadError;
+  }
   | {
-      status: "success";
-      result: TUploadRes;
-    };
+    status: "success";
+    result: TUploadRes;
+  };
 
 export type FileStatus<TUploadRes, TUploadError> = {
   id: string;
@@ -35,40 +35,40 @@ export type FileStatus<TUploadRes, TUploadError> = {
   file: File;
   tries: number;
 } & (
-  | {
+    | {
       status: "pending";
       result?: undefined;
       error?: undefined;
     }
-  | {
+    | {
       status: "error";
       error: TUploadError;
       result?: undefined;
     }
-  | {
+    | {
       status: "success";
       result: TUploadRes;
       error?: undefined;
     }
-);
+  );
 
 const fileStatusReducer = <TUploadRes, TUploadError>(
   state: FileStatus<TUploadRes, TUploadError>[],
   action:
     | {
-        type: "add";
-        id: string;
-        fileName: string;
-        file: File;
-      }
+      type: "add";
+      id: string;
+      fileName: string;
+      file: File;
+    }
     | {
-        type: "remove";
-        id: string;
-      }
+      type: "remove";
+      id: string;
+    }
     | ({
-        type: "update-status";
-        id: string;
-      } & DropzoneResult<TUploadRes, TUploadError>),
+      type: "update-status";
+      id: string;
+    } & DropzoneResult<TUploadRes, TUploadError>),
 ): FileStatus<TUploadRes, TUploadError>[] => {
   switch (action.type) {
     case "add":
@@ -132,23 +132,27 @@ const getRootError = (
 ) => {
   const errors = errorCodes.map((error) => {
     switch (error) {
-      case "file-invalid-type":
+      case "file-invalid-type": {
         const acceptedTypes = Object.values(limits.accept ?? {})
           .flat()
           .join(", ");
         return `only ${acceptedTypes} are allowed`;
-      case "file-too-large":
+      }
+      case "file-too-large": {
         const maxMb = limits.maxSize
           ? (limits.maxSize / (1024 * 1024)).toFixed(2)
           : "infinite?";
         return `max size is ${maxMb}MB`;
-      case "file-too-small":
+      }
+      case "file-too-small": {
         const roundedMinSize = limits.minSize
           ? (limits.minSize / (1024 * 1024)).toFixed(2)
           : "negative?";
         return `min size is ${roundedMinSize}MB`;
-      case "too-many-files":
+      }
+      case "too-many-files": {
         return `max ${limits.maxFiles} files`;
+      }
     }
   });
   const joinedErrors = errors.join(", ");
@@ -177,11 +181,11 @@ type UseDropzoneProps<TUploadRes, TUploadError> = {
   shiftOnMaxFiles?: boolean;
 } & (TUploadError extends string
   ? {
-      shapeUploadError?: (error: TUploadError) => string | void;
-    }
+    shapeUploadError?: (error: TUploadError) => string | void;
+  }
   : {
-      shapeUploadError: (error: TUploadError) => string | void;
-    });
+    shapeUploadError: (error: TUploadError) => string | void;
+  });
 
 interface UseDropzoneReturn<TUploadRes, TUploadError> {
   getRootProps: ReturnType<typeof rootUseDropzone>["getRootProps"];
@@ -334,6 +338,7 @@ const useDropzone = <TUploadRes, TUploadError = string>(
           : validation?.maxFiles - fileCount;
 
       if (maxNewFiles < newFiles.length) {
+        // eslint-disable-next-line no-empty
         if (shiftOnMaxFiles === true) {
         } else {
           setRootError(getRootError(["too-many-files"], validation ?? {}));
@@ -388,8 +393,10 @@ const useDropzone = <TUploadRes, TUploadError = string>(
 const DropZoneContext = createContext<UseDropzoneReturn<any, any>>({
   getRootProps: () => ({}) as never,
   getInputProps: () => ({}) as never,
-  onRemoveFile: async () => {},
-  onRetry: async () => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onRemoveFile: async () => { },
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onRetry: async () => { },
   canRetry: () => false,
   fileStatuses: [],
   isInvalid: false,
@@ -422,7 +429,7 @@ const Dropzone = <TUploadRes, TUploadError>(
 };
 Dropzone.displayName = "Dropzone";
 
-interface DropZoneAreaProps extends React.HTMLAttributes<HTMLDivElement> {}
+type DropZoneAreaProps = React.HTMLAttributes<HTMLDivElement>
 const DropZoneArea = forwardRef<HTMLDivElement, DropZoneAreaProps>(
   ({ className, children, ...props }, forwardedRef) => {
     const context = useDropzoneContext();
@@ -435,8 +442,6 @@ const DropZoneArea = forwardRef<HTMLDivElement, DropZoneAreaProps>(
       context.getRootProps();
 
     return (
-      // A11y behavior is handled through Trigger. All of these are only relevant to drag and drop which means this should be fine?
-      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <div
         ref={(instance) => {
           // TODO: test if this actually works?
@@ -468,8 +473,7 @@ const DropZoneArea = forwardRef<HTMLDivElement, DropZoneAreaProps>(
 );
 DropZoneArea.displayName = "DropZoneArea";
 
-export interface DropzoneDescriptionProps
-  extends React.HTMLAttributes<HTMLParagraphElement> {}
+export type DropzoneDescriptionProps = React.HTMLAttributes<HTMLParagraphElement>
 
 const DropzoneDescription = forwardRef<
   HTMLParagraphElement,
@@ -504,8 +508,10 @@ interface DropzoneFileListContext<TUploadRes, TUploadError> {
 const DropzoneFileListContext = createContext<
   DropzoneFileListContext<unknown, unknown>
 >({
-  onRemoveFile: async () => {},
-  onRetry: async () => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onRemoveFile: async () => { },
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onRetry: async () => { },
   fileStatus: {} as FileStatus<unknown, unknown>,
   canRetry: false,
   dropzoneId: "",
@@ -516,8 +522,7 @@ const useDropzoneFileListContext = () => {
   return useContext(DropzoneFileListContext);
 };
 
-interface DropZoneFileListProps
-  extends React.OlHTMLAttributes<HTMLOListElement> {}
+type DropZoneFileListProps = React.OlHTMLAttributes<HTMLOListElement>
 
 const DropzoneFileList = forwardRef<HTMLOListElement, DropZoneFileListProps>(
   (props, ref) => {
@@ -592,8 +597,7 @@ const DropzoneFileListItem = forwardRef<
 });
 DropzoneFileListItem.displayName = "DropzoneFileListItem";
 
-interface DropzoneFileMessageProps
-  extends React.HTMLAttributes<HTMLParagraphElement> {}
+type DropzoneFileMessageProps = React.HTMLAttributes<HTMLParagraphElement>
 
 const DropzoneFileMessage = forwardRef<
   HTMLParagraphElement,
@@ -626,8 +630,7 @@ const DropzoneFileMessage = forwardRef<
   );
 });
 DropzoneFileMessage.displayName = "DropzoneFileMessage";
-interface DropzoneMessageProps
-  extends React.HTMLAttributes<HTMLParagraphElement> {}
+type DropzoneMessageProps = React.HTMLAttributes<HTMLParagraphElement>
 
 const DropzoneMessage = forwardRef<HTMLParagraphElement, DropzoneMessageProps>(
   (props, ref) => {
@@ -655,7 +658,7 @@ const DropzoneMessage = forwardRef<HTMLParagraphElement, DropzoneMessageProps>(
 );
 DropzoneMessage.displayName = "DropzoneMessage";
 
-interface DropzoneRemoveFileProps extends ButtonProps {}
+type DropzoneRemoveFileProps = React.ComponentProps<"button">
 
 const DropzoneRemoveFile = forwardRef<
   HTMLButtonElement,
@@ -686,7 +689,7 @@ const DropzoneRemoveFile = forwardRef<
 });
 DropzoneRemoveFile.displayName = "DropzoneRemoveFile";
 
-interface DropzoneRetryFileProps extends ButtonProps {}
+type DropzoneRetryFileProps = React.ComponentProps<"button">
 
 const DropzoneRetryFile = forwardRef<HTMLButtonElement, DropzoneRetryFileProps>(
   ({ className, ...props }, ref) => {
@@ -722,8 +725,7 @@ const DropzoneRetryFile = forwardRef<HTMLButtonElement, DropzoneRetryFileProps>(
 );
 DropzoneRetryFile.displayName = "DropzoneRetryFile";
 
-interface DropzoneTriggerProps
-  extends React.LabelHTMLAttributes<HTMLLabelElement> {}
+type DropzoneTriggerProps = React.LabelHTMLAttributes<HTMLLabelElement>
 
 const DropzoneTrigger = forwardRef<HTMLLabelElement, DropzoneTriggerProps>(
   ({ className, children, ...props }, ref) => {
