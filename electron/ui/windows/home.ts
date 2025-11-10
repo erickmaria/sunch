@@ -33,13 +33,22 @@ class Window {
       webPreferences: {
         preload: join(__dirname, 'preload.js'),
         nodeIntegration: true,
-        experimentalFeatures: true,
+        experimentalFeatures: false,
       },
       resizable: false,
       frame: false,
       transparent: true,
       show: false,
     });
+
+    
+    win.on('system-context-menu', (event) => {
+      event.preventDefault()
+    })
+
+    // win.webContents.on('context-menu', (event) => {
+    //   event.preventDefault()
+    // })
 
     if (process.env.VITE_DEV_SERVER_URL) {
       win.loadURL(process.env.VITE_DEV_SERVER_URL)

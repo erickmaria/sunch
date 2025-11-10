@@ -58,7 +58,7 @@ export function SearchTabs() {
   const handleAddTab = () => {
     const newId = crypto.randomUUID();
 
-    setConfig(`tabs.${newId}.models.current`, getConfig("models.current"))
+    setConfig(`tabs.${newId}.models.current`, getConfig('models.current'))
 
     const newTab = {
       id: newId,

@@ -25,7 +25,7 @@ export function useLLMService({ id, providers, chatMode }: UseLLMOptions) {
     const llms = useMemo(() => {
         return function () {
             return {
-                execute: async (prompt: string): Promise<LLMResponses> => {
+                execute: async (prompt: string, files: Blob[]): Promise<LLMResponses> => {
 
                     setAwaiting(true)
 
@@ -33,7 +33,7 @@ export function useLLMService({ id, providers, chatMode }: UseLLMOptions) {
 
                     const promises = Array.from(providers.entries()).map(async ([_, provider]) => {
                         try {
-                            const data = await services.get(provider)!.execute(id, prompt)
+                            const data = await services.get(provider)!.execute(id, prompt, files)
                             responses.set(provider, data)
                         } catch (err) {
                             if (err instanceof Error) {
@@ -63,7 +63,7 @@ export function useLLMService({ id, providers, chatMode }: UseLLMOptions) {
         }();
     }, [chatMode, providers])
 
-    const askSomething = async (prompt: string) => llms.execute(prompt);
+    const askSomething = async (prompt: string, files: Blob[]) => llms.execute(prompt, files);
     const capabilities = llms.capabilities();
     const listLLmsProviders = llms.providers()
 

@@ -1,5 +1,6 @@
-import { Chat, ContentListUnion, GenerateContentResponse, GoogleGenAI, HarmBlockThreshold, HarmCategory } from '@google/genai';
+import { Chat, ContentListUnion, GenerateContentResponse, GoogleGenAI, HarmBlockThreshold, HarmCategory, Part } from '@google/genai';
 import { IILLMService, ILLMCapabilities, getSystemPrompt } from "./LLMService";
+import { blobToBase64 } from '@/utils/blobToBase64';
 
 export default class GeminiService implements IILLMService {
 
@@ -7,10 +8,11 @@ export default class GeminiService implements IILLMService {
 
     private genAI: GoogleGenAI;
     capabilities: ILLMCapabilities = {
+        context: true,
         text: true,
         audio: true,
-        image: false,
-        file: false,
+        // image: true,
+        file: true,
     };
     chatMode: boolean;
     private safetySettings = [
@@ -53,24 +55,18 @@ export default class GeminiService implements IILLMService {
         return window.system.store.get('models.gemini.version')
     }
 
-    async execute(sessionId: string, prompt: string): Promise<string> {
+    async execute(sessionId: string, prompt: string, files?: Base64URLString[] | Blob[]): Promise<string> {
 
-        // CONTEXT CHACHING
-        // let cache: CachedContent;
-        // if (this.cacheMode) {
-        //     try {
-        //         cache = await this.getOrCreateCache();
-        //     } catch (err) {
-        //         // console.error(":", err);
-        //         return Promise.resolve('fatal error creating/retrieving cache:' + err);;
-        //     }
-        // }
+        let parts: Part[] = []
+        if (files != undefined && Array.isArray(files) && files.every(file => file instanceof Blob)) {
+            parts = await this.fileToGenerativePart(files)
+        }
 
+        let isAudio = false;
         let contents: ContentListUnion;
         if (prompt.includes("data:audio/webm;base64")) {
-
+            isAudio = true
             const base64 = prompt.split(",")[1]
-
             contents = [{
                 role: "user",
                 parts: [
@@ -80,15 +76,16 @@ export default class GeminiService implements IILLMService {
                             mimeType: "audio/webm"
                         }
                     },
-                    {
-                        text: "Resonse audio data"
-                    }
                 ]
             }];
-
-
         } else {
-            contents = prompt;
+            parts.push({
+                text: prompt
+            })
+            contents = [{
+                role: "user",
+                parts: parts
+            }];
         }
 
         let response: GenerateContentResponse
@@ -96,13 +93,6 @@ export default class GeminiService implements IILLMService {
             let chat: Chat;
             if (this.chatSessions.has(sessionId)) {
                 chat = this.chatSessions.get(sessionId)!;
-
-                // const chat = this.chatSessions.get(sessionId);
-                // const history = await chat!.getHistory();
-                // const formattedHistory = history.map((content: Content) => ({
-                //     role: content.role,
-                //     text: content.parts ? content.parts.map(p => p.text).join('') : '',
-                // }));
             } else {
                 chat = this.genAI.chats.create({
                     model: this.getModel(),
@@ -115,7 +105,7 @@ export default class GeminiService implements IILLMService {
             }
 
             response = await chat.sendMessage({
-                message: prompt
+                message: [...parts, { text: prompt }]
             });
         } else {
             response = await this.genAI.models.generateContent({
@@ -123,21 +113,55 @@ export default class GeminiService implements IILLMService {
                 contents: contents,
                 config: {
                     safetySettings: this.safetySettings,
-                    systemInstruction: getSystemPrompt(),
+                    systemInstruction: isAudio ? getSystemPrompt() : getSystemPrompt(),
                     // CONTEXT CHACHING
                     // cachedContent: cache!.name,
                 }
             });
         }
 
-        console.log(response!.text)
         return Promise.resolve(response!.text || '');
     }
 
-    async getOrCreateChat(): Promise<Chat> {
-        return this.genAI.chats.create({
-            model: this.getModel(),
-        });
+    async fileToGenerativePart(files: Blob[]): Promise<Part[]> {
+        if (!Array.isArray(files) || !files.every(file => file instanceof Blob)) {
+            return [];
+        }
+
+        const parts: Array<Part> = await Promise.all(files.map(async (f) => {
+            try {
+                const base64String = await blobToBase64(f);
+                const pureBase64 = (base64String as string).split(',')[1];
+                return {
+                    inlineData: {
+                        data: pureBase64,
+                        mimeType: f.type.length == 0 ? "text/plain" : f.type
+                    }
+                } as Part;
+            } catch (error) {
+                console.error('Error converting blob to base64 for file:', f, error);
+                throw error;
+            }
+        }));
+        return parts;
+    }
+
+    async listModels(): Promise<Array<string>> {
+        try {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${this.getApiKey()}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error.message);
+            }
+
+            return (data.models as Array<any>).map((model) =>
+                (model.name as string).replace(/^models\//, '')
+            );
+        } catch (error) {
+            throw new Error((error as any).message);
+        }
     }
 
     // CONTEXT CHACHING
@@ -176,42 +200,29 @@ export default class GeminiService implements IILLMService {
     //     }
     // }
 
-    async sendAudioFile(filepath: string): Promise<string> {
-        const myfile = await this.genAI.files.upload({
-            file: filepath,
-            config: {
-                mimeType: "audio/mp3"
-            },
-        });
+    // async sendAudioFile(filepath: string): Promise<string> {
+    //     const myfile = await this.genAI.files.upload({
+    //         file: filepath,
+    //         config: {
+    //             mimeType: "audio/mp3"
+    //         },
+    //     });
 
-        const response = await this.genAI.models.generateContent({
-            model: this.getModel(),
-            contents: [
-                { role: "user", parts: [{ text: "Describe this audio clip" }, { fileData: myfile }] }
-            ],
-        });
+    //     const response = await this.genAI.models.generateContent({
+    //         model: this.getModel(),
+    //         contents: [
+    //             { role: "user", parts: [{ text: "Describe this audio clip" }, { fileData: myfile }] }
+    //         ],
+    //     });
 
-        return Promise.resolve(response.text || '');
-    }
+    //     return Promise.resolve(response.text || '');
+    // }
 
-    async listModels(): Promise<Array<string>> {
-        try {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${this.getApiKey()}`;
-            const response = await fetch(url);
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error.message);
-            }
-
-            return (data.models as Array<any>).map((model) =>
-                (model.name as string).replace(/^models\//, '')
-            );
-        } catch (error) {
-            throw new Error((error as any).message);
-        }
-    }
-
+    // async getOrCreateChat(): Promise<Chat> {
+    //     return this.genAI.chats.create({
+    //         model: this.getModel(),
+    //     });
+    // }
 
 }
 

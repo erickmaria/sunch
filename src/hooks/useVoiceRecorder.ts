@@ -16,7 +16,7 @@ export const useVoiceRecorder = () => {
     const analyserRef = useRef<AnalyserNode | null>(null);
     const silenceStartRef = useRef<number | null>(null);
 
-    const SILENCE_THRESHOLD = 0.15;
+    const SILENCE_THRESHOLD = 0.02;
     const MAX_SILENCE_MS = 2000;
 
     const detectSilence = useCallback(() => {
@@ -35,6 +35,7 @@ export const useVoiceRecorder = () => {
         const rms = Math.sqrt(sumSquares / data.length);
         const now = Date.now();
 
+        console.log(rms)
         if (rms < SILENCE_THRESHOLD) {
             if (!silenceStartRef.current) silenceStartRef.current = now;
             if (now - silenceStartRef.current > MAX_SILENCE_MS) {

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- feat: add multimodal input
 - feat: add OpenRouter support
 - chore: improvement ui usage
 - chore: add background opacity option

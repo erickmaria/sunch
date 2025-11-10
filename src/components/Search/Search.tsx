@@ -1,10 +1,8 @@
 
-import { ReactNode, useEffect, useState } from 'react'
-import sunchIcon from '@/assets/icon.svg'
+import { ClipboardEvent, useCallback, useEffect, useState } from 'react'
 import { Microphone } from '@/components/Microphone/Microphone';
 import Result from '../Result/Result';
-import Loading from '../Loading/Loading';
-import { AiBrowserIcon, AiIdeaIcon, ArtificialIntelligence04Icon, ArtificialIntelligence05Icon, ChatGptIcon, Chatting01Icon, CleanIcon, ColorsIcon, GoogleGeminiIcon, Layout01Icon, Layout07Icon, LayoutBottomIcon, Logout04Icon, Menu01Icon, Moon02Icon, Sun02Icon, ToggleOffIcon, ToggleOnIcon } from 'hugeicons-react';
+import { AiBrowserIcon, AiIdeaIcon, ArtificialIntelligence04Icon, ArtificialIntelligence05Icon, ChatGptIcon, Chatting01Icon, CleanIcon, ColorsIcon, GoogleGeminiIcon, Layout01Icon, Layout07Icon, LayoutBottomIcon, Logout04Icon, Menu01Icon, Moon02Icon, Sun02Icon, ToggleOffIcon, ToggleOnIcon, UploadCircle01Icon } from 'hugeicons-react';
 import {
   Tooltip,
   TooltipContent,
@@ -16,7 +14,7 @@ import { SettingsTittle } from '../SearchSettings/SettingsTittle';
 import { useUserSettings } from '@/hooks/useUserSettings';
 import { RiClaudeFill, RiGeminiFill, RiOpenaiFill } from 'react-icons/ri';
 import { Switch } from '../ui/switch';
-import { ComputerIcon, Edit, Plus, Settings, Trash2 } from "lucide-react"
+import { Check, ComputerIcon, Edit, Plus, Settings, Trash2, X } from "lucide-react"
 
 import {
   Command,
@@ -37,6 +35,56 @@ import OpenRouter from '../icons/OpenRouter/OpenRouter';
 import { LLMProvider, LLMResponses } from '@/services/LLMService';
 import { useLLMService } from '@/hooks/useLLMService';
 
+import { useDropzone } from 'react-dropzone'
+import { Spinner } from '../ui/spinner';
+import { MdWarningAmber } from 'react-icons/md';
+import { cn } from '@/lib/utils';
+import AppIcon from '../icons/AppIcon/AppIcon';
+
+interface FilesUpload {
+  // filename: string
+  file: File
+  status: {
+    type: "DONE" | "INPROGRESS" | "ABORTED" | "IDLE" | "CANCELED" | "ERROR"
+    // message?: string
+  }
+}
+
+interface SeachUploadProps {
+  files: FilesUpload[]
+  setFiles: React.Dispatch<React.SetStateAction<FilesUpload[]>>
+}
+
+function SeachFilesUpload({ files, setFiles }: SeachUploadProps) {
+  return (
+    <div className='flex flex-row flex-wrap gap-x-0.5'>
+      {
+        files.map(f => {
+          return (
+            <div key={f.file.name} className={cn(
+              'bg-background flex items-center w-fit mt-0.5 px-2 py-1 space-x-1 rounded-md',
+              // `${uploader.status.type == 'DONE' && 'text-green-400'}`,
+              `${f.status.type == 'ERROR' && 'text-red-400'}`
+            )}>
+              {f.status.type == 'INPROGRESS' && <Spinner size={18} />}
+              {f.status.type == 'DONE' && <Check size={18} />}
+              {f.status.type == 'ERROR' && <MdWarningAmber size={18} />}
+              <span>
+                {f.status.type == 'INPROGRESS' && "Uploading "}
+                {f.file.name}
+                {f.status.type == 'INPROGRESS' && "..."}
+              </span>
+              <X className="cursor-pointer" onClick={() => {
+                setFiles(prev => prev.filter(u => u.file.name !== f.file.name));
+              }} />
+            </div>
+          )
+        })
+      }
+    </div>
+  )
+}
+
 interface SearchProps {
   id: string
 }
@@ -48,6 +96,8 @@ export default function Search({ id }: SearchProps) {
   let PROMPT_EVENT = false
 
   const { getConfig, delConfig } = useUserSettings();
+
+  const [alert, setAlert] = useState<string | undefined>(undefined)
 
   const [input, setInput] = useState<string>("");
   const [LLMResponses, setLLMResponses] = useState<LLMResponses | undefined>(undefined);
@@ -79,7 +129,6 @@ export default function Search({ id }: SearchProps) {
           id: data.value as string,
           ...promptData
         })
-        console.log(prompt)
       }
     });
 
@@ -89,6 +138,13 @@ export default function Search({ id }: SearchProps) {
   });
 
   useEffect(() => {
+    setConfig(`general.layout.mode`, layoutMode)
+  }, [layoutMode])
+
+  useEffect(() => {
+
+    !capabilities.get(providers[0])?.context && setChatMode(false)
+
     setConfig(`tabs.${id}.models.current`, providers[0])
     dispatchSyncConfig(`tabs.${id}.models.current`, providers[0])
   }, [providers])
@@ -109,15 +165,17 @@ export default function Search({ id }: SearchProps) {
   }
 
   function sendAsk(input: string) {
-    askSomething(input).then((responses) => {
+    !capabilities.get(providers[0])?.file && setFiles([])
+    askSomething(input, files.map(f => f.file)).then((responses) => {
       if (responses !== undefined) {
         setLLMResponses(responses)
+        if (chatMode) setFiles([])
         setInput('')
       }
     }).catch(err => {
-      if (err instanceof Error) {
-        // setLLMResponses(err)
-      }
+      setLLMResponses(err as LLMResponses)
+      // if (err instanceof Error) {
+      // }
     })
 
     window.system.searchReady({
@@ -140,6 +198,7 @@ export default function Search({ id }: SearchProps) {
       }
       if (cmd.startsWith("/clear")) {
         setLLMResponses(undefined)
+        setFiles([])
       }
       if (cmd.startsWith("/theme")) {
         setTheme(cmd.split(' ')[1] as string as Theme)
@@ -174,7 +233,7 @@ export default function Search({ id }: SearchProps) {
     function CommandItems() {
 
       const [prompts, setPrompts] = useState<Map<string, { title: string, content: string, default: boolean }>>(getConfig("prompts"))
-      
+
       // sync configs
       useEffect(() => {
         const removeListener = window.system.syncConfig((data) => {
@@ -310,8 +369,6 @@ export default function Search({ id }: SearchProps) {
                   )
                 )}
               </CommandGroup>
-
-
             </>
           );
         default:
@@ -411,8 +468,8 @@ export default function Search({ id }: SearchProps) {
     }
 
     return (
-      <Command className="">
-        <CommandInput className='' autoFocus value={input} onValueChange={e => { setInput(e) }} placeholder="Type a command or search..." />
+      <Command>
+        <CommandInput autoFocus value={input} onValueChange={e => { setInput(e) }} placeholder="Type a command or search..." />
         <CommandList>
           {CommandItems()}
         </CommandList>
@@ -420,35 +477,133 @@ export default function Search({ id }: SearchProps) {
     )
   }
 
+
+  const [files, setFiles] = useState<FilesUpload[]>([])
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+
+    // First check if file already exists
+    acceptedFiles.forEach((file) => {
+      // Skip if file with same name already exists
+      if (files.some(f => f.file.name === file.name)) {
+        return;
+      }
+
+      const reader = new FileReader()
+      setFiles(prev => [...prev, {
+        file: file,
+        status: {
+          type: 'IDLE',
+        }
+      }])
+
+      reader.onabort = () => {
+        setFiles(prev => prev.filter(u => u.file.name !== file.name))
+      }
+
+      reader.onerror = () => {
+        setFiles(prev => prev.map(u => u.file.name === file.name ? {
+          file: file,
+          status: {
+            type: 'ERROR',
+            message: 'file reading has failed'
+          }
+        } : u))
+      }
+
+      reader.onloadstart = () => {
+
+        setFiles(prev => prev.map(u => u.file.name === file.name ? {
+          file: file,
+          status: {
+            type: 'INPROGRESS'
+          }
+        } : u))
+      }
+
+      reader.onloadend = async () => {
+        await sleep(1000);
+        setFiles(prev => prev.map(u => u.file.name === file.name ? {
+          file: file,
+          status: {
+            type: 'DONE'
+          }
+        } : u))
+      }
+
+      reader.readAsArrayBuffer(file)
+    })
+
+  }, [files])
+
+  const { getRootProps, isDragActive } = useDropzone({ onDrop })
+
+  const handlePaste = (event: ClipboardEvent<HTMLTextAreaElement>) => {
+
+    if (capabilities.get(providers[0])?.file) {
+      const items = event.clipboardData.items;
+      if (!items) return;
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (item.kind === 'file') {
+          const blob = item.getAsFile();
+          if (blob == null) return
+          // blob.name = `${blob.name}-${crypto.randomUUID()}`
+          onDrop([blob])
+          return;
+        }
+      }
+    } else {
+      setAlert(`The model doesn't support this feature, or we haven't implemented it yet for the model or provider.`)
+    }
+
+  }
+
+  useEffect(() => {
+    // reset alert
+    setAlert(undefined)
+  },[input, providers, awaiting])
+
   return (
-    <>
-      <div>
-        {!input.startsWith("/") ?
-          <>
+    <div>
+      {!input.startsWith("/") ?
+        <div>
+          <div {...(capabilities.get(providers[0])?.file ? getRootProps() : {})}>
+            {/* <input className='hidden' {...getInputProps()} /> */}
             <div className={`bg-background ${layoutMode == "minimalist" ? 'rounded-md' : 'rounded-b-md'}`}>
-              <InputGroup className='border-none dark:bg-input/0 items-start'>
-                <InputGroupAddon align="inline-start" className='pt-3'>
-                  <div className='draggable'>
-                    <img className='size-5' src={sunchIcon} alt="sunch icon" />
-                      <div className='relative bottom-6 left-3 bg-background rounded-xl'>
-                        {(providers[0] === 'openrouter') && <SeachIconTooltip provider='openrouter' icon={<OpenRouter size={16} />} />}
-                        {(providers[0] === 'gemini') && <SeachIconTooltip provider='gemini' icon={<RiGeminiFill size={16} />} />}
-                        {(providers[0] === 'gpt') && <SeachIconTooltip provider='gpt' icon={<RiOpenaiFill size={16} />} />}
-                        {(providers[0] === 'claude') && <SeachIconTooltip provider='claude' icon={<RiClaudeFill size={16} />} />}
+              <InputGroup className='border-none dark:bg-input/0 items-center '>
+                <InputGroupAddon>
+                  <div className='draggable items-center'>
+                    {awaiting && <Spinner size={24} />}
+                    {(isDragActive && !awaiting) && <UploadCircle01Icon size={24} />}
+                    {(!isDragActive && !awaiting) && <AppIcon size={23} />}
+                    <div className={cn(
+                      'relative left-3 bg-background rounded-xl',
+                      awaiting ? 'bottom-6' : 'bottom-6'
+                    )}>
+                      <div onContextMenu={async () => {
+                        setAlert(undefined)
+                      }}>
+                        <SeachIconTooltip provider={providers[0]} alert={alert} />
                       </div>
+                    </div>
                   </div>
                 </InputGroupAddon>
+                {/* <Input className='focus-visible:border-none focus-visible:ring-ring/0 focus-visible:ring-'/> */}
                 <InputGroupTextareaAutosize
-                  className={`rounded-sm h-[44px] placeholder:opacity-40`}
+                  className={cn(
+                    `rounded-sm h-[44px] placeholder:opacity-40 text`,
+                  )}
                   autoFocus
+                  onPaste={handlePaste}
                   name='search'
                   id='search'
-                  placeholder='Ask something or type / to check commands'
+                  placeholder={isDragActive ? 'Drop the files here ...' : 'Ask something or type / to check commands'}
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={e => keyDownHandler(e)}
                 />
-                <InputGroupAddon align="inline-end" className='pt-2.5'>
+                <InputGroupAddon align="inline-end" className=''>
                   {prompt?.id != undefined &&
                     <Tooltip>
                       <TooltipTrigger asChild className='cursor-pointer' onContextMenu={() => {
@@ -457,7 +612,7 @@ export default function Search({ id }: SearchProps) {
                       }}>
                         <AiIdeaIcon />
                       </TooltipTrigger>
-                      <TooltipContent side={document.body.offsetHeight > 0 ? "bottom" : "left"}>
+                      <TooltipContent side={document.body.offsetHeight > 44 ? "bottom" : "left"}>
                         <p>{prompt.title}</p>
                       </TooltipContent>
                     </Tooltip>
@@ -473,75 +628,73 @@ export default function Search({ id }: SearchProps) {
                 </InputGroupAddon>
               </InputGroup>
             </div>
-            
-            {openOptions &&
-              <>
-                <div className='bg-background rounded-md border-2 border-transparent w-full px-1 my-0.5'>
-                  <div className='flex justify-between align-middle '>
-                    <div className='flex'>
-                      <div className='flex'>
-                        <SettingsOptions>
-                          <div className='pt-1.5 pr-2 pl-1'>
-                            <SettingsTittle name='AI' />
-                          </div>
-                          <SettingsSwitcher name="AI" defaultValue={providers[0]}>
-                            <SettingsSwitcherItem onClick={() => setProviders(['gemini'])} value='gemini' icon={<GoogleGeminiIcon size={15} />} />
-                            <SettingsSwitcherItem onClick={() => setProviders(['gpt'])} value='gpt' icon={<ChatGptIcon size={15} />} />
-                            <SettingsSwitcherItem onClick={() => setProviders(['claude'])} value='claude' icon={<RiClaudeFill size={15} />} />
-                            <SettingsSwitcherItem onClick={() => setProviders(['openrouter'])} value='openrouter' icon={<OpenRouter size={15} />} />
-                          </SettingsSwitcher>
-                        </SettingsOptions>
-                      </div>
-                      <span className='pl-2 p-0.5 opacity-40'>|</span>
-                      <div className='flex items-center'>
-                        <div className='flex items-center space-x-1 rounded-md'>
-                          <div className='pl-2 p-1'>
-                            <SettingsTittle name='chat' />
-                          </div>
-                          <Switch className='' checked={chatMode} onCheckedChange={(checked) => { setChatMode(checked) }} />
-                          <div>
-                          </div>
+            {openOptions && (
+              <div className='bg-background rounded-md border-2 border-transparent w-full px-1 my-0.5'>
+                <div className='flex justify-between items-center'>
+                  <div className='flex'>
+                    <div >
+                      <SettingsOptions >
+                        <SettingsTittle name='AI' />
+                        <SettingsSwitcher name="AI" defaultValue={providers[0]}>
+                          <SettingsSwitcherItem onClick={() => setProviders(['gemini'])} value='gemini' icon={<GoogleGeminiIcon size={15} />} />
+                          <SettingsSwitcherItem onClick={() => setProviders(['gpt'])} value='gpt' icon={<ChatGptIcon size={15} />} />
+                          <SettingsSwitcherItem onClick={() => setProviders(['claude'])} value='claude' icon={<RiClaudeFill size={15} />} />
+                          <SettingsSwitcherItem onClick={() => setProviders(['openrouter'])} value='openrouter' icon={<OpenRouter size={15} />} />
+                        </SettingsSwitcher>
+                      </SettingsOptions>
+                    </div>
+                    <span className='pl-2 p-0.5 opacity-40'>|</span>
+
+                    <div className={`flex items-center ${!(capabilities.get(providers[0])?.context) && 'pointer-events-none opacity-10'}`}>
+                      <div className='flex items-center space-x-1 rounded-md'>
+                        <div className='pl-2 p-1'>
+                          <SettingsTittle name='chat' />
+                        </div>
+                        <Switch className='' checked={chatMode} onCheckedChange={(checked) => { setChatMode(checked) }} />
+                        <div>
                         </div>
                       </div>
                     </div>
-                    <div className='flex'>
-                      <div className={`${!(capabilities.get(providers[0])?.audio) && 'pointer-events-none opacity-10'} p-1`}>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div>
-                              <Microphone
-                                className=''
-                                lang='pt-BR'
-                                onError={setLLMResponses}
-                                audioData={setAudio}
-                              />
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Use Voice</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </div>
+                  </div>
+                  <div className='flex'>
+                    <div className={`${!(capabilities.get(providers[0])?.audio) && 'pointer-events-none opacity-10'} p-1`}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <Microphone
+                              onError={setLLMResponses}
+                              audioData={setAudio}
+                            />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Use Voice</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
                   </div>
                 </div>
-              </>
-            }
-            {awaiting ? <Loading /> : !input.startsWith("/") && <Result contents={LLMResponses} />}
-          </> : <Commands />
-        }
-      </div>
-
-    </>
+              </div>
+            )}
+          </div>
+          {!awaiting && !input.startsWith("/") && <Result contents={LLMResponses} />}
+          {(files && capabilities.get(providers[0])?.file) && <SeachFilesUpload files={files} setFiles={setFiles} />}
+        </ div> :
+        <div className={`bg-background ${layoutMode == "minimalist" ? 'rounded-md' : 'rounded-b-md'}`}>
+          <Commands />
+        </div>
+      }
+    </div>
   )
 }
 
+
 interface SeachIconTooltipProps {
   provider: "gpt" | "gemini" | "claude" | "openrouter"
-  icon: ReactNode
+  alert?: string
 }
 
-function SeachIconTooltip({ provider, icon }: SeachIconTooltipProps) {
+function SeachIconTooltip({ alert, provider }: SeachIconTooltipProps) {
 
   const { getConfig } = useUserSettings();
   const [model, setModel] = useState(getConfig(`models.${provider}.version`))
@@ -557,17 +710,23 @@ function SeachIconTooltip({ provider, icon }: SeachIconTooltipProps) {
   });
 
 
-  return <>
-    <Tooltip>
-      <TooltipTrigger asChild className='cursor-pointer'>
-        <div
-          className='absolute'>
-          {icon}
-        </div>
-      </TooltipTrigger>
-      <TooltipContent side={document.body.offsetHeight > 0 ? "bottom" : "left"}>
-        {model}
-      </TooltipContent>
-    </Tooltip>
-  </>
+  return (
+    <>
+      <Tooltip>
+        <TooltipTrigger asChild className='cursor-pointer'>
+          <div className='absolute'>
+            {(alert == undefined) ? <div>
+              {(provider === 'openrouter') && <OpenRouter size={16} />}
+              {(provider === 'gemini') && <RiGeminiFill size={16} />}
+              {(provider === 'gpt') && <RiOpenaiFill size={16} />}
+              {(provider === 'claude') && <RiClaudeFill size={16} />}
+            </div> : <MdWarningAmber className='text-red-600 animate-bounce' size={16} />}
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side={document.body.offsetHeight > 44 ? "bottom" : "left"}>
+          {(alert == undefined) ? <p>{model}</p> : <p>{alert}</p>}
+        </TooltipContent>
+      </Tooltip>
+    </>
+  )
 }

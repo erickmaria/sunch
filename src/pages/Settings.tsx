@@ -324,7 +324,7 @@ function ModelContainer({ provider, icon }: ModelContainerProps) {
             Api Key
           </p>
           <Input
-            defaultValue={getConfig("models.claude.apikey")}
+            defaultValue={getConfig('models.claude.apikey')}
             type="password"
             placeholder="provide your API key"
             className="placeholder:text-xs placeholder:opacity-20" onChange={(e) => {

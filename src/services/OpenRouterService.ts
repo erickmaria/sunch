@@ -1,20 +1,25 @@
 import { OpenAI } from "openai";
-import { ILLMCapabilities, IILLMService } from "./LLMService";
+import { ILLMCapabilities, IILLMService, getSystemPrompt } from "./LLMService";
+import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 
 export default class OpenRouterService implements IILLMService {
 
   private genAI: OpenAI
+  private chatHistory: Array<ChatCompletionMessageParam>;
   chatMode: boolean;
   capabilities: ILLMCapabilities = {
+    context: true,
     text: true,
     audio: false,
-    image: false,
+    // image: false,
     file: false,
   };
+
 
   private constructor(chatMode = false) {
 
     this.chatMode = chatMode
+    this.chatHistory = []
 
     this.genAI = new OpenAI({
       baseURL: 'https://openrouter.ai/api/v1',
@@ -42,6 +47,18 @@ export default class OpenRouterService implements IILLMService {
 
   async execute(sessionId: string, prompt: string): Promise<string> {
 
+    if (this.chatMode) {
+      if (this.chatHistory.length == 0) {
+        this.chatHistory.push({ role: "system", content: getSystemPrompt() })
+      }
+      this.chatHistory.push({ role: "user", content: prompt })
+    } else {
+      this.chatHistory = [
+        { role: "system", content: getSystemPrompt() },
+        { role: "user", content: prompt }
+      ]
+    }
+
     // eslint-disable-next-line no-empty
     if (sessionId) { }
 
@@ -50,13 +67,7 @@ export default class OpenRouterService implements IILLMService {
     }
 
     const completion = await this.genAI.chat.completions.create({
-      messages: [
-        {
-          role: "system",
-          content: "",
-        },
-        { role: "user", content: prompt },
-      ],
+      messages: this.chatHistory,
       model: this.getModel(),
     });
 
