@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v1.6.0 - 2025-11-10
+
 - feat: add multimodal input
 - feat: add OpenRouter support
 - chore: improvement ui usage
