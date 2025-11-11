@@ -30,7 +30,7 @@ class Window {
       title: "prompts",
       width: this.width,
       minWidth: this.width,
-      maxWidth: this.width,
+      maxWidth: this.maxHeight,
       // y: 50,
       resizable: false,
       minimizable: false,

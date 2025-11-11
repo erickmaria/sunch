@@ -28,7 +28,7 @@ class Window {
     const win = new BrowserWindow({
       width: this.width,
       minWidth: this.width,
-      maxWidth: this.width,
+      maxWidth: this.maxHeight,
       y: 50,
       webPreferences: {
         preload: join(__dirname, 'preload.js'),
