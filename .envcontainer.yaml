@@ -56,10 +56,14 @@ container:
     # Start SSH server
     CMD ["sudo", "/usr/sbin/sshd", "-D"]
 mounts:
-  - /home/erickmariarodriguesdasilva/Projects/Assistant/containers/.envcontainer/.kube:/home/envcontainer/.kube:bind
-  - /home/erickmariarodriguesdasilva/Projects/Assistant/containers/.envcontainer/.vscode-server:/home/envcontainer/.vscode-server:bind
-  - /var/run/docker.sock:/var/run/docker.sock:bind
-
+    - type: bind
+      source: /home/erickmariarodriguesdasilva/Projects/Assistant/containers/kubernetes/.envcontainer/.vscode-server
+      target: /home/envcontainer/.vscode-server
+      readonly: false
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+      readonly: false
 
 # Dynamically in the entrypoint script:
 # ```
