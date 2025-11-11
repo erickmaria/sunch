@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix: ubuntu shortcut script
+
 ## v1.6.0 - 2025-11-10
 
 - feat: add multimodal input
