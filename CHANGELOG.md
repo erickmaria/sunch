@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v1.6.1 - 2025-11-11
+
 - fix: ubuntu shortcut script
 
 ## v1.6.0 - 2025-11-10
