@@ -1,30 +1,38 @@
-import { OpenAI } from "openai";
-import { ILLMCapabilities, IILLMService, getSystemPrompt } from "./LLMService";
-import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
+import { createOpenAI } from '@ai-sdk/openai';
+import { LanguageModelV2 } from '@ai-sdk/provider';
+import { LLMService } from "./LLMService";
+import { fetchData } from '@/utils/feachData';
 
-export default class GPTService implements IILLMService {
-
-  private genAI: OpenAI
-  private chatHistory: Array<ChatCompletionMessageParam>;
-  chatMode: boolean;
-  capabilities: ILLMCapabilities = {
-    context: true,
-    text: true,
-    audio: false,
-    // image: false,
-    file: false,
-  };
-
+export default class GPTService extends LLMService {
 
   private constructor(chatMode = false) {
+    super(chatMode)
+  }
 
-    this.chatMode = chatMode
-    this.chatHistory = []
+  provider(): LanguageModelV2 {
+    const openai = createOpenAI({
+      apiKey: this.apiKey(),
+    })
+    return openai(window.system.store.get('models.gpt.version'))
+  }
 
-    this.genAI = new OpenAI({
-      apiKey: this.getApiKey(),
-      dangerouslyAllowBrowser: true
+  async listModels(): Promise<Array<string>> {
+    const models = await fetchData({
+      url: `https://api.openai.com/v1/models`,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${this.apiKey()}`
+      }
     });
+
+    return (models.data as Array<any>)
+      .map(models => models.id)
+      .filter(model => (/^(gpt-)([1-9])|(o([1-9]))/).test(model))
+      .filter(model => !(/\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/).test(model));
+  }
+
+  apiKey(): string {
+    return window.system.store.get('models.gpt.apikey') || window.env?.SUNCH_GPT_API_KEY || process.env.SUNCH_GPT_API_KEY || "";
   }
 
   private static instance: GPTService;
@@ -36,80 +44,5 @@ export default class GPTService implements IILLMService {
     return GPTService.instance;
   }
 
-  getApiKey(): string {
-    return window.system.store.get('models.gpt.apikey') || window.env.SUNCH_GPT_API_KEY || process.env.SUNCH_GPT_API_KEY || "";
-  }
-
-  getModel(): string {
-    return window.system.store.get('models.gpt.version')
-  }
-
-  async execute(sessionId: string, prompt: string): Promise<string> {
-
-
-    if (this.chatMode) {
-      if (this.chatHistory.length == 0) {
-        this.chatHistory.push({ role: "system", content: getSystemPrompt() })
-      }
-      this.chatHistory.push({ role: "user", content: prompt })
-    } else {
-      this.chatHistory = [
-        { role: "system", content: getSystemPrompt() },
-        { role: "user", content: prompt }
-      ]
-    }
-
-    // eslint-disable-next-line no-empty
-    if (sessionId) { }
-
-    if (this.genAI.apiKey != this.getApiKey()) {
-      this.genAI.apiKey = this.getApiKey()
-    }
-
-    const completion = await this.genAI.chat.completions.create({
-      messages: [
-        { role: "system", content: getSystemPrompt() },
-        { role: "user", content: prompt },
-      ],
-      model: this.getModel(),
-    });
-
-    return completion.choices[0].message.content || ""
-  }
-
-  async listModels(): Promise<Array<string>> {
-
-    return await this.genAI.models.list()
-      .then((response) => {
-        return response.data
-          // .filter((model) => model.id.includes("gpt"))
-          .map((model) => model.id);
-
-      })
-      .catch((error) => {
-        throw error;
-        //   // Check for specific error types
-        //   if (error instanceof RateLimitError) {
-        //     console.error(`Rate limit exceeded: ${error.message}`);
-        //     // Implement retry logic with exponential backoff here
-        //   } else if (error instanceof AuthenticationError) {
-        //     console.error(`Authentication failed: ${error.message}`);
-        //     console.error("Please check your API key.");
-        //   } else if (error instanceof NotFoundError) {
-        //     console.error(`Resource not found: ${error.message}`);
-        //   } else if (error instanceof BadRequestError) {
-        //     console.error(`Bad request: ${error.message}`);
-        //   } else if (error instanceof APIConnectionError) {
-        //     console.error(`API connection error: ${error.message}`);
-        //   } else if (error instanceof APIError) {
-        //     // General API errors (e.g., server issues >= 500)
-        //     console.error(`OpenAI API Error: ${error.status} - ${error.message}`);
-        //   } else {
-        //     // Handle other potential errors (e.g., network issues, local exceptions)
-        //     console.error("An unexpected error occurred:", error);
-        //   }
-
-      });
-  }
-
 }
+

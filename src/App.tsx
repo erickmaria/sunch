@@ -7,7 +7,6 @@ import { Theme, useTheme } from './contexts/ThemeProvider';
 import { useUserSettings } from './hooks/useUserSettings';
 import Promtps from './pages/Promtps';
 
-
 export default function App() {
 
   const { setTheme, theme } = useTheme()

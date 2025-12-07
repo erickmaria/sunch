@@ -41,7 +41,7 @@ class Window {
       show: false,
     });
 
-    
+
     win.on('system-context-menu', (event) => {
       event.preventDefault()
     })
@@ -115,9 +115,38 @@ class Window {
       }, 100)
     })
 
+    win.webContents.session.webRequest.onBeforeSendHeaders(
+      (details, callback) => {
+        const { requestHeaders } = details;
+        UpsertKeyValue(requestHeaders, 'Access-Control-Allow-Origin', ['*']);
+        callback({ requestHeaders });
+      },
+    );
+
+    win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+      const { responseHeaders } = details;
+      UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Origin', ['*']);
+      UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Headers', ['*']);
+      callback({
+        responseHeaders,
+      });
+    });
+
     return win
   }
 
+}
+
+function UpsertKeyValue(obj: Record<string, string | string[]> | undefined, keyToChange: string, value: string[]) {
+  if (!obj) return;
+  const keyToChangeLower = keyToChange.toLowerCase();
+  for (const key of Object.keys(obj)) {
+    if (key.toLowerCase() === keyToChangeLower) {
+      obj[key] = value;
+      return;
+    }
+  }
+  obj[keyToChange] = value;
 }
 
 export { Window as HomeWindow }

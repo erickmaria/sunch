@@ -1,15 +1,15 @@
-import './Result.css'
 import MarkdownHighlighter from '../MarkdownHighlighter/MarkdownHighlighter'
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 import { LLMProvider, LLMResponses } from '@/services/LLMService'
 import OpenRouter from '../icons/OpenRouter/OpenRouter'
 import { RiClaudeFill, RiGeminiFill, RiOpenaiFill } from 'react-icons/ri'
+import React from 'react'
 
 interface ResultProps {
   contents: LLMResponses | undefined
 }
 
-export default function Result({ contents }: ResultProps) {
+function Result({ contents }: ResultProps) {
 
   if (contents != undefined && contents.size > 0) {
     const providers = Array.from(contents.keys())
@@ -18,9 +18,9 @@ export default function Result({ contents }: ResultProps) {
         <div className='bg-background w-full max-h-[780px] overflow-auto rounded-md mt-0.5 select-text' >
           {providers.map((provider: LLMProvider, index: number) => (
             <div key={index}>
-              {(contents.size > 0) && <PanelResizeHandle className='px-[1px]' />}
+              {(contents.size > 0) && <PanelResizeHandle className='px-px' />}
               <Panel>
-                <div className='p-1 bg-background rounded-md whitespace-pre-wrap break-words leading-8 overflow-x-auto'
+                <div className='p-1 bg-background rounded-md whitespace-pre-wrap leading-8 overflow-x-auto'
                   style={(contents.size > 1) ? { whiteSpace: 'pre-wrap' } : { whiteSpace: 'wrap' }}
                 >
                   {(contents.size > 1) && <>
@@ -47,3 +47,5 @@ export default function Result({ contents }: ResultProps) {
     <></>
   )
 }
+
+export default React.memo(Result)

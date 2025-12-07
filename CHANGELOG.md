@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- chore: improvement performace
+- feat: add mcp
+
 ## v1.6.0 - 2025-11-10
 
 - feat: add multimodal input

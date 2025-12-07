@@ -15,7 +15,7 @@ const formPromptSchema = z.object({
   title: z.string().nonempty({
     message: "Title cannot be empty.",
   }),
-  content: z.string().nonempty({
+  instructions: z.string().nonempty({
     message: "Content cannot be empty.",
   }),
   default: z.boolean()
@@ -37,7 +37,7 @@ export default function Promtps() {
 
         const prompts = data.value as { title: string; content: string, default: boolean }
         promptForm.setValue("title", prompts.title);
-        promptForm.setValue("content", prompts.content);
+        promptForm.setValue("instructions", prompts.content);
         promptForm.setValue("default", prompts.default);
 
         setId(data.key.split(".")[1])
@@ -53,7 +53,7 @@ export default function Promtps() {
     resolver: zodResolver(formPromptSchema),
     defaultValues: {
       title: "",
-      content: "",
+      instructions: "",
       default: false
     }
   })
@@ -127,12 +127,12 @@ export default function Promtps() {
               />
               <FormField
                 control={promptForm.control}
-                name="content"
+                name="instructions"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">Content</FormLabel>
+                    <FormLabel className="text-sm">Instructions</FormLabel>
                     <FormControl>
-                      <Textarea rows={7} placeholder="Content..." {...field} className="text-sm resize-none" />
+                      <Textarea rows={7} placeholder="" {...field} className="text-sm resize-none" />
                     </FormControl>
                     <FormDescription>
                       This is your prompt content.
