@@ -21,6 +21,7 @@ import AppIcon from '../icons/AppIcon/AppIcon';
 import _ from 'lodash';
 import { SeachOptionProps } from './SearchOptions';
 import { SeachIconTooltip } from './SearchTooltip';
+import TiptapEditor from '../Editor/Editor';
 
 interface FilesUpload {
   // filename: string
@@ -257,13 +258,12 @@ export function Search({ id, input, setInput, setAwaiting, setLLMResponses }: Se
 
   return (
     <div>
-
       <div>
         <div {...(capabilities.get(providers[0])?.file ? getRootProps() : {})}>
-          <div className={`bg-background ${layoutMode == "minimalist" ? 'rounded-md' : 'rounded-b-md'}`}>
-            <InputGroup className='border-none dark:bg-input/0 items-center '>
-              <InputGroupAddon>
-                <div className='draggable items-center'>
+          <div className={`bg-background px-1 ${layoutMode == "minimalist" ? 'rounded-md' : 'rounded-b-md'}`}>
+            <div className='flex align-middle px-1'>
+              <div>
+                <div className='draggable items-center pt-2.5'>
                   {awaiting && <Spinner size={24} />}
                   {(isDragActive && !awaiting) && <UploadCircle01Icon size={24} />}
                   {(!isDragActive && !awaiting) && <AppIcon size={23} />}
@@ -278,8 +278,11 @@ export function Search({ id, input, setInput, setAwaiting, setLLMResponses }: Se
                     </div>
                   </div>
                 </div>
-              </InputGroupAddon>
-              <InputGroupTextareaAutosize
+              </div>
+              <div className='px-1 min-w-[95%] max-w-[95%]'>
+                <TiptapEditor />
+              </div>
+              {/* <InputGroupTextareaAutosize
                 className={cn(
                   `rounded-sm h-11 placeholder:opacity-40 text`,
                 )}
@@ -291,8 +294,8 @@ export function Search({ id, input, setInput, setAwaiting, setLLMResponses }: Se
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => keyDownHandler(e)}
-              />
-              <InputGroupAddon align="inline-end" className=''>
+              /> */}
+              <div className='pt-2'>
                 {prompt?.id != undefined &&
                   <Tooltip>
                     <TooltipTrigger asChild className='cursor-pointer' onContextMenu={() => {
@@ -310,12 +313,12 @@ export function Search({ id, input, setInput, setAwaiting, setLLMResponses }: Se
                   onClick={() => (openOptions ? setOpenOptions(false) : setOpenOptions(true))}
                   // variant="outline"
                   size="icon-xs"
-                  className="rounded-full"
+                  className="rounded-md"
                 >
                   <Menu01Icon />
                 </InputGroupButton>
-              </InputGroupAddon>
-            </InputGroup>
+              </div>
+            </div>
           </div>
           {openOptions && <SeachOptionProps setProviders={setProviders} setLLMResponses={setLLMResponses} setAudio={setAudio} audio={audio} chatMode={chatMode} setChatMode={setChatMode} capabilities={capabilities} providers={providers} />}
         </div>
@@ -324,3 +327,76 @@ export function Search({ id, input, setInput, setAwaiting, setLLMResponses }: Se
     </div>
   )
 }
+
+
+
+
+
+
+// return (
+//   <div>
+//     <div>
+//       <div {...(capabilities.get(providers[0])?.file ? getRootProps() : {})}>
+//         <div className={`bg-background ${layoutMode == "minimalist" ? 'rounded-md' : 'rounded-b-md'}`}>
+//           <InputGroup className='border-none dark:bg-input/0 items-center '>
+//             <InputGroupAddon>
+//               <div className='draggable items-center'>
+//                 {awaiting && <Spinner size={24} />}
+//                 {(isDragActive && !awaiting) && <UploadCircle01Icon size={24} />}
+//                 {(!isDragActive && !awaiting) && <AppIcon size={23} />}
+//                 <div className={cn(
+//                   'relative left-3 bg-background rounded-xl',
+//                   awaiting ? 'bottom-6' : 'bottom-6'
+//                 )}>
+//                   <div onContextMenu={async () => {
+//                     setAlert(undefined)
+//                   }}>
+//                     <SeachIconTooltip provider={providers[0]} alert={alert} />
+//                   </div>
+//                 </div>
+//               </div>
+//             </InputGroupAddon>
+//             <InputGroupTextareaAutosize
+//               className={cn(
+//                 `rounded-sm h-11 placeholder:opacity-40 text`,
+//               )}
+//               autoFocus
+//               onPaste={handlePaste}
+//               name='search'
+//               id='search'
+//               placeholder={isDragActive ? 'Drop the files here ...' : 'Ask something or type / to check commands'}
+//               value={input}
+//               onChange={e => setInput(e.target.value)}
+//               onKeyDown={e => keyDownHandler(e)}
+//             />
+//             <InputGroupAddon align="inline-end" className=''>
+//               {prompt?.id != undefined &&
+//                 <Tooltip>
+//                   <TooltipTrigger asChild className='cursor-pointer' onContextMenu={() => {
+//                     delConfig("prompts._selected_")
+//                     setPrompt(undefined)
+//                   }}>
+//                     <AiIdeaIcon />
+//                   </TooltipTrigger>
+//                   <TooltipContent side={document.body.offsetHeight > 44 ? "bottom" : "left"}>
+//                     <p>{prompt.title}</p>
+//                   </TooltipContent>
+//                 </Tooltip>
+//               }
+//               <InputGroupButton
+//                 onClick={() => (openOptions ? setOpenOptions(false) : setOpenOptions(true))}
+//                 // variant="outline"
+//                 size="icon-xs"
+//                 className="rounded-full"
+//               >
+//                 <Menu01Icon />
+//               </InputGroupButton>
+//             </InputGroupAddon>
+//           </InputGroup>
+//         </div>
+//         {openOptions && <SeachOptionProps setProviders={setProviders} setLLMResponses={setLLMResponses} setAudio={setAudio} audio={audio} chatMode={chatMode} setChatMode={setChatMode} capabilities={capabilities} providers={providers} />}
+//       </div>
+//       {(files && capabilities.get(providers[0])?.file) && <SeachFilesUpload files={files} setFiles={setFiles} />}
+//     </ div>
+//   </div>
+// )

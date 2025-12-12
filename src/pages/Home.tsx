@@ -10,19 +10,6 @@ export default function Home() {
   const [awaiting, setAwaiting] = useState<boolean>(false);
   const [LLMResponses, setLLMResponses] = useState<LLMResponses | undefined>(undefined);
 
-  // const [layoutMode, setLayoutMode] = useState<string>(getConfig("general.layout.mode"));
-
-  // // sync configs
-  // useEffect(() => {
-  //   const removeListener = window.system.syncConfig((data) => {
-  //     if (data.key == `general.layout.mode`) setLayoutMode(data.value as unknown as string)
-  //   });
-
-  //   return () => {
-  //     removeListener();
-  //   };
-  // });
-
   return (
     <>
       <div autoFocus>
