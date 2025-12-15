@@ -13,7 +13,11 @@ interface SeachIconTooltipProps {
 export function SeachIconTooltip({ alert, provider }: SeachIconTooltipProps) {
 
   const { getConfig } = useUserSettings();
-  const [model, setModel] = useState(getConfig(`models.${provider}.version`))
+  const [model, setModel] = useState(getConfig(`models.${provider}.version`));
+
+  useEffect(() => {
+    setModel(getConfig(`models.${provider}.version`))
+  }, [provider]);
 
   useEffect(() => {
     const removeListener = window.system.syncConfig((data) => {

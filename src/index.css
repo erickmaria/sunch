@@ -25,6 +25,13 @@
   }
 }
 
+@layer utilities {
+  .tiptap p.is-editor-empty:first-child::before {
+    @apply text-slate-400 opacity-50 float-left h-0 pointer-events-none;
+    content: attr(data-placeholder);
+  }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {

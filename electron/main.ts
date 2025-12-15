@@ -155,6 +155,8 @@ if (!gotTheLock) {
 
       ipcMain.on('dispatch-sync-config', async (e: Electron.IpcMainEvent, key: string, value: unknown) => {
         HomeWindow.getInstance().bw.webContents.send('sync-config', { key, value });
+        SettingsWindow.getInstance().bw.webContents.send('sync-config', { key, value });
+        PromptsWindow.getInstance().bw.webContents.send('sync-config', { key, value });
       })
 
     })
