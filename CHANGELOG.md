@@ -2,8 +2,10 @@
 
 ## Unreleased
 
+- feat: add rich text editor
+- chore: unify the LLM service backend with Vercel's AI SDK
+- chore: add new command /editor
 - chore: improvement performace
-- feat: add mcp
 
 ## v1.6.0 - 2025-11-10
 

@@ -16,6 +16,19 @@ export const UserSettingsSchema = {
 					enable: true,
 				}
 			},
+			editor: {
+				type: JSONSchemaType.Object,
+				properties: {
+					mode: {
+						type: JSONSchemaType.String,
+						enum: ['plaintext', 'markdown'],
+						default: 'markdown'
+					}
+				},
+				default: {
+					mode: 'markdown'
+				}
+			},
 			media: {
 				type: JSONSchemaType.Object,
 				default: {
@@ -27,12 +40,6 @@ export const UserSettingsSchema = {
 				type: JSONSchemaType.Object,
 				default: {
 					enable: true,
-				}
-			},
-			layout: {
-				type: JSONSchemaType.Object,
-				default: {
-					mode: "minimalist",
 				}
 			}
 		},

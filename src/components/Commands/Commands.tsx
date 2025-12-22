@@ -59,6 +59,10 @@ export function Commands({ id, input, setInput }: CommandsProps) {
       setConfig(`prompts._selected_`, { id: args[0] as string })
       dispatchSyncConfig(`prompts.#selected#`, args[0] as unknown)
     }
+    if (cmd.startsWith("/editor")) {
+      setConfig(`general.editor.mode`, value)
+      dispatchSyncConfig(`general.editor.mode`, value)
+    }
     if (cmd.startsWith("/settings")) {
       window.system.openWindow("settings")
     }
@@ -238,6 +242,30 @@ export function Commands({ id, input, setInput }: CommandsProps) {
             </CommandGroup>
           </>
         );
+      case "/editor":
+        const editor = getConfig("general.editor.mode") ?? "";
+        return (
+          <>
+            <CommandGroup heading="Editor Mode">
+              <CommandItem value="/editor plaintext" className='flex justify-between items-center' onSelect={(value) => execCommand(value, true)}>
+                <CommandItemContent
+                  icon={<ToggleOnIcon />}
+                  diplayName="Plain Text (classic)"
+                  value="plaintext"
+                  active={editor}
+                />
+              </CommandItem>
+              <CommandItem value="/editor markdown" className='flex justify-between items-center' onSelect={(value) => execCommand(value, false)}>
+                <CommandItemContent
+                  icon={<ToggleOffIcon />}
+                  diplayName="Markdown Rendering (mordern)"
+                  value="markdown"
+                  active={editor}
+                />
+              </CommandItem>
+            </CommandGroup>
+          </>
+        );
       default:
         return (
           <>
@@ -289,15 +317,15 @@ export function Commands({ id, input, setInput }: CommandsProps) {
                   </Kbd>
                 </CommandShortcut>
               </CommandItem>
-              {/* <CommandItem value='/layout' onSelect={(value) => setInput(value)}>
+              <CommandItem value='/editor' onSelect={(value) => setInput(value)}>
                   <Layout01Icon />
-                  <span>Change Layout</span>
+                  <span>Change editor mode</span>
                   <CommandShortcut>
                     <Kbd>
-                      /layout
+                      /editor
                     </Kbd>
                   </CommandShortcut>
-                </CommandItem> */}
+                </CommandItem>
             </CommandGroup>
             <CommandSeparator />
             <CommandGroup heading="General Settings">

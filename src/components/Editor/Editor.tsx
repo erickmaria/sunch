@@ -2,9 +2,11 @@
 import { cn } from '@/lib/utils';
 import { useEditor, EditorContext, EditorContent, Extension } from '@tiptap/react';
 import { Placeholder } from '@tiptap/extensions';
-import {StarterKit} from '@tiptap/starter-kit';
+import { StarterKit } from '@tiptap/starter-kit';
 import { Markdown } from '@tiptap/markdown';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { EditorMode } from '@/models/editor';
+import { useUserSettings } from '@/hooks/useUserSettings';
 
 type TiptapEditorProps = React.ComponentPropsWithoutRef<'div'> & {
     className?: string;
@@ -14,6 +16,24 @@ type TiptapEditorProps = React.ComponentPropsWithoutRef<'div'> & {
 }
 
 export default function TiptapEditor({ className, placeholder, setContext, setEnter, ...props }: TiptapEditorProps) {
+
+    const { getConfig } = useUserSettings();
+
+
+    const [editorMode, setEditorMode] = useState<EditorMode>(getConfig("general.editor.mode"));
+
+    // sync configs
+    useEffect(() => {
+        const removeListener = window.system.syncConfig((data) => {
+            if (data.key === `general.editor.mode`) {
+                editor?.view.updateState(editor.state);
+            }
+        });
+
+        return () => {
+            removeListener();
+        };
+    });
 
     const OverrideShortcuts = Extension.create({
         name: 'override',
@@ -39,6 +59,8 @@ export default function TiptapEditor({ className, placeholder, setContext, setEn
     });
 
     const editor = useEditor({
+        enableInputRules: editorMode == "markdown" && true,
+        enablePasteRules: editorMode == "markdown" && true,
         extensions: [
             StarterKit.configure({
                 heading: false,
