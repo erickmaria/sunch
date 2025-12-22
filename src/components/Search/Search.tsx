@@ -81,8 +81,9 @@ export function Search({ id, input, setInput, setAwaiting, setLLMResponses }: Se
 
   const { getConfig, delConfig } = useUserSettings();
   const [alert, setAlert] = useState<string | undefined>(undefined)
-  // const [LLMResponses, setLLMResponses] = useState<LLMResponses | undefined>(undefined);
   const [openOptions, setOpenOptions] = useState(false);
+  const [enter, setEnter] = useState(false);
+
   const [chatMode, setChatMode] = useState<boolean>(getConfig(`general.chatMode.enable`) as boolean);
   const [audio, setAudio] = useState("");
 
@@ -109,6 +110,10 @@ export function Search({ id, input, setInput, setAwaiting, setLLMResponses }: Se
           ...promptData
         })
       }
+      if (data.key == `commands./clean`) {
+        setLLMResponses(undefined)
+        setFiles([])
+      }
     });
 
     return () => {
@@ -121,9 +126,7 @@ export function Search({ id, input, setInput, setAwaiting, setLLMResponses }: Se
   }, [awaiting])
 
   useEffect(() => {
-
     !capabilities.get(providers[0])?.context && setChatMode(false)
-
     setConfig(`tabs.${id}.models.current`, providers[0])
     dispatchSyncConfig(`tabs.${id}.models.current`, providers[0])
   }, [providers])
@@ -134,17 +137,16 @@ export function Search({ id, input, setInput, setAwaiting, setLLMResponses }: Se
     }
   }, [audio])
 
-  async function keyDownHandler(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key == "Enter" && e.shiftKey) return
-    if (e.key == "Enter") {
-      e.preventDefault()
-      if (input.length == 0) return
-      sendAsk(input)
-    }
-  }
+  useEffect(() => {
+    if (enter && (input.length != 0)) sendAsk(input)
+    setEnter(false)
+  }, [enter])
 
   function sendAsk(input: string) {
+    if (input.length == 0) return
+
     !capabilities.get(providers[0])?.file && setFiles([])
+
     askSomething(input, files.map(f => f.file)).then((responses) => {
       if (responses !== undefined) {
         setLLMResponses(responses)
@@ -225,7 +227,7 @@ export function Search({ id, input, setInput, setAwaiting, setLLMResponses }: Se
 
   const { getRootProps, isDragActive } = useDropzone({ onDrop })
 
-  const handlePaste = (event: ClipboardEvent<HTMLTextAreaElement>) => {
+  const handlePaste = (event: ClipboardEvent<HTMLDivElement>) => {
 
     if (capabilities.get(providers[0])?.file) {
       const items = event.clipboardData.items;
@@ -273,6 +275,8 @@ export function Search({ id, input, setInput, setAwaiting, setLLMResponses }: Se
               </div>
             </div>
             <TiptapEditor
+              onPaste={handlePaste}
+              setEnter={setEnter}
               setContext={setInput}
               placeholder={isDragActive ? 'Drop the files here ...' : 'Ask something or type / to check commands'}
             />

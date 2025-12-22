@@ -46,8 +46,7 @@ export function Commands({ id, input, setInput }: CommandsProps) {
       dispatchSyncConfig('models.current', value)
     }
     if (cmd.startsWith("/clear")) {
-      // setLLMResponses(undefined)
-      // setFiles([])
+      dispatchSyncConfig('commands./clean', undefined)
     }
     if (cmd.startsWith("/theme")) {
       dispatchSyncConfig('general.theme', value)
