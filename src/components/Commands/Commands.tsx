@@ -15,7 +15,7 @@ import { Kbd } from '../ui/kbd';
 import { Badge } from '../ui/badge';
 import { ReactNode, useEffect, useState } from "react";
 import { useUserSettings } from "@/hooks/useUserSettings";
-import { AiBrowserIcon, ArtificialIntelligence04Icon, ArtificialIntelligence05Icon, ChatGptIcon, Chatting01Icon, CleanIcon, ColorsIcon, GoogleGeminiIcon, Layout01Icon, Layout07Icon, LayoutBottomIcon, Logout04Icon, Moon02Icon, Sun02Icon, ToggleOffIcon, ToggleOnIcon } from "hugeicons-react";
+import { AiBrowserIcon, ArtificialIntelligence04Icon, ArtificialIntelligence05Icon, ChatGptIcon, Chatting01Icon, CleanIcon, ColorsIcon, GoogleGeminiIcon, Layout01Icon, Logout04Icon, Moon02Icon, Sun02Icon, ToggleOffIcon, ToggleOnIcon } from "hugeicons-react";
 import { RiClaudeFill } from "react-icons/ri";
 import OpenRouter from "../icons/OpenRouter/OpenRouter";
 import { Prompt } from "@/models/prompt";
@@ -114,7 +114,7 @@ export function Commands({ id, input, setInput }: CommandsProps) {
     }
 
     switch (input) {
-      case "/theme":
+      case "/theme": {
         const theme = getConfig("general.theme")
         return (
           <>
@@ -143,7 +143,8 @@ export function Commands({ id, input, setInput }: CommandsProps) {
             </CommandGroup>
           </>
         );
-      case "/use":
+      }
+      case "/use": {
         const use = getConfig("models.current")
         return (
           <>
@@ -179,7 +180,8 @@ export function Commands({ id, input, setInput }: CommandsProps) {
             </CommandGroup>
           </>
         );
-      case "/chat":
+      }
+      case "/chat": {
         const chat = getConfig("general.chatMode.enable") ?? "";
         return (
           <>
@@ -203,10 +205,9 @@ export function Commands({ id, input, setInput }: CommandsProps) {
             </CommandGroup>
           </>
         );
-      case "/prompts":
-
+      }
+      case "/prompts": {
         const promptSelected = (getConfig("prompts._selected_") as Prompt) ?? undefined;
-
         return (
           <>
             <div className={`cursor-pointer absolute right-1 top-1 hover:bg-secondary rounded-md m-1 p-0.5`}>
@@ -242,7 +243,8 @@ export function Commands({ id, input, setInput }: CommandsProps) {
             </CommandGroup>
           </>
         );
-      case "/editor":
+      }
+      case "/editor": {
         const editor = getConfig("general.editor.mode") ?? "";
         return (
           <>
@@ -266,7 +268,8 @@ export function Commands({ id, input, setInput }: CommandsProps) {
             </CommandGroup>
           </>
         );
-      default:
+      }
+      default: {
         return (
           <>
             <CommandEmpty>No results found.</CommandEmpty>
@@ -318,14 +321,14 @@ export function Commands({ id, input, setInput }: CommandsProps) {
                 </CommandShortcut>
               </CommandItem>
               <CommandItem value='/editor' onSelect={(value) => setInput(value)}>
-                  <Layout01Icon />
-                  <span>Change editor mode</span>
-                  <CommandShortcut>
-                    <Kbd>
-                      /editor
-                    </Kbd>
-                  </CommandShortcut>
-                </CommandItem>
+                <Layout01Icon />
+                <span>Change editor mode</span>
+                <CommandShortcut>
+                  <Kbd>
+                    /editor
+                  </Kbd>
+                </CommandShortcut>
+              </CommandItem>
             </CommandGroup>
             <CommandSeparator />
             <CommandGroup heading="General Settings">
@@ -359,6 +362,7 @@ export function Commands({ id, input, setInput }: CommandsProps) {
             </CommandGroup>
           </>
         );
+      }
     }
   }
 

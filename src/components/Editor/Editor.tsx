@@ -1,7 +1,7 @@
 
 import { cn } from '@/lib/utils';
 import { useEditor, EditorContext, EditorContent, Extension } from '@tiptap/react';
-import { Dropcursor, Placeholder } from '@tiptap/extensions';
+import { Placeholder } from '@tiptap/extensions';
 import { StarterKit } from '@tiptap/starter-kit';
 import { Markdown } from '@tiptap/markdown';
 import { useEffect, useMemo, useState } from 'react';
