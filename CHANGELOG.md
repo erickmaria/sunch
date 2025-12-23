@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v1.7.0 - 2025-12-23
+
 - feat: add rich text editor
 - chore: unify the LLM service backend with Vercel's AI SDK
 - chore: add new command /editor
