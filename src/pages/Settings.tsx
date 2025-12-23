@@ -58,8 +58,10 @@ export default function Settings() {
   // sync configs
   useEffect(() => {
     const removeListener = window.system.syncConfig((data) => {
+      // console.log(data)
       if (data.key == `general.layout.mode`) setLayoutMode(data.value == "full" ? true : false)
       if (data.key == `general.chatMode.enable`) setChatMode(data.value as boolean)
+      // if (data.key == `general.theme`) setTheme(data.value as string as Theme)
     });
 
     return () => {
@@ -101,7 +103,7 @@ export default function Settings() {
 
   return (
     <>
-      <div data-theme={theme} className={`bg-background border-b rounded-tl-none rounded-tr-xl rounded-b-xl ${backgroundOpacity && `opacity-95`}`}>
+      <div className={`bg-background border-b rounded-tl-none rounded-tr-xl rounded-b-xl ${backgroundOpacity && `opacity-95`}`}>
         <div>
           <div className="absolute right-1 mt-1 cursor-pointer">
             <X
@@ -110,7 +112,7 @@ export default function Settings() {
           </div>
 
           {/* <div className="bg-secondary draggable absolute right-8 w-[148px] h-[28px]"></div> */}
-          <div className="bg-secondary draggable absolute right-8 w-[225px] h-[28px]"></div>
+          <div className="bg-secondary draggable absolute right-8 w-[225px] h-7"></div>
 
           <Tabs initialTabIndex={0}>
             <Tab label="General">

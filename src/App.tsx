@@ -7,12 +7,10 @@ import { Theme, useTheme } from './contexts/ThemeProvider';
 import { useUserSettings } from './hooks/useUserSettings';
 import Promtps from './pages/Promtps';
 
-
 export default function App() {
 
-  const { setTheme, theme } = useTheme()
   const { getConfig } = useUserSettings()
-
+  const { setTheme, theme } = useTheme()
   const [backgroundOpacity, setBackgroundOpacity] = useState<boolean>((getConfig("general.backgroundOpacity") as boolean));
 
   useEffect(() => {

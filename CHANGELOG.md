@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- feat: add rich text editor
+- chore: unify the LLM service backend with Vercel's AI SDK
+- chore: add new command /editor
+- chore: improvement performace
+
 ## v1.6.1 - 2025-11-11
 
 - fix: ubuntu shortcut script

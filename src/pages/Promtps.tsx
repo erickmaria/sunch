@@ -10,12 +10,13 @@ import { X } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { Prompt } from "@/models/prompt"
 
 const formPromptSchema = z.object({
   title: z.string().nonempty({
     message: "Title cannot be empty.",
   }),
-  content: z.string().nonempty({
+  instructions: z.string().nonempty({
     message: "Content cannot be empty.",
   }),
   default: z.boolean()
@@ -35,9 +36,9 @@ export default function Promtps() {
           return
         }
 
-        const prompts = data.value as { title: string; content: string, default: boolean }
+        const prompts = data.value as Prompt
         promptForm.setValue("title", prompts.title);
-        promptForm.setValue("content", prompts.content);
+        promptForm.setValue("instructions", prompts.instructions);
         promptForm.setValue("default", prompts.default);
 
         setId(data.key.split(".")[1])
@@ -53,7 +54,7 @@ export default function Promtps() {
     resolver: zodResolver(formPromptSchema),
     defaultValues: {
       title: "",
-      content: "",
+      instructions: "",
       default: false
     }
   })
@@ -93,7 +94,7 @@ export default function Promtps() {
     <>
       <div className="bg-background border-2 rounded-md text-sm">
         <div className="flex justify-end">
-          <div className="draggable absolute right-8 w-full h-[28px]"></div>
+          <div className="draggable absolute right-8 w-full h-7"></div>
           <X
             onClick={() => { closeWindow() }}
             className="m-2 hover:bg-red-500" />
@@ -116,7 +117,7 @@ export default function Promtps() {
                   <FormItem>
                     <FormLabel className="text-sm">Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="Title" {...field} className="text-sm" />
+                      <Input {...field} className="text-sm" />
                     </FormControl>
                     <FormDescription>
                       This is your prompt title.
@@ -127,12 +128,12 @@ export default function Promtps() {
               />
               <FormField
                 control={promptForm.control}
-                name="content"
+                name="instructions"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">Content</FormLabel>
+                    <FormLabel className="text-sm">Instructions</FormLabel>
                     <FormControl>
-                      <Textarea rows={7} placeholder="Content..." {...field} className="text-sm resize-none" />
+                      <Textarea  {...field} className="text-sm resize-none min-h-[100px] max-h-[200px]" />
                     </FormControl>
                     <FormDescription>
                       This is your prompt content.

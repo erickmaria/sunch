@@ -1,90 +1,42 @@
-import { OpenAI } from "openai";
-import { ILLMCapabilities, IILLMService, getSystemPrompt } from "./LLMService";
-import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
+import { createOpenRouter } from '@openrouter/ai-sdk-provider';
+import { LanguageModelV2 } from '@ai-sdk/provider';
+import { LLMService } from "./LLMService";
+import { fetchData } from '@/utils/feachData';
 
-export default class OpenRouterService implements IILLMService {
+export default class OpenRouterService extends LLMService {
 
-  private genAI: OpenAI
-  private chatHistory: Array<ChatCompletionMessageParam>;
-  chatMode: boolean;
-  capabilities: ILLMCapabilities = {
-    context: true,
-    text: true,
-    audio: false,
-    // image: false,
-    file: false,
-  };
-
-
-  private constructor(chatMode = false) {
-
-    this.chatMode = chatMode
-    this.chatHistory = []
-
-    this.genAI = new OpenAI({
-      baseURL: 'https://openrouter.ai/api/v1',
-      apiKey: this.getApiKey(),
-      dangerouslyAllowBrowser: true
-    });
-  }
-
-  private static instance: OpenRouterService;
-  public static getInstance(chatMode = false): OpenRouterService {
-    if (!OpenRouterService.instance) {
-      OpenRouterService.instance = new OpenRouterService(chatMode);
-    }
-    OpenRouterService.instance.chatMode = chatMode
-    return OpenRouterService.instance;
-  }
-
-  getApiKey(): string {
-    return window.system.store.get('models.openrouter.apikey') || window.env.SUNCH_OPENROUTER_API_KEY || process.env.SUNCH_OPENROUTER_API_KEY || "";
-  }
-
-  getModel(): string {
-    return window.system.store.get('models.openrouter.version')
-  }
-
-  async execute(sessionId: string, prompt: string): Promise<string> {
-
-    if (this.chatMode) {
-      if (this.chatHistory.length == 0) {
-        this.chatHistory.push({ role: "system", content: getSystemPrompt() })
-      }
-      this.chatHistory.push({ role: "user", content: prompt })
-    } else {
-      this.chatHistory = [
-        { role: "system", content: getSystemPrompt() },
-        { role: "user", content: prompt }
-      ]
+    private constructor(chatMode = false) {
+        super(chatMode)
     }
 
-    // eslint-disable-next-line no-empty
-    if (sessionId) { }
-
-    if (this.genAI.apiKey != this.getApiKey()) {
-      this.genAI.apiKey = this.getApiKey()
+    provider(): LanguageModelV2 {
+        const openrouter = createOpenRouter({
+            apiKey: this.apiKey()
+        })
+        return openrouter(window.system.store.get('models.openrouter.version'))
     }
 
-    const completion = await this.genAI.chat.completions.create({
-      messages: this.chatHistory,
-      model: this.getModel(),
-    });
+    async listModels(): Promise<Array<string>> {
+        const models = await fetchData({ url: `https://openrouter.ai/api/v1/models` });
+        console.log(models)
+        return (models.data as Array<any>).filter(models => {
+            const f = (models.architecture.output_modalities as Array<string>)
+            return f.length == 1 && f.includes("text")
+        }).map(data => data?.id)
+    }
 
-    return completion.choices[0].message.content || ""
-  }
+    apiKey(): string {
+        return window.system.store.get('models.openrouter.apikey') || window.env?.SUNCH_OPENROUTER_API_KEY || process.env.SUNCH_OPENROUTER_API_KEY || "";
+    }
 
-  async listModels(): Promise<Array<string>> {
-    return await this.genAI.models.list()
-      .then((response) => {
-        return response.data
-          .map((model) => model.id);
-      })
-      .catch((error) => {
-        console.error("Error listing models:", error);
-
-        return [];
-      });
-  }
+    private static instance: OpenRouterService;
+    public static getInstance(chatMode = false): OpenRouterService {
+        if (!OpenRouterService.instance) {
+            OpenRouterService.instance = new OpenRouterService(chatMode);
+        }
+        OpenRouterService.instance.chatMode = chatMode
+        return OpenRouterService.instance;
+    }
 
 }
+

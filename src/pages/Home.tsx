@@ -1,34 +1,25 @@
-import Search from '@/components/Search/Search';
-import { useUserSettings } from '@/hooks/useUserSettings';
-import { useEffect, useState } from 'react';
-import { SearchTabs } from '@/components/SearchTabs/SearchTabs';
+import { Search } from '@/components/Search/Search';
+import { Commands } from '@/components/Commands/Commands';
+import { useState } from 'react';
+import Result from '@/components/Result/Result';
+import { LLMResponses } from '@/services/LLMService';
 
 export default function Home() {
 
-  const { getConfig } = useUserSettings()
-  const [layoutMode, setLayoutMode] = useState<string>(getConfig("general.layout.mode"));
-
-  // sync configs
-  useEffect(() => {
-    const removeListener = window.system.syncConfig((data) => {
-      if (data.key == `general.layout.mode`) setLayoutMode(data.value as unknown as string)
-    });
-
-    return () => {
-      removeListener();
-    };
-  });
+  const [input, setInput] = useState<string>("");
+  const [awaiting, setAwaiting] = useState<boolean>(false);
+  const [LLMResponses, setLLMResponses] = useState<LLMResponses | undefined>(undefined);
 
   return (
     <>
-      {/* <div className="bg-background rounded-b-xl rounded-tr-xl" autoFocus> */}
       <div autoFocus>
-        {layoutMode == "full" && <SearchTabs />}
-        {layoutMode == "minimalist" && <Search id='1' key={1} />}
+        {input.startsWith("/") ?
+          <Commands id='1' key={1} input={input} setInput={setInput} />
+          :
+          <Search id='1' key={1} input={input} setInput={setInput} setAwaiting={setAwaiting} setLLMResponses={setLLMResponses} />
+        }
+        {(!awaiting && !input.startsWith("/")) && <Result contents={LLMResponses} />}
       </div>
     </>
   )
 }
-
-
-

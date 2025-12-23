@@ -1,93 +1,49 @@
-import Anthropic from '@anthropic-ai/sdk';
-import { getSystemPrompt, IILLMService, ILLMCapabilities } from "./LLMService";
-import { MessageParam, TextBlock } from '@anthropic-ai/sdk/resources/messages.mjs';
+import { createAnthropic } from '@ai-sdk/anthropic';
+import { LanguageModelV2 } from '@ai-sdk/provider';
+import { LLMService } from "./LLMService";
+import { fetchData } from '@/utils/feachData';
 
-export default class ClaudeService implements IILLMService {
+export default class ClaudeService extends LLMService {
 
-  private genAI: Anthropic
-  private chatHistory: Array<MessageParam>;
-  
-  chatMode: boolean;
-  capabilities: ILLMCapabilities = {
-    context: true,
-    text: true,
-    audio: false,
-    // image: false,
-    file: false,
-  };
-
-  private constructor(chatMode = false) {
-
-    this.chatMode = chatMode
-    this.chatHistory = []
-
-    this.genAI = new Anthropic({
-      apiKey: this.getApiKey(),
-      dangerouslyAllowBrowser: true
-    });
-  }
-
-  private static instance: ClaudeService;
-  public static getInstance(chatMode = false): ClaudeService {
-    if (!ClaudeService.instance) {
-      ClaudeService.instance = new ClaudeService(chatMode);
-    }
-    ClaudeService.instance.chatMode = chatMode
-    return ClaudeService.instance;
-  }
-
-  getApiKey(): string {
-    return window.system.store.get('models.claude.apikey') || window.env.SUNCH_CLAUDE_API_KEY || process.env.SUNCH_CLAUDE_API_KEY || "";
-  }
-
-  getModel(): string {
-    return window.system.store.get('models.claude.version')
-  }
-
-  async execute(sessionId: string, prompt: string): Promise<string> {
-    
-        if (this.chatMode) {
-      if (this.chatHistory.length == 0) {
-        this.chatHistory.push({ role: "assistant", content: getSystemPrompt() })
-      }
-      this.chatHistory.push({ role: "user", content: prompt })
-    } else {
-      this.chatHistory = [
-        { role: "assistant", content: getSystemPrompt() },
-        { role: "user", content: prompt }
-      ]
+    private constructor(chatMode = false) {
+        super(chatMode)
     }
 
-    // eslint-disable-next-line no-empty
-    if (sessionId) {} 
-
-    if (this.genAI.apiKey != this.getApiKey()) {
-      this.genAI.apiKey = this.getApiKey()
+    provider(): LanguageModelV2 {
+        const anthropic = createAnthropic({
+            apiKey: this.apiKey(),
+            headers: {
+                "anthropic-dangerous-direct-browser-access": "true",
+            }
+        })
+        return anthropic(window.system.store.get('models.claude.version'))
     }
 
-    const message = await this.genAI.messages.create({
-      max_tokens: 1024,
-      messages: this.chatHistory,
-      model: this.getModel(),
-    });
+    async listModels(): Promise<Array<string>> {
+        const claude = await fetchData({
+            url: `https://api.anthropic.com/v1/models`,
+            headers: {
+                "Content-Type": "application/json",
+                "anthropic-version": "2023-06-01",
+                "anthropic-dangerous-direct-browser-access": "true",
+                "X-Api-Key": this.apiKey()
+            }
+        });
+        return (claude.data as Array<any>).map(models => models.id)
+    }
 
-    const text = message.content
-      .filter(block => block.type === 'text')
-      .map(block => (block as TextBlock).text)
-      .join('');
+    apiKey(): string {
+        return window.system.store.get('models.claude.apikey') || window.env?.SUNCH_CLAUDE_API_KEY || process.env.SUNCH_CLAUDE_API_KEY || "";
+    }
 
-    return text || "";
-  }
-
-  async listModels(): Promise<Array<string>> {
-    return await this.genAI.models.list()
-      .then((response) => {
-        return response.data
-          .map((model) => model.id);
-      })
-      .catch((error) => {
-        throw  `${error.error.error.type}: ${error.error.error.message}`
-      });
-  }
+    private static instance: ClaudeService;
+    public static getInstance(chatMode = false): ClaudeService {
+        if (!ClaudeService.instance) {
+            ClaudeService.instance = new ClaudeService(chatMode);
+        }
+        ClaudeService.instance.chatMode = chatMode
+        return ClaudeService.instance;
+    }
 
 }
+

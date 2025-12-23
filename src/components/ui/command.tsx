@@ -47,7 +47,7 @@ const CommandInput = React.forwardRef<
       className={cn("p-2", draggable ? "draggable cursor-move" : "")}
       {...(draggable ? { draggable: true } : {})}
     >
-      {icon ?? <Terminal />}
+      {icon ?? <Terminal size={22} />}
     </div>
     <div className="w-[99%]">
       <CommandPrimitive.Input

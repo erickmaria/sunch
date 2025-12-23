@@ -25,6 +25,19 @@
   }
 }
 
+@layer utilities {
+  .tiptap p.is-editor-empty:first-child::before {
+    @apply text-slate-400 opacity-50 float-left h-0 pointer-events-none;
+    content: attr(data-placeholder);
+  }
+
+  /* Target `code` elements inside `.not-pre-code` that are not inside `pre` */
+  .not-pre-code :not(pre) > code,
+  .not-pre-code :not(pre) code {
+    @apply text-sm;
+  }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {

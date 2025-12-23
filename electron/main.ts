@@ -8,8 +8,6 @@ import { SettingsWindow } from './ui/windows/settings';
 import { autoUpdater } from "electron-updater"
 import path from 'path';
 import fs from 'fs';
-import fsp from 'fs/promises';
-import { spawn, } from 'child_process';
 import { PromptsWindow } from './ui/windows/prompts';
 import { UserSettingsSchema } from './store/schemas/userSettings'
 
@@ -130,33 +128,35 @@ if (!gotTheLock) {
         });
       });
 
-      ipcMain.on('transcript', () => {
+      // ipcMain.on('transcript', () => {
 
-        console.log("transcripting recording: ", recordingsDir)
+      //   console.log("transcripting recording: ", recordingsDir)
 
 
-        const child = spawn(`uvx --from openai-whisper whisper.exe --model medium --output_dir \"${recordingsDir}\"  -f txt \"${recordingsDir}\\recording.webm\"`, [], {
-          shell: true
-        })
+      //   const child = spawn(`uvx --from openai-whisper whisper.exe --model medium --output_dir \"${recordingsDir}\"  -f txt \"${recordingsDir}\\recording.webm\"`, [], {
+      //     shell: true
+      //   })
 
-        child.stdout.on('data', (data) => {
-          console.log(`stdout: ${data}`);
-        });
+      //   child.stdout.on('data', (data) => {
+      //     console.log(`stdout: ${data}`);
+      //   });
 
-        child.stderr.on('data', (data) => {
-          console.error(`stderr: ${data}`);
-        });
+      //   child.stderr.on('data', (data) => {
+      //     console.error(`stderr: ${data}`);
+      //   });
 
-        child.on('close', (code) => {
-          if (code == 0) {
-            fsp.readFile(recordingsDir + '\\recording.txt', { encoding: 'utf8' }).then((data) => console.log(data))
-          }
-          console.log(`transcript: child process exited with code ${code}`);
-        });
-      });
+      //   child.on('close', (code) => {
+      //     if (code == 0) {
+      //       fsp.readFile(recordingsDir + '\\recording.txt', { encoding: 'utf8' }).then((data) => console.log(data))
+      //     }
+      //     console.log(`transcript: child process exited with code ${code}`);
+      //   });
+      // });
 
       ipcMain.on('dispatch-sync-config', async (e: Electron.IpcMainEvent, key: string, value: unknown) => {
         HomeWindow.getInstance().bw.webContents.send('sync-config', { key, value });
+        SettingsWindow.getInstance().bw.webContents.send('sync-config', { key, value });
+        PromptsWindow.getInstance().bw.webContents.send('sync-config', { key, value });
       })
 
     })
@@ -171,6 +171,9 @@ if (!gotTheLock) {
           path: app.getPath('exe')
         })
       }
+
+      // app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
+      // app.commandLine.appendSwitch("disable-web-security");
     })
     .then(() => App())
     .then(() => runningNotification())
