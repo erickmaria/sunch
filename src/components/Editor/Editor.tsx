@@ -1,7 +1,7 @@
 
 import { cn } from '@/lib/utils';
 import { useEditor, EditorContext, EditorContent, Extension } from '@tiptap/react';
-import { Placeholder } from '@tiptap/extensions';
+import { Dropcursor, Placeholder } from '@tiptap/extensions';
 import { StarterKit } from '@tiptap/starter-kit';
 import { Markdown } from '@tiptap/markdown';
 import { useEffect, useMemo, useState } from 'react';
@@ -11,16 +11,20 @@ import { useUserSettings } from '@/hooks/useUserSettings';
 type TiptapEditorProps = React.ComponentPropsWithoutRef<'div'> & {
     className?: string;
     placeholder?: string;
-    setContext: React.Dispatch<React.SetStateAction<string>>
+    content: string;
+    setContent: React.Dispatch<React.SetStateAction<string>>
     setEnter: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function TiptapEditor({ className, placeholder, setContext, setEnter, ...props }: TiptapEditorProps) {
+export default function TiptapEditor({ className, placeholder, content, setContent, setEnter, ...props }: TiptapEditorProps) {
 
     const { getConfig } = useUserSettings();
 
+    const [editorMode] = useState<EditorMode>(getConfig("general.editor.mode"));
 
-    const [editorMode, setEditorMode] = useState<EditorMode>(getConfig("general.editor.mode"));
+    useEffect(() => {
+        if (content.length == 0) editor.commands.clearContent()
+    }, [content]);
 
     // sync configs
     useEffect(() => {
@@ -61,8 +65,10 @@ export default function TiptapEditor({ className, placeholder, setContext, setEn
     const editor = useEditor({
         enableInputRules: editorMode == "markdown" && true,
         enablePasteRules: editorMode == "markdown" && true,
+
         extensions: [
             StarterKit.configure({
+                dropcursor: false,
                 heading: false,
                 trailingNode: false
                 // hardBreak: false,
@@ -78,12 +84,13 @@ export default function TiptapEditor({ className, placeholder, setContext, setEn
             attributes: {
                 class: cn(
                     "p-0.5 rounded-xs min-h-4 text-foreground max-w-full",
-                    "prose prose-xs md:prose-sm prose-blockquote:text-foreground prose-blockquote:m-1 prose-blockquote:opacity-70 prose-ul:m-0 prose-li:m-0 prose-ol:m-0 prose-pre:m-1 prose-pre:p-1 prose-pre:text-sm prose-p:m-0 not-pre-code prose-code:text-primary"
+                    "prose prose-xs md:prose-sm prose-blockquote:text-foreground prose-blockquote:m-1 prose-blockquote:opacity-70 prose-ul:m-0 prose-li:m-0 prose-li:p-0 prose-ol:m-0 prose-pre:m-1",
+                    "prose-pre:p-1 prose-pre:text-sm prose-p:m-0 not-pre-code prose-code:text-primary prose-pre:bg-secondary"
                 ),
             },
         },
         onUpdate: ({ editor }) => {
-            setContext(editor.getMarkdown());
+            setContent(editor.getMarkdown());
         },
     })
 
@@ -91,7 +98,7 @@ export default function TiptapEditor({ className, placeholder, setContext, setEn
     const providerValue = useMemo(() => ({ editor }), [editor])
 
     return (
-        <div className={cn(className, "flex-1 opacity-90 p-0.5 m-1 max-h-60 overflow-y-auto  prose-pre:bg-secondary")}>
+        <div className={cn(className, "flex-1 opacity-90 p-0.5 m-1 max-h-60 overflow-y-auto ")}>
             <EditorContext.Provider value={providerValue}>
                 <EditorContent
                     {...props}

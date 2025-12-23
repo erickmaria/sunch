@@ -277,7 +277,8 @@ export function Search({ id, input, setInput, setAwaiting, setLLMResponses }: Se
             <TiptapEditor
               onPaste={handlePaste}
               setEnter={setEnter}
-              setContext={setInput}
+              content={input}
+              setContent={setInput}
               placeholder={isDragActive ? 'Drop the files here ...' : 'Ask something or type / to check commands'}
             />
             {/* <InputGroupTextareaAutosize
