@@ -1,7 +1,7 @@
 import { app, globalShortcut } from "electron"
 import { toggleWindow } from "../utils/wintoggle"
 import net from 'net'
-import { exec } from 'child_process'
+import { spawn } from 'child_process'
 import { join } from 'path';
 import { config } from "dotenv"
 
@@ -19,17 +19,24 @@ const PATH: string = join(appPath, 'scripts/shortcuts')
 const scriptShortcuts = (() => {
 
     const execScript = (file: string) => {
-        exec(`bash ${join(PATH, file)} ${PORT} ${appPath} `, (error, stdout, stderr) => {
-            if (error) {
-              console.error(`[ERROR][LINUX] shortcuts script: ${error.message}`);
-              return;
-            }
-            if (stderr) {
-              console.error(`[ERROR][LINUX] shortcuts script: ${stderr}`);
-              return;
-            }
-            console.log(`[INFO][LINUX] shortcuts scripts: ${stdout}`);
-          });
+        const scriptPath = join(PATH, file);
+        const child = spawn('bash', [scriptPath, `${PORT}`, appPath]);
+
+        child.on('error', (error: Error) => {
+            console.error(`[ERROR][LINUX] shortcuts script: ${error.message}`);
+        });
+
+        if (child.stderr) {
+            child.stderr.on('data', (chunk: Buffer) => {
+                console.error(`[ERROR][LINUX] shortcuts script: ${chunk.toString()}`);
+            });
+        }
+
+        if (child.stdout) {
+            child.stdout.on('data', (chunk: Buffer) => {
+                console.log(`[INFO][LINUX] shortcuts scripts: ${chunk.toString()}`);
+            });
+        }
     }
 
     return {

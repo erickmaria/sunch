@@ -37,6 +37,7 @@ linux:
   icon: public/
   executableArgs:
     - "--no-sandbox"
+    - "--ozone-platform=x11"
   target:
     - target: deb
       arch:
