@@ -7,27 +7,23 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command"
 
 import { Kbd } from '../ui/kbd';
 import { Badge } from '../ui/badge';
-import { ReactNode, useEffect, useState } from "react";
+import { forwardRef, HTMLAttributes, ReactNode, useEffect, useState } from "react";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { AiBrowserIcon, ArtificialIntelligence04Icon, ArtificialIntelligence05Icon, ChatGptIcon, Chatting01Icon, CleanIcon, ColorsIcon, GoogleGeminiIcon, Layout01Icon, Logout04Icon, Moon02Icon, Sun02Icon, ToggleOffIcon, ToggleOnIcon } from "hugeicons-react";
 import { RiClaudeFill } from "react-icons/ri";
 import OpenRouter from "../icons/OpenRouter/OpenRouter";
 import { Prompt } from "@/models/prompt";
 
-interface CommandsProps {
-  id: string
-  input: string
-  setInput: React.Dispatch<React.SetStateAction<string>>
-}
+interface CommandsProps extends HTMLAttributes<HTMLDivElement> {}
 
-export function Commands({ id, input, setInput }: CommandsProps) {
+export const Commands = forwardRef<HTMLDivElement, CommandsProps>((props, ref) => {
 
+  const [input, setInput] = useState<string>("");
   const { setConfig, dispatchSyncConfig } = useUserSettings();
 
   let PROMPT_EVENT = false
@@ -273,7 +269,7 @@ export function Commands({ id, input, setInput }: CommandsProps) {
         return (
           <>
             <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup heading="Suggestions">
+            {/* <CommandGroup heading="Suggestions"> */}
               <CommandItem value='/clear' onSelect={(value) => execCommand(value)}>
                 <CleanIcon />
                 <span>Clear content and Chat context</span>
@@ -299,9 +295,9 @@ export function Commands({ id, input, setInput }: CommandsProps) {
                   </Kbd>
                 </CommandShortcut>
               </CommandItem>
-            </CommandGroup>
-            <CommandSeparator />
-            <CommandGroup heading="Quick Settings">
+            {/* </CommandGroup> */}
+            {/* <CommandSeparator />
+            <CommandGroup heading="Quick Settings"> */}
               <CommandItem value='/theme' onSelect={(value) => setInput(value)}>
                 <ColorsIcon />
                 <span>Change theme</span>
@@ -329,9 +325,9 @@ export function Commands({ id, input, setInput }: CommandsProps) {
                   </Kbd>
                 </CommandShortcut>
               </CommandItem>
-            </CommandGroup>
-            <CommandSeparator />
-            <CommandGroup heading="General Settings">
+            {/* </CommandGroup> */}
+            {/* <CommandSeparator /> */}
+            {/* <CommandGroup heading="General Settings"> */}
               <CommandItem value='/settings' onSelect={(value) => execCommand(value)}>
                 <Settings />
                 <span>Advanced Settings</span>
@@ -359,7 +355,7 @@ export function Commands({ id, input, setInput }: CommandsProps) {
                   </Kbd>
                 </CommandShortcut>
               </CommandItem>
-            </CommandGroup>
+            {/* </CommandGroup> */}
           </>
         );
       }
@@ -367,14 +363,16 @@ export function Commands({ id, input, setInput }: CommandsProps) {
   }
 
   return (
-    <Command key={id} id={id}>
-      <CommandInput autoFocus value={input} onValueChange={e => { setInput(e) }} placeholder="Type a command or search..." />
+    <div>
+    <Command className="px-2" ref={ref} {...props}>
+      <CommandInput draggable quickai value={input} onValueChange={e => { setInput(e) }} placeholder="Type a command or search..." />
       <CommandList>
         {CommandItems()}
       </CommandList>
     </Command>
+    </div>
   )
-}
+})
 
 interface CommandItemContentProps {
   icon: ReactNode

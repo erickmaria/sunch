@@ -1,15 +1,15 @@
 
-import React, { ClipboardEvent, useCallback, useEffect, useState } from 'react'
-import { AiIdeaIcon, Menu01Icon, UploadCircle01Icon } from 'hugeicons-react';
+import React, { ClipboardEvent, forwardRef, HTMLAttributes, useCallback, useEffect, useState } from 'react'
+import { AiIdeaIcon, Search01Icon, UploadCircle01Icon } from 'hugeicons-react';
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useUserSettings } from '@/hooks/useUserSettings';
 import { Check, X } from "lucide-react"
 
-import { InputGroupButton } from '../ui/input-group';
 import { LLMProvider, LLMResponses } from '@/services/LLMService';
 import { useLLMService } from '@/hooks/useLLMService';
 
@@ -17,11 +17,12 @@ import { useDropzone } from 'react-dropzone'
 import { Spinner } from '../ui/spinner';
 import { MdWarningAmber } from 'react-icons/md';
 import { cn } from '@/lib/utils';
-import AppIcon from '../icons/AppIcon/AppIcon';
+// import AppIcon from '../icons/AppIcon/AppIcon';
 import _ from 'lodash';
 import { SeachOptionProps } from './SearchOptions';
 import { SeachIconTooltip } from './SearchTooltip';
 import TiptapEditor from '../Editor/Editor';
+import Result from '../Result/Result';
 
 interface FilesUpload {
   // filename: string
@@ -39,23 +40,23 @@ interface SeachUploadProps {
 
 function SeachFilesUpload({ files, setFiles }: SeachUploadProps) {
   return (
-    <div className='flex flex-row flex-wrap gap-x-0.5'>
+    <div className='flex flex-row gap-x-1 h-fit overflow-auto'>
       {
         files.map(f => {
           return (
             <div key={f.file.name} className={cn(
-              'bg-background flex items-center w-fit mt-0.5 px-2 py-1 space-x-1 rounded-md',
+              'bg-background border flex items-center p-1 space-x-1 rounded-md',
               // `${uploader.status.type == 'DONE' && 'text-green-400'}`,
               `${f.status.type == 'ERROR' && 'text-red-400'}`
             )}>
-              {f.status.type == 'INPROGRESS' && <Spinner size={18} />}
+              {f.status.type == 'INPROGRESS' && <Spinner />}
               {f.status.type == 'DONE' && <Check size={18} />}
               {f.status.type == 'ERROR' && <MdWarningAmber size={18} />}
-              <span>
+              <div className='flex-1 w-fit unwarp text-nowrap'>
                 {f.status.type == 'INPROGRESS' && "Uploading "}
-                {f.file.name}
+                <span>{f.file.name}</span>
                 {f.status.type == 'INPROGRESS' && "..."}
-              </span>
+              </div>
               <X className="cursor-pointer" onClick={() => {
                 setFiles(prev => prev.filter(u => u.file.name !== f.file.name));
               }} />
@@ -67,25 +68,23 @@ function SeachFilesUpload({ files, setFiles }: SeachUploadProps) {
   )
 }
 
-interface SearchProps {
-  id: string
-  input: string
-  setInput: React.Dispatch<React.SetStateAction<string>>
-  setAwaiting: React.Dispatch<React.SetStateAction<boolean>>
-  setLLMResponses: React.Dispatch<React.SetStateAction<LLMResponses | undefined>>
-}
-
 type Prompt = { id: string, title?: string, content?: string }
 
-export function Search({ id, input, setInput, setAwaiting, setLLMResponses }: SearchProps) {
+interface SearchProps extends HTMLAttributes<HTMLDivElement> { }
+
+export const Search = forwardRef<HTMLDivElement, SearchProps>((props, ref) => {
 
   const { getConfig, delConfig } = useUserSettings();
   const [alert, setAlert] = useState<string | undefined>(undefined)
-  const [openOptions, setOpenOptions] = useState(false);
   const [enter, setEnter] = useState(false);
 
   const [chatMode, setChatMode] = useState<boolean>(getConfig(`general.chatMode.enable`) as boolean);
   const [audio, setAudio] = useState("");
+
+  const [input, setInput] = useState<string>("");
+  const [awaitingResponse, setAwaitingResponse] = useState<boolean>(false);
+  const [LLMResponses, setLLMResponses] = useState<LLMResponses | undefined>(undefined);
+
 
   const [providers, setProviders] = useState<Array<LLMProvider>>([getConfig(`models.current`) as LLMProvider]);
 
@@ -96,6 +95,7 @@ export function Search({ id, input, setInput, setAwaiting, setLLMResponses }: Se
     ...promptSelected
   });
 
+  const id = props.id || "1"
   const { awaiting, capabilities, askSomething } = useLLMService({ id, providers, chatMode });
   const { dispatchSyncConfig, setConfig } = useUserSettings()
 
@@ -122,7 +122,7 @@ export function Search({ id, input, setInput, setAwaiting, setLLMResponses }: Se
   });
 
   useEffect(() => {
-    setAwaiting(awaiting)
+    setAwaitingResponse(awaiting)
   }, [awaiting])
 
   useEffect(() => {
@@ -253,15 +253,23 @@ export function Search({ id, input, setInput, setAwaiting, setLLMResponses }: Se
   }, [input, providers, awaiting])
 
   return (
-    <div>
+    <div ref={ref} {...props}>
       <div>
-        <div className="bg-background px-1 rounded-md" {...(capabilities.get(providers[0])?.file ? getRootProps() : {})}>
+        <div className={cn(
+          "bg-background px-2 py-1 rounded-md"
+        )} {...(capabilities.get(providers[0])?.file ? getRootProps() : {})}>
           <div className='flex gap-x-0.5 px-1'>
             <div>
-              <div className='draggable pt-2.5'>
-                {awaiting && <Spinner size={22} />}
+              <div className='draggable pt-2'>
+                {awaiting && (
+                  <div className="animate-search-path">
+                  <Search01Icon
+                    className="text-blue-500 animate-search-tilt" />
+                </div>
+                )}
                 {(isDragActive && !awaiting) && <UploadCircle01Icon size={22} />}
-                {(!isDragActive && !awaiting) && <AppIcon size={22} />}
+                {(!isDragActive && !awaiting) && <Search01Icon size={22} />}
+
                 <div className={cn(
                   'relative left-3 bg-background rounded-xl',
                   awaiting ? 'bottom-6' : 'bottom-6'
@@ -274,123 +282,41 @@ export function Search({ id, input, setInput, setAwaiting, setLLMResponses }: Se
                 </div>
               </div>
             </div>
-            <TiptapEditor
+            <TiptapEditor 
               onPaste={handlePaste}
+              editable={awaitingResponse}
               setEnter={setEnter}
               content={input}
               setContent={setInput}
-              placeholder={isDragActive ? 'Drop the files here ...' : 'Ask something or type / to check commands'}
+              placeholder={isDragActive ? 'Drop the files here ...' : 'Ask something or press [tab] to check commands'}
             />
-            {/* <InputGroupTextareaAutosize
-                className={cn(
-                  `rounded-sm h-11 placeholder:opacity-40 text`,
-                )}
-                autoFocus
-                onPaste={handlePaste}
-                name='search'
-                id='search'
-                placeholder={isDragActive ? 'Drop the files here ...' : 'Ask something or type / to check commands'}
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                onKeyDown={e => keyDownHandler(e)}
-              /> */}
             <div className='flex items-baseline gap-x-1 pt-2'>
               {prompt?.id != undefined &&
-                <Tooltip>
-                  <TooltipTrigger asChild className='cursor-pointer' onContextMenu={() => {
-                    delConfig("prompts._selected_")
-                    setPrompt(undefined)
-                  }}>
-                    <AiIdeaIcon size={16} />
-                  </TooltipTrigger>
-                  <TooltipContent side={document.body.offsetHeight > 44 ? "bottom" : "left"}>
-                    <p>{prompt.title}</p>
-                  </TooltipContent>
-                </Tooltip>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild className='cursor-pointer' onContextMenu={() => {
+                      delConfig("prompts._selected_")
+                      setPrompt(undefined)
+                    }}>
+                      <AiIdeaIcon size={16} />
+                    </TooltipTrigger>
+                    <TooltipContent side={document.body.offsetHeight > 44 ? "bottom" : "left"}>
+                      <p>{prompt.title}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               }
-              <InputGroupButton
-                onClick={() => (openOptions ? setOpenOptions(false) : setOpenOptions(true))}
-                // variant="outline"
-                size="icon-xs"
-                className="rounded-md"
-              >
-                <Menu01Icon />
-              </InputGroupButton>
             </div>
           </div>
+          <div className='border rounded-md m-1'>
+            {/* {!awaitingResponse && <Result contents={LLMResponses} />} */}
+            <Result contents={LLMResponses} />
+
+          </div>
+          {(files && capabilities.get(providers[0])?.file) && <SeachFilesUpload files={files} setFiles={setFiles} />}
+          <SeachOptionProps key={id} setProviders={setProviders} setLLMResponses={setLLMResponses} setAudio={setAudio} audio={audio} chatMode={chatMode} setChatMode={setChatMode} capabilities={capabilities} providers={providers} />
         </div>
-        {openOptions && <SeachOptionProps key={id} setProviders={setProviders} setLLMResponses={setLLMResponses} setAudio={setAudio} audio={audio} chatMode={chatMode} setChatMode={setChatMode} capabilities={capabilities} providers={providers} />}
       </div>
-      {(files && capabilities.get(providers[0])?.file) && <SeachFilesUpload files={files} setFiles={setFiles} />}
     </div>
   )
-}
-
-
-// return (
-//   <div>
-//     <div>
-//       <div {...(capabilities.get(providers[0])?.file ? getRootProps() : {})}>
-//         <div className={`bg-background ${layoutMode == "minimalist" ? 'rounded-md' : 'rounded-b-md'}`}>
-//           <InputGroup className='border-none dark:bg-input/0 items-center '>
-//             <InputGroupAddon>
-//               <div className='draggable items-center'>
-//                 {awaiting && <Spinner size={24} />}
-//                 {(isDragActive && !awaiting) && <UploadCircle01Icon size={24} />}
-//                 {(!isDragActive && !awaiting) && <AppIcon size={23} />}
-//                 <div className={cn(
-//                   'relative left-3 bg-background rounded-xl',
-//                   awaiting ? 'bottom-6' : 'bottom-6'
-//                 )}>
-//                   <div onContextMenu={async () => {
-//                     setAlert(undefined)
-//                   }}>
-//                     <SeachIconTooltip provider={providers[0]} alert={alert} />
-//                   </div>
-//                 </div>
-//               </div>
-//             </InputGroupAddon>
-//             <InputGroupTextareaAutosize
-//               className={cn(
-//                 `rounded-sm h-11 placeholder:opacity-40 text`,
-//               )}
-//               autoFocus
-//               onPaste={handlePaste}
-//               name='search'
-//               id='search'
-//               placeholder={isDragActive ? 'Drop the files here ...' : 'Ask something or type / to check commands'}
-//               value={input}
-//               onChange={e => setInput(e.target.value)}
-//               onKeyDown={e => keyDownHandler(e)}
-//             />
-//             <InputGroupAddon align="inline-end" className=''>
-//               {prompt?.id != undefined &&
-//                 <Tooltip>
-//                   <TooltipTrigger asChild className='cursor-pointer' onContextMenu={() => {
-//                     delConfig("prompts._selected_")
-//                     setPrompt(undefined)
-//                   }}>
-//                     <AiIdeaIcon />
-//                   </TooltipTrigger>
-//                   <TooltipContent side={document.body.offsetHeight > 44 ? "bottom" : "left"}>
-//                     <p>{prompt.title}</p>
-//                   </TooltipContent>
-//                 </Tooltip>
-//               }
-//               <InputGroupButton
-//                 onClick={() => (openOptions ? setOpenOptions(false) : setOpenOptions(true))}
-//                 // variant="outline"
-//                 size="icon-xs"
-//                 className="rounded-full"
-//               >
-//                 <Menu01Icon />
-//               </InputGroupButton>
-//             </InputGroupAddon>
-//           </InputGroup>
-//         </div>
-//         {openOptions && <SeachOptionProps setProviders={setProviders} setLLMResponses={setLLMResponses} setAudio={setAudio} audio={audio} chatMode={chatMode} setChatMode={setChatMode} capabilities={capabilities} providers={providers} />}
-//       </div>
-//       {(files && capabilities.get(providers[0])?.file) && <SeachFilesUpload files={files} setFiles={setFiles} />}
-//     </ div>
-//   </div>
-// )
+})

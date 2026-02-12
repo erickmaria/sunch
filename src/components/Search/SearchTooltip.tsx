@@ -1,6 +1,6 @@
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { useEffect, useState } from "react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import OpenRouter from "../icons/OpenRouter/OpenRouter";
 import { RiClaudeFill, RiGeminiFill, RiOpenaiFill } from "react-icons/ri";
 import { MdWarningAmber } from "react-icons/md";
@@ -30,6 +30,7 @@ export function SeachIconTooltip({ alert, provider }: SeachIconTooltipProps) {
   });
 
   return (
+    <TooltipProvider>
     <Tooltip>
       <TooltipTrigger asChild className='cursor-pointer'>
         <div className='absolute'>
@@ -45,5 +46,6 @@ export function SeachIconTooltip({ alert, provider }: SeachIconTooltipProps) {
         {(alert == undefined) ? <p>{model}</p> : <p>{alert}</p>}
       </TooltipContent>
     </Tooltip>
+    </TooltipProvider>
   )
 }

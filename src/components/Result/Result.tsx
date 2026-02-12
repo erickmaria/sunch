@@ -1,9 +1,7 @@
-import MarkdownHighlighter from '../MarkdownHighlighter/MarkdownHighlighter'
-import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
+
 import { LLMProvider, LLMResponses } from '@/services/LLMService'
-import OpenRouter from '../icons/OpenRouter/OpenRouter'
-import { RiClaudeFill, RiGeminiFill, RiOpenaiFill } from 'react-icons/ri'
 import React from 'react'
+import { Message, MessageContent, MessageResponse } from '../ai-elements/message'
 
 interface ResultProps {
   contents: LLMResponses | undefined
@@ -14,32 +12,22 @@ function Result({ contents }: ResultProps) {
   if (contents != undefined && contents.size > 0) {
     const providers = Array.from(contents.keys())
     return (
-      <PanelGroup direction="horizontal">
-        <div className='bg-background w-full max-h-[780px] overflow-auto rounded-md mt-0.5 select-text' >
-          {providers.map((provider: LLMProvider, index: number) => (
-            <div key={index}>
-              {(contents.size > 0) && <PanelResizeHandle className='px-px' />}
-              <Panel>
-                <div className='p-1 bg-background rounded-md whitespace-pre-wrap leading-8 overflow-x-auto'
-                  style={(contents.size > 1) ? { whiteSpace: 'pre-wrap' } : { whiteSpace: 'wrap' }}
-                >
-                  {(contents.size > 1) && <>
-                    <div className='h-2.5'>
-                      <div className='relative bottom-0.5 right-0.5 rounded-full w-fit p-0.5'>
-                        {(provider === 'openrouter') && <OpenRouter size={16} />}
-                        {(provider === 'gemini') && <RiGeminiFill size={16} />}
-                        {(provider === 'gpt') && <RiOpenaiFill size={16} />}
-                        {(provider === 'claude') && <RiClaudeFill size={16} />}
-                      </div>
-                    </div>
-                  </>}
-                  <MarkdownHighlighter key={provider} markdown={contents.get(provider)!} />
-                </div>
-              </Panel>
-            </div>
-          ))}
-        </div>
-      </PanelGroup>
+
+      <div className="bg-background/15 p-6  max-h-[400px] overflow-auto rounded-b-md mt-0.5 select-text">
+        <div className="flex flex-coloverflow-auto">
+          {providers.map((provider: LLMProvider) => (
+            <Message from='assistant'>
+              <MessageContent>
+                <MessageResponse
+                linkSafety={{
+                  enabled: false,
+                }}
+                >{contents.get(provider)!}</MessageResponse>
+              </MessageContent>
+            </Message>
+         ))}
+      </div>
+    </div >
     )
   }
 

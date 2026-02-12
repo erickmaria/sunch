@@ -1,4 +1,4 @@
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import OpenRouter from "../icons/OpenRouter/OpenRouter";
 import { RiClaudeFill } from "react-icons/ri";
 import { SettingsOptions } from "../SearchSettings/SettingsOptions";
@@ -23,7 +23,7 @@ interface SeachOptionProps {
 export function SeachOptionProps({ setProviders, setLLMResponses, setAudio, chatMode, setChatMode, capabilities, providers }: SeachOptionProps) {
 
   return (
-    <div className='bg-background rounded-md border-2 border-transparent w-full px-1 my-0.5'>
+    <div className='bg-background rounded-b-md border-2 border-transparent w-full p-1 pt-2'>
       <div className='flex justify-between items-center'>
         <div className='flex'>
           <div >
@@ -52,6 +52,7 @@ export function SeachOptionProps({ setProviders, setLLMResponses, setAudio, chat
         </div>
         <div className='flex'>
           <div className={`${!(capabilities.get(providers[0])?.audio) && 'pointer-events-none opacity-10'} p-1`}>
+            <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <div>
@@ -65,6 +66,7 @@ export function SeachOptionProps({ setProviders, setLLMResponses, setAudio, chat
                 <p>Use Voice</p>
               </TooltipContent>
             </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
       </div>

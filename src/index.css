@@ -199,3 +199,25 @@
   }
 
 }
+
+/* movimento circular extremamente suave */
+@theme {
+  --animate-search-path: searchPath 5.2s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+  --animate-search-tilt: searchTilt 5.2s ease-in-out infinite;
+}
+
+/* caminho elíptico contínuo */
+@keyframes searchPath {
+  0%   { transform: translate(0px, -3px); }
+  25%  { transform: translate(3px, 0px); }
+  50%  { transform: translate(0px, 3px); }
+  75%  { transform: translate(-3px, 0px); }
+  100% { transform: translate(0px, -3px); }
+}
+
+/* pequena inclinação da lupa */
+@keyframes searchTilt {
+  0%   { transform: rotate(-2deg); }
+  50%  { transform: rotate(2deg); }
+  100% { transform: rotate(-2deg); }
+}

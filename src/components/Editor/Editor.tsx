@@ -12,11 +12,12 @@ type TiptapEditorProps = React.ComponentPropsWithoutRef<'div'> & {
     className?: string;
     placeholder?: string;
     content: string;
+    editable: boolean;
     setContent: React.Dispatch<React.SetStateAction<string>>
     setEnter: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function TiptapEditor({ className, placeholder, content, setContent, setEnter, ...props }: TiptapEditorProps) {
+export default function TiptapEditor({ className, placeholder, content, editable = true, setContent, setEnter, ...props }: TiptapEditorProps) {
 
     const { getConfig } = useUserSettings();
 
@@ -94,11 +95,18 @@ export default function TiptapEditor({ className, placeholder, content, setConte
         },
     })
 
+    useEffect(() => {
+        editor.setOptions({ editable: !editable }) 
+    }, [editable])
+
     // Memoize the provider value to avoid unnecessary re-renders
     const providerValue = useMemo(() => ({ editor }), [editor])
 
     return (
-        <div className={cn(className, "flex-1 opacity-90 p-0.5 m-1 max-h-60 overflow-y-auto ")}>
+        <div className={cn(className, 
+            "flex-1 p-0.5 m-1 max-h-60 overflow-y-auto",
+            !editable ? "opacity-90" : "opacity-20"
+            )}>
             <EditorContext.Provider value={providerValue}>
                 <EditorContent
                     {...props}
