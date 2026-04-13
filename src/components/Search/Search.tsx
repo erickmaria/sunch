@@ -17,7 +17,6 @@ import { useDropzone } from 'react-dropzone'
 import { Spinner } from '../ui/spinner';
 import { MdWarningAmber } from 'react-icons/md';
 import { cn } from '@/lib/utils';
-// import AppIcon from '../icons/AppIcon/AppIcon';
 import _ from 'lodash';
 import { SeachOptionProps } from './SearchOptions';
 import { SeachIconTooltip } from './SearchTooltip';
@@ -70,9 +69,13 @@ function SeachFilesUpload({ files, setFiles }: SeachUploadProps) {
 
 type Prompt = { id: string, title?: string, content?: string }
 
-interface SearchProps extends HTMLAttributes<HTMLDivElement> { }
+interface SearchProps extends HTMLAttributes<HTMLDivElement> {
+  hidden?: boolean;
+}
 
 export const Search = forwardRef<HTMLDivElement, SearchProps>((props, ref) => {
+
+  const { hidden = false } = props;
 
   const { getConfig, delConfig } = useUserSettings();
   const [alert, setAlert] = useState<string | undefined>(undefined)
@@ -141,6 +144,37 @@ export const Search = forwardRef<HTMLDivElement, SearchProps>((props, ref) => {
     if (enter && (input.length != 0)) sendAsk(input)
     setEnter(false)
   }, [enter])
+
+  useEffect(() => {
+    const focusEditor = () => {
+      if (!hidden) {
+        const editorElement = document.querySelector('.ProseMirror') as HTMLElement | null;
+        editorElement?.focus();
+      }
+    };
+
+    if (!hidden) {
+      focusEditor();
+    }
+
+    const handleWindowFocus = () => {
+      focusEditor();
+    };
+
+    const handleVisibilityChange = () => {
+      if (!hidden && !document.hidden) {
+        focusEditor();
+      }
+    };
+
+    window.addEventListener('focus', handleWindowFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('focus', handleWindowFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [hidden]);
 
   function sendAsk(input: string) {
     if (input.length == 0) return
@@ -256,9 +290,9 @@ export const Search = forwardRef<HTMLDivElement, SearchProps>((props, ref) => {
     <div ref={ref} {...props}>
       <div>
         <div className={cn(
-          "bg-background px-2 py-1 rounded-md"
+          "bg-background py-1 rounded-md"
         )} {...(capabilities.get(providers[0])?.file ? getRootProps() : {})}>
-          <div className='flex gap-x-0.5 px-1'>
+          <div className='flex gap-x-0.5 px-2'>
             <div>
               <div className='draggable pt-2'>
                 {awaiting && (
@@ -288,6 +322,7 @@ export const Search = forwardRef<HTMLDivElement, SearchProps>((props, ref) => {
               setEnter={setEnter}
               content={input}
               setContent={setInput}
+              shouldFocus={!hidden}
               placeholder={isDragActive ? 'Drop the files here ...' : 'Ask something or press [tab] to check commands'}
             />
             <div className='flex items-baseline gap-x-1 pt-2'>
@@ -308,9 +343,11 @@ export const Search = forwardRef<HTMLDivElement, SearchProps>((props, ref) => {
               }
             </div>
           </div>
-          <div className='border rounded-md m-1'>
+          <div className='border-t rounded-md'>
+            <div className='' >
             {/* {!awaitingResponse && <Result contents={LLMResponses} />} */}
             <Result contents={LLMResponses} />
+            </div>
 
           </div>
           {(files && capabilities.get(providers[0])?.file) && <SeachFilesUpload files={files} setFiles={setFiles} />}

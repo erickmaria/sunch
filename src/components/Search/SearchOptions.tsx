@@ -23,9 +23,9 @@ interface SeachOptionProps {
 export function SeachOptionProps({ setProviders, setLLMResponses, setAudio, chatMode, setChatMode, capabilities, providers }: SeachOptionProps) {
 
   return (
-    <div className='bg-background rounded-b-md border-2 border-transparent w-full p-1 pt-2'>
+    <div className='bg-background rounded-b-md px-2'>
       <div className='flex justify-between items-center'>
-        <div className='flex'>
+        <div className='flex mt-1'>
           <div >
             <SettingsOptions >
               <SettingsTittle name='AI' />

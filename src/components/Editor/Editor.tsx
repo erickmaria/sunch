@@ -15,9 +15,10 @@ type TiptapEditorProps = React.ComponentPropsWithoutRef<'div'> & {
     editable: boolean;
     setContent: React.Dispatch<React.SetStateAction<string>>
     setEnter: React.Dispatch<React.SetStateAction<boolean>>
+    shouldFocus?: boolean;
 }
 
-export default function TiptapEditor({ className, placeholder, content, editable = true, setContent, setEnter, ...props }: TiptapEditorProps) {
+export default function TiptapEditor({ className, placeholder, content, editable = true, setContent, setEnter, shouldFocus = false, ...props }: TiptapEditorProps) {
 
     const { getConfig } = useUserSettings();
 
@@ -80,7 +81,7 @@ export default function TiptapEditor({ className, placeholder, content, editable
                 placeholder: placeholder,
             })
         ],
-        autofocus: true,
+        autofocus: false,
         editorProps: {
             attributes: {
                 class: cn(
@@ -94,6 +95,12 @@ export default function TiptapEditor({ className, placeholder, content, editable
             setContent(editor.getMarkdown());
         },
     })
+
+    useEffect(() => {
+        if (shouldFocus && editor) {
+            editor.commands.focus();
+        }
+    }, [shouldFocus, editor])
 
     useEffect(() => {
         editor.setOptions({ editable: !editable }) 

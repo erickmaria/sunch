@@ -42,6 +42,7 @@ class Window {
         experimentalFeatures: true,
       },
       transparent: true,
+      backgroundColor: '#00000000',
       frame: false,
       show: false,
     });

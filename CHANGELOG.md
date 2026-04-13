@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- fix: Search input now focuses when switching components via Tab key
+- fix: Commands input no longer selects text when focusing back
+- fix: intermittent black region in transparent Electron windows by keeping window compositor active and forcing transparent HTML/body/root backgrounds
+
 ## v1.7.0 - 2025-12-23
 
 - feat: add rich text editor

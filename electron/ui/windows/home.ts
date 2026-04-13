@@ -38,6 +38,7 @@ class Window {
       resizable: false,
       frame: false,
       transparent: true,
+      backgroundColor: '#00000000',
       show: false,
     });
 

@@ -37,7 +37,9 @@ if (!gotTheLock) {
     store.delete("tabs")
   })
 
-  app.disableHardwareAcceleration()
+  // Keep the transparent window compositor active for proper window transparency on Windows.
+  // Disabling hardware acceleration can cause intermittent black rendering artifacts.
+  // app.disableHardwareAcceleration()
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -172,8 +174,8 @@ if (!gotTheLock) {
         })
       }
 
-      // app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
-      // app.commandLine.appendSwitch("disable-web-security");
+      app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
+      app.commandLine.appendSwitch("disable-web-security");
     })
     .then(() => App())
     .then(() => runningNotification())

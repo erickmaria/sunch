@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode } from "react"
+import React, { ReactElement, ReactNode, useState } from "react"
 
 
 interface SettingsSwitcherProps {
@@ -9,12 +9,14 @@ interface SettingsSwitcherProps {
 
 
 export function SettingsSwitcher({ name, defaultValue, children }: SettingsSwitcherProps) {
+    const [selectedValue, setSelectedValue] = useState(defaultValue);
 
     const enhancedChildren = React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
             return React.cloneElement(child as ReactElement<any>, {
                 name,
-                defaultValue
+                selectedValue,
+                onSelect: setSelectedValue
             });
         }
         return child;
@@ -22,7 +24,7 @@ export function SettingsSwitcher({ name, defaultValue, children }: SettingsSwitc
 
     return (
         <>
-            <div className="setting-options-switch-field setting-options-switch-size">
+            <div className="flex bg-secondary border-2 border-secondary rounded-md relative">
                 {enhancedChildren}
             </div>
         </>
@@ -31,23 +33,39 @@ export function SettingsSwitcher({ name, defaultValue, children }: SettingsSwitc
 
 interface SettingsItemSwitcherItem {
     name?: string
-    defaultValue?: string
+    selectedValue?: string
+    onSelect?: (value: string) => void
     onClick: () => void
     icon: ReactNode
     value: string
 }
 
 
-export function SettingsSwitcherItem({ name, defaultValue, icon, value, onClick }: SettingsItemSwitcherItem) {
+export function SettingsSwitcherItem({ selectedValue, onSelect, icon, value, onClick }: SettingsItemSwitcherItem) {
+
+    const handleClick = () => {
+        if (onSelect) {
+            onSelect(value);
+        }
+        onClick();
+    };
+
+    const isSelected = selectedValue === value;
 
     return (
         <>
-            <div className="flex">
-                <input type="radio" id={`theme-switcher-${value}`} name={name} value={value} defaultChecked={defaultValue === value} />
-                <label onClick={onClick} htmlFor={`theme-switcher-${value}`} aria-label={value} >
-                    {icon}
-                </label>
-            </div>
+            <button
+                type="button"
+                onClick={handleClick}
+                className={`inline-flex justify-center items-center cursor-pointer font-medium leading-4 px-2 py-1 text-center capitalize transition-all duration-150 ease-in-out rounded-md ${
+                    isSelected
+                        ? 'bg-background shadow-md text-foreground'
+                        : 'bg-transparent text-gray-400 hover:text-gray-300'
+                }`}
+                aria-label={value}
+            >
+                {icon}
+            </button>
         </>
     )
 }

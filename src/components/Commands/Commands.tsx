@@ -1,4 +1,4 @@
-import { ComputerIcon, Edit, Plus, Settings, Trash2 } from "lucide-react"
+import { ArrowDown, ArrowUp, ComputerIcon, Edit, Plus, Settings, Trash2 } from "lucide-react"
 
 import {
   Command,
@@ -12,16 +12,18 @@ import {
 
 import { Kbd } from '../ui/kbd';
 import { Badge } from '../ui/badge';
-import { forwardRef, HTMLAttributes, ReactNode, useEffect, useState } from "react";
+import { forwardRef, HTMLAttributes, ReactNode, useEffect, useRef, useState } from "react";
 import { useUserSettings } from "@/hooks/useUserSettings";
-import { AiBrowserIcon, ArtificialIntelligence04Icon, ArtificialIntelligence05Icon, ChatGptIcon, Chatting01Icon, CleanIcon, ColorsIcon, GoogleGeminiIcon, Layout01Icon, Logout04Icon, Moon02Icon, Sun02Icon, ToggleOffIcon, ToggleOnIcon } from "hugeicons-react";
+import { AiBrowserIcon, ArtificialIntelligence04Icon, ChatGptIcon, Chatting01Icon, CleanIcon, ColorsIcon, GoogleGeminiIcon, Layout01Icon, Logout04Icon, Moon02Icon, Sun02Icon, ToggleOffIcon, ToggleOnIcon } from "hugeicons-react";
 import { RiClaudeFill } from "react-icons/ri";
 import OpenRouter from "../icons/OpenRouter/OpenRouter";
 import { Prompt } from "@/models/prompt";
 
-interface CommandsProps extends HTMLAttributes<HTMLDivElement> {}
+interface CommandsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'defaultValue' | 'defaultChecked'> { }
 
 export const Commands = forwardRef<HTMLDivElement, CommandsProps>((props, ref) => {
+  const { hidden, ...rest } = props;
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [input, setInput] = useState<string>("");
   const { setConfig, dispatchSyncConfig } = useUserSettings();
@@ -268,8 +270,8 @@ export const Commands = forwardRef<HTMLDivElement, CommandsProps>((props, ref) =
       default: {
         return (
           <>
-            <CommandEmpty>No results found.</CommandEmpty>
-            {/* <CommandGroup heading="Suggestions"> */}
+            <CommandEmpty className="py-8 text-center text-muted-foreground">No results found.</CommandEmpty>
+            <CommandGroup heading="Settings">
               <CommandItem value='/clear' onSelect={(value) => execCommand(value)}>
                 <CleanIcon />
                 <span>Clear content and Chat context</span>
@@ -295,9 +297,6 @@ export const Commands = forwardRef<HTMLDivElement, CommandsProps>((props, ref) =
                   </Kbd>
                 </CommandShortcut>
               </CommandItem>
-            {/* </CommandGroup> */}
-            {/* <CommandSeparator />
-            <CommandGroup heading="Quick Settings"> */}
               <CommandItem value='/theme' onSelect={(value) => setInput(value)}>
                 <ColorsIcon />
                 <span>Change theme</span>
@@ -325,9 +324,8 @@ export const Commands = forwardRef<HTMLDivElement, CommandsProps>((props, ref) =
                   </Kbd>
                 </CommandShortcut>
               </CommandItem>
-            {/* </CommandGroup> */}
-            {/* <CommandSeparator /> */}
-            {/* <CommandGroup heading="General Settings"> */}
+
+
               <CommandItem value='/settings' onSelect={(value) => execCommand(value)}>
                 <Settings />
                 <span>Advanced Settings</span>
@@ -337,7 +335,7 @@ export const Commands = forwardRef<HTMLDivElement, CommandsProps>((props, ref) =
                   </Kbd>
                 </CommandShortcut>
               </CommandItem>
-              <CommandItem disabled value='/ai' onSelect={(value) => execCommand(value)}>
+              {/* <CommandItem disabled value='/ai' onSelect={(value) => execCommand(value)}>
                 <ArtificialIntelligence05Icon />
                 <span>AI Settings</span>
                 <CommandShortcut>
@@ -345,7 +343,7 @@ export const Commands = forwardRef<HTMLDivElement, CommandsProps>((props, ref) =
                     /ai
                   </Kbd>
                 </CommandShortcut>
-              </CommandItem>
+              </CommandItem> */}
               <CommandItem value='/exit' onSelect={(value) => execCommand(value)}>
                 <Logout04Icon />
                 <span>Exit Program</span>
@@ -355,21 +353,66 @@ export const Commands = forwardRef<HTMLDivElement, CommandsProps>((props, ref) =
                   </Kbd>
                 </CommandShortcut>
               </CommandItem>
-            {/* </CommandGroup> */}
+              {/* <CommandSeparator /> */}
+            </CommandGroup>
           </>
         );
       }
     }
   }
 
+  useEffect(() => {
+    const focusInput = () => {
+      if (!hidden && inputRef.current) {
+        inputRef.current.focus();
+        const length = inputRef.current.value.length;
+        inputRef.current.setSelectionRange(length, length);
+      }
+    };
+
+    if (!hidden) {
+      const timer = window.setTimeout(focusInput, 20);
+      return () => window.clearTimeout(timer);
+    }
+  }, [hidden]);
+
+  useEffect(() => {
+    const handleWindowFocus = () => {
+      if (!hidden && inputRef.current) {
+        inputRef.current.focus();
+      }
+    };
+
+    window.addEventListener('focus', handleWindowFocus);
+    return () => window.removeEventListener('focus', handleWindowFocus);
+  }, [hidden]);
+
   return (
-    <div>
-    <Command className="px-2" ref={ref} {...props}>
-      <CommandInput draggable quickai value={input} onValueChange={e => { setInput(e) }} placeholder="Type a command or search..." />
-      <CommandList>
-        {CommandItems()}
-      </CommandList>
-    </Command>
+    <div {...rest}>
+      <Command ref={ref} {...props}>
+        <CommandInput ref={inputRef} draggable quickai value={input} onValueChange={e => { setInput(e) }} onFocus={(e) => { e.target.selectionStart = e.target.selectionEnd = e.target.value.length; }} />
+        <CommandList>
+          <CommandItems />
+        </CommandList>
+        {/* {input.length > 0 ? (
+          <CommandList>
+            <CommandItems />
+          </CommandList>
+        ) : (
+          <div className="flex justify-center p-8">
+            <span className="text-muted-foreground">Start typing a command...</span>
+          </div>
+        )} */}
+        <div className="min-h-9 max-h-9 px-2 border flex justify-between items-center">
+          <div className="flex text-sm items-center gap-x-1">
+          <span className=" text-muted-foreground">navegate</span>
+          <div className="flex">
+          <ArrowUp size={13}/>
+          <ArrowDown size={13}/>
+          </div>
+          </div>
+        </div> 
+      </Command>
     </div>
   )
 })

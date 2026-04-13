@@ -1,4 +1,3 @@
-import './index.css'
 import { ReactNode } from "react"
 
 interface SettingsRootProps {

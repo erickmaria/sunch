@@ -327,11 +327,20 @@ const streamdownPlugins = { cjk, code, math, mermaid };
 export const MessageResponse = memo(
   ({ className, ...props }: MessageResponseProps) => (
     <Streamdown
+      // allowElement={(element) =>
+      //   !["h3", "h4", "h5", "h6"].includes(element.tagName)
+      // }
       className={cn(
         "size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
         className
       )}
       plugins={streamdownPlugins}
+      controls={{
+        table: true
+      }}
+      animated
+
+      
       {...props}
     />
   ),
