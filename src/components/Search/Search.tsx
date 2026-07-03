@@ -39,7 +39,7 @@ interface SeachUploadProps {
 
 function SeachFilesUpload({ files, setFiles }: SeachUploadProps) {
   return (
-    <div className='flex flex-row gap-x-1 h-fit overflow-auto'>
+    <div className='flex flex-row gap-x-1 m-0.5 h-fit overflow-auto'>
       {
         files.map(f => {
           return (

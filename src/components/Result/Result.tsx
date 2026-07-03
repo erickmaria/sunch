@@ -2,12 +2,16 @@
 import { LLMProvider, LLMResponses } from '@/services/LLMService'
 import React from 'react'
 import { Message, MessageContent, MessageResponse } from '../ai-elements/message'
+import { useTheme } from '@/contexts/ThemeProvider'
+import { cn } from '@/lib/utils'
 
 interface ResultProps {
   contents: LLMResponses | undefined
 }
 
 function Result({ contents }: ResultProps) {
+
+  const { theme } = useTheme()
 
 //   const markdownContent = `# Markdown Example
 
@@ -41,15 +45,20 @@ function Result({ contents }: ResultProps) {
 // *   [Hyperlinks](https://markdownguide.org)
 // *   > Blockquotes for highlighting specific statements.`;
 
-//   contents = new Map<LLMProvider, string>([
-//     ["claude" as LLMProvider, markdownContent]
-//   ]);
+  // contents = new Map<LLMProvider, string>([
+  //   ["claude" as LLMProvider, markdownContent]
+  // ]);
 
   if (contents != undefined && contents.size > 0) {
     const providers = Array.from(contents.keys())
     return (
 
-      <div className="bg-background/15 p-6  max-h-[400px] overflow-auto rounded-b-md mt-0.5 select-text">
+      // dark  = bg-muted/10
+      // light = bg-muted/60
+      <div className={cn(
+        `bg-muted/${theme == "light" ? "60" : "10"}`,
+        "p-6  max-h-[400px] overflow-auto rounded-b-md rounded-t-md mt-0.5 select-text"
+      )}>
         <div className="flex flex-coloverflow-auto">
           {providers.map((provider: LLMProvider) => (
             <Message key={provider} from='assistant'>
